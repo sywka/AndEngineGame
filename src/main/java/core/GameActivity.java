@@ -13,13 +13,21 @@ import org.anddev.andengine.ui.activity.BaseGameActivity;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GameActivity extends BaseGameActivity {
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+
+public class GameActivity extends BaseGameActivity implements SensorEventListener {
 
     /**
      * Массив игровых объектов
      */
     private List<GameObject> objectList;
     private Player player;
+    private SensorManager sensorManager;
+    /** Чувствительность акселерометра по ОХ */
+    private final int accelerometerXCencity = 2;
 
     @Override
     public Engine onLoadEngine() {
@@ -53,6 +61,9 @@ public class GameActivity extends BaseGameActivity {
         for (GameObject ob : objectList)
             ob.attachTo(scene);
 
+        sensorManager = (SensorManager) this.getSystemService(this.SENSOR_SERVICE);
+        sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), sensorManager.SENSOR_DELAY_GAME);
+
         scene.setOnSceneTouchListener(new Scene.IOnSceneTouchListener() {
             @Override
             public boolean onSceneTouchEvent(Scene scene, TouchEvent touchEvent) {
@@ -63,7 +74,7 @@ public class GameActivity extends BaseGameActivity {
                         player.setMove(Player.MOVE_LEFT);
                 }
                 if (touchEvent.isActionUp()) {
-                    player.setMove(Player.NOT_MOVE_LEFT_RIGHT);
+                    player.setMove(Player.IDLE);
                 }
                 return true;
             }
@@ -87,6 +98,32 @@ public class GameActivity extends BaseGameActivity {
 
     @Override
     public void onLoadComplete() {
+
+    }
+
+    /**
+     *  Движение по акселлерометру
+     *  угол акселерометра определяется через sensorEvent.values[i], при
+     *  i == 1: Х, i == 0: Y, i == 2: Z
+     *  */
+    @Override
+    public void onSensorChanged(SensorEvent sensorEvent) {
+        switch (sensorEvent.sensor.getType()) {
+            case Sensor.TYPE_ACCELEROMETER:
+                if(sensorEvent.values[1] < accelerometerXCencity && sensorEvent.values[1] > -accelerometerXCencity)
+                    player.setMove(Player.IDLE);
+                else{
+                    if (sensorEvent.values[1] > 2)
+                        player.setMove(Player.MOVE_RIGHT);
+                    if (sensorEvent.values[1] < -2)
+                        player.setMove(Player.MOVE_LEFT);
+                }
+                break;
+        }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int i) {
 
     }
 }

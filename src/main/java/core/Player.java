@@ -27,11 +27,11 @@ public class Player extends GameObject implements IEntityModifier.IEntityModifie
 
     public static final int MOVE_RIGHT = 0;
     public static final int MOVE_LEFT = 1;
-    public static final int NOT_MOVE_LEFT_RIGHT = 2;
+    public static final int IDLE = 2;
 
     public static final int STEP = 10;
 
-    public int move = NOT_MOVE_LEFT_RIGHT;
+    public int move = IDLE;
     public int startSpriteFrame = 0;
     public int endSpriteFrame = 3;
 
@@ -90,7 +90,7 @@ public class Player extends GameObject implements IEntityModifier.IEntityModifie
         super.onUpdateState(v);
         switch (move) {
             case MOVE_LEFT:
-                setPosition(getX() - STEP, getY());
+                setNewPosition(getX() - STEP, getY());
                 if (startSpriteFrame < 5) {
                     startSpriteFrame += 8;
                     endSpriteFrame += 8;
@@ -98,17 +98,16 @@ public class Player extends GameObject implements IEntityModifier.IEntityModifie
                 }
                 break;
             case MOVE_RIGHT:
-                setPosition(getX() + STEP, getY());
+                setNewPosition(getX() + STEP, getY());
                 if (startSpriteFrame > 5) {
                     startSpriteFrame -= 8;
                     endSpriteFrame -= 8;
                     getSprite().animate(new long[]{100, 100, 100, 100}, startSpriteFrame, endSpriteFrame, true);
                 }
                 break;
-            case NOT_MOVE_LEFT_RIGHT:
+            case IDLE:
                 break;
         }
-        getSprite().setPosition(getX(), getY());
     }
 
     public void setMove(int move) {

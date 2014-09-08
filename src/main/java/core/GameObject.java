@@ -20,6 +20,10 @@ abstract public class GameObject extends Entity {
     private TiledTextureRegion region;
     private BitmapTextureAtlas atlas;
 
+    private static final float PART = 0.1f;
+    private float spriteWidth = 0;
+    private float spriteHeight = 0;
+
     public GameObject(BaseGameActivity activity, Engine engine, int positionX, int positionY) {
         super(positionX, positionY);
         this.activity = activity;
@@ -27,7 +31,8 @@ abstract public class GameObject extends Entity {
         atlas = getNewAtlas();
         engine.getTextureManager().loadTexture(atlas);
         region = getNewRegion();
-        sprite = new AnimatedSprite(getX(), getY(), region) {
+        calculateSizeSprite();
+        sprite = new AnimatedSprite(getX(), getY(), spriteWidth, spriteHeight, region) {
             @Override
             public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY) {
                 GameObject.this.onAreaTouched(pSceneTouchEvent, pTouchAreaLocalX, pTouchAreaLocalY);
@@ -57,7 +62,8 @@ abstract public class GameObject extends Entity {
         scene.registerTouchArea(sprite);
     }
 
-    public void onUpdateState(float v) {}
+    public void onUpdateState(float v) {
+    }
 
     /**
      * @return атлас для хранения спрайта
@@ -68,6 +74,13 @@ abstract public class GameObject extends Entity {
      * @return объект хранящий отдельные регионы
      */
     abstract protected TiledTextureRegion getNewRegion();
+
+    private void calculateSizeSprite() {
+        spriteWidth = Utils.getScreenWidth() * PART;
+        int regionHeight = region.getTileHeight();
+        int regionWidth = region.getTileWidth();
+        spriteHeight = spriteWidth * (float) regionHeight / (float) regionWidth;
+    }
 
     public BaseGameActivity getActivity() {
         return activity;

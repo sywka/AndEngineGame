@@ -21,7 +21,6 @@ public class GameActivity extends BaseGameActivity {
     private List<GameObject> objectList;
     private Player player;
 
-    //Игнат
     @Override
     public Engine onLoadEngine() {
         final Camera camera = new Camera(0, 0, Utils.getScreenWidth(), Utils.getScreenHeight());

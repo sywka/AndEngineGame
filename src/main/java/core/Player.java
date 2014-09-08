@@ -2,6 +2,8 @@ package core;
 
 import android.util.Log;
 
+import com.el.game.R;
+
 import org.anddev.andengine.engine.Engine;
 import org.anddev.andengine.entity.IEntity;
 import org.anddev.andengine.entity.modifier.IEntityModifier;
@@ -17,7 +19,6 @@ import org.anddev.andengine.opengl.texture.region.TiledTextureRegion;
 import org.anddev.andengine.ui.activity.BaseGameActivity;
 import org.anddev.andengine.util.modifier.IModifier;
 
-import game.lalki.com.game.R;
 
 public class Player extends GameObject implements IEntityModifier.IEntityModifierListener {
 

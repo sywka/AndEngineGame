@@ -1,7 +1,5 @@
 package core;
 
-import android.util.DisplayMetrics;
-
 import org.anddev.andengine.engine.Engine;
 import org.anddev.andengine.engine.camera.Camera;
 import org.anddev.andengine.engine.handler.IUpdateHandler;
@@ -25,11 +23,11 @@ public class GameActivity extends BaseGameActivity {
 
     @Override
     public Engine onLoadEngine() {
-        final Camera camera = new Camera(0, 0, getScreenWidth(), getScreenHeight());
+        final Camera camera = new Camera(0, 0, Utils.getScreenWidth(), Utils.getScreenHeight());
 
         return new Engine(
                 new EngineOptions(true, EngineOptions.ScreenOrientation.LANDSCAPE,
-                        new RatioResolutionPolicy(getScreenResolutionRatio()), camera));
+                        new RatioResolutionPolicy(Utils.getScreenResolutionRatio()), camera));
     }
 
     /**
@@ -59,9 +57,9 @@ public class GameActivity extends BaseGameActivity {
             @Override
             public boolean onSceneTouchEvent(Scene scene, TouchEvent touchEvent) {
                 if (touchEvent.isActionDown()) {
-                    if (getScreenWidth() / 2 < touchEvent.getMotionEvent().getX())
+                    if (Utils.getScreenWidth() / 2 < touchEvent.getMotionEvent().getX())
                         player.setMove(Player.MOVE_RIGHT);
-                    else if (getScreenWidth() / 2 > touchEvent.getMotionEvent().getX())
+                    else if (Utils.getScreenWidth() / 2 > touchEvent.getMotionEvent().getX())
                         player.setMove(Player.MOVE_LEFT);
                 }
                 if (touchEvent.isActionUp()) {
@@ -90,31 +88,5 @@ public class GameActivity extends BaseGameActivity {
     @Override
     public void onLoadComplete() {
 
-    }
-
-    private float getScreenResolutionRatio() {
-        DisplayMetrics dm = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(dm);
-        return ((float) dm.widthPixels) / ((float) dm.heightPixels);
-    }
-
-    private int getScreenWidth() {
-        DisplayMetrics dm = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(dm);
-        return dm.widthPixels;
-    }
-
-    private int getScreenHeight() {
-        DisplayMetrics dm = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(dm);
-        return dm.heightPixels;
-    }
-
-    private float getWidthFromPercent(float partOf) {
-        return getScreenWidth() * partOf;
-    }
-
-    private float getHeightFromPercent(float partOf) {
-        return getScreenHeight() * partOf;
     }
 }

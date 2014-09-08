@@ -1,0 +1,11 @@
+build/
+.idea/
+.gradle/
+gradle/
+*.apk
+*.ap_
+local.properties
+gradlew.bat
+gradlew
+Thumbs.db
+.gitattributes

@@ -61,11 +61,11 @@ public class Player extends GameObject implements IEntityModifier.IEntityModifie
     @Override
     public void onModifierStarted(IModifier<IEntity> iEntityIModifier, IEntity iEntity) {
         if (iEntityIModifier == moveDown) {
-            startSpriteFrame = 0;
-            endSpriteFrame = 3;
+            startSpriteFrame = (startSpriteFrame < 5) ? 0 : 8;
+            endSpriteFrame = (endSpriteFrame < 8) ? 3 : 11;
         } else {
-            startSpriteFrame = 4;
-            endSpriteFrame = 7;
+            startSpriteFrame = (startSpriteFrame < 5) ? 4 : 12;
+            endSpriteFrame = (endSpriteFrame < 8) ? 7 : 15;
         }
         getSprite().animate(new long[]{100, 100, 100, 100}, startSpriteFrame, endSpriteFrame, true);
     }

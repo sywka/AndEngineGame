@@ -20,15 +20,18 @@ import android.hardware.SensorManager;
 
 public class GameActivity extends BaseGameActivity implements SensorEventListener {
 
-    /**
-     * Массив игровых объектов
-     */
+    /** Массив игровых объектов */
     private List<GameObject> objectList;
+    /** Объект игрока */
     private Player player;
+    /** Менеджер сенсора**/
     private SensorManager sensorManager;
-    /** Чувствительность акселерометра по ОХ */
-    private final int accelerometerXCencity = 2;
+    /** Чувствительность акселерометра по ОY */
+    private final int accelerometerYCencity = 2;
+    /** Коэфициент погрешности поворота по OZ */
+    private double zRotation = 0;
 
+    /** Инициализация движка */
     @Override
     public Engine onLoadEngine() {
         final Camera camera = new Camera(0, 0, Utils.getScreenWidth(), Utils.getScreenHeight());
@@ -38,14 +41,15 @@ public class GameActivity extends BaseGameActivity implements SensorEventListene
                         new RatioResolutionPolicy(Utils.getScreenResolutionRatio()), camera));
     }
 
-    /**
-     * Инициализация игровых объектов
-     */
+    /** Инициализация игровых объектов */
     @Override
     public void onLoadResources() {
-        player = new Player(this, getEngine(), 0, 0);
-        objectList = new ArrayList<GameObject>();
-        objectList.add(player);
+        player = new Player(this, getEngine(), 0, 0);       //Добавляем игрока
+        objectList = new ArrayList<GameObject>();           //Инициализируем массив игровых объектов
+        objectList.add(player);                             //Добавляем к массиву игрока
+        sensorManager = (SensorManager) this.getSystemService(this.SENSOR_SERVICE); //Определяем менеджер сенсора
+        sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+                sensorManager.SENSOR_DELAY_GAME);   //Устанавливаем менеджер сенсора как работника с акселерометром
     }
 
     /**
@@ -60,9 +64,6 @@ public class GameActivity extends BaseGameActivity implements SensorEventListene
         final Scene scene = new Scene();
         for (GameObject ob : objectList)
             ob.attachTo(scene);
-
-        sensorManager = (SensorManager) this.getSystemService(this.SENSOR_SERVICE);
-        sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), sensorManager.SENSOR_DELAY_GAME);
 
         scene.setOnSceneTouchListener(new Scene.IOnSceneTouchListener() {
             @Override
@@ -88,42 +89,44 @@ public class GameActivity extends BaseGameActivity implements SensorEventListene
             }
 
             @Override
-            public void reset() {
-
-            }
+            public void reset() {}
         });
 
         return scene;
     }
 
+    /** Завершение загрузки*/
     @Override
-    public void onLoadComplete() {
-
-    }
+    public void onLoadComplete() {}
 
     /**
-     *  Движение по акселлерометру
-     *  угол акселерометра определяется через sensorEvent.values[i], при
-     *  i == 1: Х, i == 0: Y, i == 2: Z
-     *  */
+     *  Изменение значения датчика движения сенсора.
+     *  Угол акселерометра определяется через sensorEvent.values[i], при
+     *  i == 1: Y, i == 0: Z, i == 2: X
+     *  По Оси ОУ - Телефон лежит на боку = 10. Повёрнут положен на спину\лицо = 0.
+     */
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
         switch (sensorEvent.sensor.getType()) {
             case Sensor.TYPE_ACCELEROMETER:
-                if(sensorEvent.values[1] < accelerometerXCencity && sensorEvent.values[1] > -accelerometerXCencity)
+                /**
+                 * Помимо наклонов по ОY cледует учитывать наклоны по ОZ. Необходимый коэфициент наклона рассчитывается
+                 * по формуле (1 - OZ / 10 ) / чувствительность экселероментра по ОY
+                 */
+                zRotation = (1 - sensorEvent.values[0] / 10) / accelerometerYCencity;
+                if(sensorEvent.values[1] < accelerometerYCencity - zRotation && sensorEvent.values[1] > -accelerometerYCencity + zRotation)
                     player.setMove(Player.IDLE);
                 else{
-                    if (sensorEvent.values[1] > 2)
+                    if (sensorEvent.values[1] > accelerometerYCencity - zRotation)
                         player.setMove(Player.MOVE_RIGHT);
-                    if (sensorEvent.values[1] < -2)
+                    if (sensorEvent.values[1] < -accelerometerYCencity + zRotation)
                         player.setMove(Player.MOVE_LEFT);
                 }
                 break;
         }
     }
 
+    /** Изменение точности показателя датчика(не используется) */
     @Override
-    public void onAccuracyChanged(Sensor sensor, int i) {
-
-    }
+    public void onAccuracyChanged(Sensor sensor, int i) {}
 }

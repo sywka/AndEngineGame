@@ -6,6 +6,7 @@ import org.anddev.andengine.engine.handler.IUpdateHandler;
 import org.anddev.andengine.engine.options.EngineOptions;
 import org.anddev.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
 import org.anddev.andengine.entity.scene.Scene;
+import org.anddev.andengine.entity.scene.Scene.IOnSceneTouchListener;
 import org.anddev.andengine.entity.util.FPSLogger;
 import org.anddev.andengine.input.touch.TouchEvent;
 import org.anddev.andengine.ui.activity.BaseGameActivity;
@@ -17,23 +18,40 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.util.Log;
+import android.view.MotionEvent;
 
-public class GameActivity extends BaseGameActivity implements SensorEventListener {
+public class GameActivity extends BaseGameActivity implements SensorEventListener, IOnSceneTouchListener {
 
-    /** Массив игровых объектов */
+    /**
+     * Массив игровых объектов
+     */
     private List<GameObject> objectList;
-    /** Объект игрока */
+    /**
+     * Объект игрока
+     */
     private Player player;
-    /** Менеджер сенсора**/
+    /**
+     * Менеджер сенсора*
+     */
     private SensorManager sensorManager;
-    /** Чувствительность акселерометра по ОY */
+    /**
+     * Чувствительность акселерометра по ОY
+     */
     private final int accelerometerYCencity = 2;
-    /** Коэфициент погрешности поворота по OZ */
+    /**
+     * Коэфициент погрешности поворота по OZ
+     */
     private double zRotation = 0;
 
-    /** Инициализация движка */
+    private List<Integer> fingersId;
+
+    /**
+     * Инициализация движка
+     */
     @Override
     public Engine onLoadEngine() {
+        fingersId = new ArrayList<Integer>();
         final Camera camera = new Camera(0, 0, Utils.getScreenWidth(), Utils.getScreenHeight());
 
         return new Engine(
@@ -41,15 +59,17 @@ public class GameActivity extends BaseGameActivity implements SensorEventListene
                         new RatioResolutionPolicy(Utils.getScreenResolutionRatio()), camera));
     }
 
-    /** Инициализация игровых объектов */
+    /**
+     * Инициализация игровых объектов
+     */
     @Override
     public void onLoadResources() {
         player = new Player(this, getEngine(), 0, 0);       //Добавляем игрока
         objectList = new ArrayList<GameObject>();           //Инициализируем массив игровых объектов
         objectList.add(player);                             //Добавляем к массиву игрока
-        sensorManager = (SensorManager) this.getSystemService(this.SENSOR_SERVICE); //Определяем менеджер сенсора
-        sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
-                sensorManager.SENSOR_DELAY_GAME);   //Устанавливаем менеджер сенсора как работника с акселерометром
+//        sensorManager = (SensorManager) this.getSystemService(this.SENSOR_SERVICE); //Определяем менеджер сенсора
+//        sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+//                sensorManager.SENSOR_DELAY_GAME);   //Устанавливаем менеджер сенсора как работника с акселерометром
     }
 
     /**
@@ -65,21 +85,7 @@ public class GameActivity extends BaseGameActivity implements SensorEventListene
         for (GameObject ob : objectList)
             ob.attachTo(scene);
 
-        scene.setOnSceneTouchListener(new Scene.IOnSceneTouchListener() {
-            @Override
-            public boolean onSceneTouchEvent(Scene scene, TouchEvent touchEvent) {
-                if (touchEvent.isActionDown()) {
-                    if (Utils.getScreenWidth() / 2 < touchEvent.getMotionEvent().getX())
-                        player.setMove(Player.MOVE_RIGHT);
-                    else if (Utils.getScreenWidth() / 2 > touchEvent.getMotionEvent().getX())
-                        player.setMove(Player.MOVE_LEFT);
-                }
-                if (touchEvent.isActionUp()) {
-                    player.setMove(Player.IDLE);
-                }
-                return true;
-            }
-        });
+        scene.setOnSceneTouchListener(this);
 
         scene.registerUpdateHandler(new IUpdateHandler() {
             @Override
@@ -89,21 +95,25 @@ public class GameActivity extends BaseGameActivity implements SensorEventListene
             }
 
             @Override
-            public void reset() {}
+            public void reset() {
+            }
         });
 
         return scene;
     }
 
-    /** Завершение загрузки*/
+    /**
+     * Завершение загрузки
+     */
     @Override
-    public void onLoadComplete() {}
+    public void onLoadComplete() {
+    }
 
     /**
-     *  Изменение значения датчика движения сенсора.
-     *  Угол акселерометра определяется через sensorEvent.values[i], при
-     *  i == 1: Y, i == 0: Z, i == 2: X
-     *  По Оси ОУ - Телефон лежит на боку = 10. Повёрнут положен на спину\лицо = 0.
+     * Изменение значения датчика движения сенсора.
+     * Угол акселерометра определяется через sensorEvent.values[i], при
+     * i == 1: Y, i == 0: Z, i == 2: X
+     * По Оси ОУ - Телефон лежит на боку = 10. Повёрнут положен на спину\лицо = 0.
      */
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
@@ -114,9 +124,9 @@ public class GameActivity extends BaseGameActivity implements SensorEventListene
                  * по формуле (1 - OZ / 10 ) / чувствительность экселероментра по ОY
                  */
                 zRotation = (1 - sensorEvent.values[0] / 10) / accelerometerYCencity;
-                if(sensorEvent.values[1] < accelerometerYCencity - zRotation && sensorEvent.values[1] > -accelerometerYCencity + zRotation)
+                if (sensorEvent.values[1] < accelerometerYCencity - zRotation && sensorEvent.values[1] > -accelerometerYCencity + zRotation)
                     player.setMove(Player.IDLE);
-                else{
+                else {
                     if (sensorEvent.values[1] > accelerometerYCencity - zRotation)
                         player.setMove(Player.MOVE_RIGHT);
                     if (sensorEvent.values[1] < -accelerometerYCencity + zRotation)
@@ -126,7 +136,39 @@ public class GameActivity extends BaseGameActivity implements SensorEventListene
         }
     }
 
-    /** Изменение точности показателя датчика(не используется) */
+    /**
+     * Изменение точности показателя датчика(не используется)
+     */
     @Override
-    public void onAccuracyChanged(Sensor sensor, int i) {}
+    public void onAccuracyChanged(Sensor sensor, int i) {
+    }
+
+    @Override
+    public boolean onSceneTouchEvent(Scene scene, TouchEvent touchEvent) {
+        MotionEvent motionEvent = touchEvent.getMotionEvent();
+        switch (motionEvent.getActionMasked()) {
+            case MotionEvent.ACTION_DOWN:
+            case MotionEvent.ACTION_POINTER_DOWN:
+                fingersId.add(motionEvent.getPointerId(motionEvent.getActionIndex()));
+                checkMove(motionEvent);
+                break;
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_POINTER_UP:
+                fingersId.remove(fingersId.indexOf(motionEvent.getPointerId(motionEvent.getActionIndex())));
+                checkMove(motionEvent);
+                break;
+        }
+        return true;
+    }
+
+    private void checkMove(MotionEvent motionEvent) {
+        if (fingersId.isEmpty()) {
+            player.setMove(Player.IDLE);
+            return;
+        }
+        if (Utils.getScreenWidth() / 2 < motionEvent.getX(motionEvent.findPointerIndex(fingersId.get(0))))
+            player.setMove(Player.MOVE_RIGHT);
+        else if (Utils.getScreenWidth() / 2 > motionEvent.getX(motionEvent.findPointerIndex(fingersId.get(0))))
+            player.setMove(Player.MOVE_LEFT);
+    }
 }

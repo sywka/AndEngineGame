@@ -86,7 +86,7 @@ abstract public class GameObject extends Entity {
         return activity;
     }
 
-    public void setNewPosition(float positionX, float positionY){
+    public void setNewPosition(float positionX, float positionY) {
         setPosition(positionX, positionY);
         getSprite().setPosition(getX(), getY());
     }

@@ -35,14 +35,21 @@ public class Player extends GameObject implements IEntityModifier.IEntityModifie
     public int startSpriteFrame = 0;        //Значение начального фрейма у спрайта
     public int endSpriteFrame = 3;          //Значение конечного фрейма у спрайта
 
+    private static final int UPPER_POINT = 25;
+    private static final int DOWNER_POINT = 143;
+    private static final int PLAYER_WIDTH = 18;
+    private static final int PLAYER_HEIGHT = 35;
+    private static final int FIELD_EXTREME_RIGHT_POINT = 314;
+    private static final int FIELD_EXTREME_LEFT_POINT = -14;
+
     /**
      *  Конструктор
      */
     public Player(BaseGameActivity activity, Engine engine, int positionX, int positionY) {
-        super(activity, engine, positionX, positionY);
+        super(activity, engine, positionX, positionY, PLAYER_WIDTH, PLAYER_HEIGHT);
         //Устанавливаем значения движений по OY
-        moveDown = new MoveYModifier(1f, positionY, engine.getCamera().getHeight() - getSprite().getHeight(), this);
-        moveUp = new MoveYModifier(1f, engine.getCamera().getHeight() - getSprite().getHeight(), positionY, this);
+        moveDown = new MoveYModifier(1f, UPPER_POINT, DOWNER_POINT, this);
+        moveUp = new MoveYModifier(1f, DOWNER_POINT, UPPER_POINT, this);
         //Зацикливаем движение спрайта по OY
         getSprite().registerEntityModifier(new LoopEntityModifier(new SequenceEntityModifier(moveDown, moveUp)));
     }
@@ -132,6 +139,10 @@ public class Player extends GameObject implements IEntityModifier.IEntityModifie
             case IDLE:
                 break;
         }
+        if (getX() > FIELD_EXTREME_RIGHT_POINT)
+            setNewPosition(FIELD_EXTREME_LEFT_POINT, getY());
+        if (getX() < FIELD_EXTREME_LEFT_POINT)
+            setNewPosition(FIELD_EXTREME_RIGHT_POINT, getY());
     }
 
     public void setMove(int move) {

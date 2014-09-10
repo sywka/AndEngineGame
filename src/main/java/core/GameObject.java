@@ -21,20 +21,23 @@ abstract public class GameObject extends Entity {
     private BitmapTextureAtlas atlas;       //Атлас обёекта
 
     private static final float PART = 0.1f;
+
+    ///Ширину и высоту спрайта оставим для коллизии!!!
     private float spriteWidth = 0;          //Ширина спрайта
     private float spriteHeight = 0;         //Высота спрайта
 
     /**
      *  Конструктор
      */
-    public GameObject(BaseGameActivity activity, Engine engine, int positionX, int positionY) {
+    public GameObject(BaseGameActivity activity, Engine engine, int positionX, int positionY, int spriteWidth, int spriteHeight) {
         super(positionX, positionY);
         this.activity = activity;
         this.engine = engine;
         atlas = getNewAtlas();
         engine.getTextureManager().loadTexture(atlas);
         region = getNewRegion();
-        calculateSizeSprite();
+        this.spriteWidth = spriteWidth;
+        this.spriteHeight = spriteHeight;
         sprite = new AnimatedSprite(getX(), getY(), spriteWidth, spriteHeight, region) {
             @Override
             public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY) {
@@ -77,14 +80,6 @@ abstract public class GameObject extends Entity {
      * @return объект хранящий отдельные регионы
      */
     abstract protected TiledTextureRegion getNewRegion();
-
-    /* Высчитывает ширину и высоту спрайта */
-    private void calculateSizeSprite() {
-        spriteWidth = Utils.getScreenWidth() * PART;
-        int regionHeight = region.getTileHeight();
-        int regionWidth = region.getTileWidth();
-        spriteHeight = spriteWidth * (float) regionHeight / (float) regionWidth;
-    }
 
     /*
     *   Возвращает текущую Активити

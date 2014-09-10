@@ -7,8 +7,14 @@ import org.anddev.andengine.engine.options.EngineOptions;
 import org.anddev.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
 import org.anddev.andengine.entity.scene.Scene;
 import org.anddev.andengine.entity.scene.Scene.IOnSceneTouchListener;
+import org.anddev.andengine.entity.sprite.Sprite;
+import org.anddev.andengine.entity.sprite.TiledSprite;
 import org.anddev.andengine.entity.util.FPSLogger;
 import org.anddev.andengine.input.touch.TouchEvent;
+import org.anddev.andengine.opengl.texture.TextureOptions;
+import org.anddev.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
+import org.anddev.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
+import org.anddev.andengine.opengl.texture.region.TextureRegion;
 import org.anddev.andengine.ui.activity.BaseGameActivity;
 
 import java.util.ArrayList;
@@ -20,6 +26,8 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.view.MotionEvent;
 
+import com.el.game.R;
+
 public class GameActivity extends BaseGameActivity implements SensorEventListener, IOnSceneTouchListener {
 
     private List<GameObject> objectList;    //Список игровых объектов
@@ -28,6 +36,7 @@ public class GameActivity extends BaseGameActivity implements SensorEventListene
     private SensorManager sensorManager;    //Менеджер сенсора
     private final int accelerometerYCencity = 2;    //Чувствительность акселлерометра по OY
     private double zRotation = 0;                   //Коэфициент погрешности поворота акс. по OZ
+    private ControlButton controlButton;
 
     /**
      * Инициализация движка
@@ -35,7 +44,7 @@ public class GameActivity extends BaseGameActivity implements SensorEventListene
     @Override
     public Engine onLoadEngine() {
         fingersId = new ArrayList<Integer>();   //Инициализируем список Id пальцев
-        final Camera camera = new Camera(0, 0, Utils.getScreenWidth(), Utils.getScreenHeight());    //Устанавливаем камеру
+        final Camera camera = new Camera(0, 0, 300, 200);    //Устанавливаем камеру
 
         return new Engine(
                 new EngineOptions(true, EngineOptions.ScreenOrientation.LANDSCAPE,
@@ -50,9 +59,13 @@ public class GameActivity extends BaseGameActivity implements SensorEventListene
         player = new Player(this, getEngine(), 0, 0);       //Добавляем игрока
         objectList = new ArrayList<GameObject>();           //Инициализируем массив игровых объектов
         objectList.add(player);                             //Добавляем к массиву игрока
-//        sensorManager = (SensorManager) this.getSystemService(this.SENSOR_SERVICE);   //Определяем менеджер сенсора
-//        sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
-//                sensorManager.SENSOR_DELAY_GAME);         //Устанавливаем менеджер сенсора как работника с акселерометром
+        ///Добавление кнопки
+        controlButton = new ControlButton(this, getEngine(), 240, 0);
+        objectList.add(controlButton);
+        ///
+        sensorManager = (SensorManager) this.getSystemService(this.SENSOR_SERVICE);   //Определяем менеджер сенсора
+        sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+                sensorManager.SENSOR_DELAY_GAME);         //Устанавливаем менеджер сенсора как работника с акселерометром
     }
 
     /**
@@ -65,6 +78,20 @@ public class GameActivity extends BaseGameActivity implements SensorEventListene
         getEngine().registerUpdateHandler(new FPSLogger());
 
         final Scene scene = new Scene();        //Устанавливаем сцену
+
+
+        ///Отрисовка поля
+        BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
+        BitmapTextureAtlas mBitmapTextureAtlas = new BitmapTextureAtlas(1024, 1024, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
+        TextureRegion myTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBitmapTextureAtlas, this, "screen.png", 0, 0);
+        this.getEngine().getTextureManager().loadTexture(mBitmapTextureAtlas);
+        Sprite mySprite = new Sprite(0, 0, myTextureRegion);
+        scene.attachChild(mySprite);
+        ///
+
+
+
+
         for (GameObject ob : objectList)        //Привязываем все игровые объекты к сцене
             ob.attachTo(scene);
 
@@ -98,6 +125,8 @@ public class GameActivity extends BaseGameActivity implements SensorEventListene
      */
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
+        if (controlButton.getButtonState() == 2 || controlButton.getButtonState() == 3)
+            return;
         switch (sensorEvent.sensor.getType()) {
             case Sensor.TYPE_ACCELEROMETER:
                 /**
@@ -134,6 +163,8 @@ public class GameActivity extends BaseGameActivity implements SensorEventListene
      */
     @Override
     public boolean onSceneTouchEvent(Scene scene, TouchEvent touchEvent) {
+        if (controlButton.getButtonState() == 0 || controlButton.getButtonState() == 1)
+            return true;
         MotionEvent motionEvent = touchEvent.getMotionEvent();  //Устанавливает событие движения
         switch (motionEvent.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
@@ -143,8 +174,13 @@ public class GameActivity extends BaseGameActivity implements SensorEventListene
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_POINTER_UP:
-                fingersId.remove(fingersId.indexOf(motionEvent.getPointerId(motionEvent.getActionIndex())));    //Удаляем из списка палец с данным Id
-                checkMovement(motionEvent);     //Устанавливаем направление персонажа согласно id первого пальца
+                try {
+                    fingersId.remove(fingersId.indexOf(motionEvent.getPointerId(motionEvent.getActionIndex())));    //Удаляем из списка палец с данным Id
+                    checkMovement(motionEvent);     //Устанавливаем направление персонажа согласно id первого пальца
+                }
+                catch(Exception e){
+                    fingersId.clear();
+                }
                 break;
         }
         return true;

@@ -20,8 +20,6 @@ abstract public class GameObject {
     private BitmapTextureAtlas atlas;       //Атлас обёекта
 
     private static final float PART = 0.1f;
-    private float positionX;
-    private float positionY;
 
     /**
      * Конструктор
@@ -29,8 +27,6 @@ abstract public class GameObject {
     public GameObject(BaseGameActivity activity, Engine engine, float positionX, float positionY, int spriteWidth, int spriteHeight) {
         this.activity = activity;
         this.engine = engine;
-        this.positionX = positionX;
-        this.positionY = positionY;
         atlas = getNewAtlas();
         engine.getTextureManager().loadTexture(atlas);
         region = getNewRegion();
@@ -86,21 +82,19 @@ abstract public class GameObject {
     }
 
     public void setPositionX(float positionX) {
-        this.positionX = positionX;
         getSprite().setPosition(positionX, getPositionY());
     }
 
     public float getPositionX() {
-        return positionX;
+        return getSprite().getX();
     }
 
     public void setPositionY(float positionY) {
-        this.positionY = positionY;
         getSprite().setPosition(getPositionX(), positionY);
     }
 
     public float getPositionY() {
-        return positionY;
+        return getSprite().getY();
     }
 
     /*

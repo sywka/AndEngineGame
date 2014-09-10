@@ -60,7 +60,7 @@ public class Player extends GameObject implements IEntityModifier.IEntityModifie
      */
     @Override
     protected BitmapTextureAtlas getNewAtlas() {
-        return new BitmapTextureAtlas(getActivity().getTextureManager(), 4096, 4096, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
+        return new BitmapTextureAtlas(getActivity().getTextureManager(), 1024, 512, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
     }
 
     /**

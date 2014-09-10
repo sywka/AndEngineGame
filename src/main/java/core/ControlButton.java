@@ -21,14 +21,14 @@ public class ControlButton extends GameObject {
 
     public ControlButton(BaseGameActivity activity, Engine engine, int positionX, int positionY) {
         super(activity, engine, positionX, positionY, BUTTON_WIDTH, BUTTON_HEIGHT);
-        buttonRectangle = new Rectangle(getPositionX() + 10, getPositionY() + 10, (float) BUTTON_WIDTH - 10, (float) BUTTON_HEIGHT - 10,
+        buttonRectangle = new Rectangle( 10, 10, (float) BUTTON_WIDTH - 20, (float) BUTTON_HEIGHT - 15,
                 activity.getVertexBufferObjectManager());
         getSprite().stopAnimation(0);
     }
 
     @Override
     protected BitmapTextureAtlas getNewAtlas() {
-        return new BitmapTextureAtlas(getActivity().getTextureManager(), 4096, 4096, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
+        return new BitmapTextureAtlas(getActivity().getTextureManager(), 512, 64, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
     }
 
     @Override

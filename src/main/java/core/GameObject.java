@@ -14,16 +14,19 @@ import org.anddev.andengine.ui.activity.BaseGameActivity;
  */
 abstract public class GameObject extends Entity {
 
-    private BaseGameActivity activity;
-    private Engine engine;
-    private AnimatedSprite sprite;
-    private TiledTextureRegion region;
-    private BitmapTextureAtlas atlas;
+    private BaseGameActivity activity;      //Текущая активити
+    private Engine engine;                  //Текущий движок
+    private AnimatedSprite sprite;          //Анимированный спрайт объекта
+    private TiledTextureRegion region;      //Регион объекта
+    private BitmapTextureAtlas atlas;       //Атлас обёекта
 
     private static final float PART = 0.1f;
-    private float spriteWidth = 0;
-    private float spriteHeight = 0;
+    private float spriteWidth = 0;          //Ширина спрайта
+    private float spriteHeight = 0;         //Высота спрайта
 
+    /**
+     *  Конструктор
+     */
     public GameObject(BaseGameActivity activity, Engine engine, int positionX, int positionY) {
         super(positionX, positionY);
         this.activity = activity;
@@ -75,6 +78,7 @@ abstract public class GameObject extends Entity {
      */
     abstract protected TiledTextureRegion getNewRegion();
 
+    /* Высчитывает ширину и высоту спрайта */
     private void calculateSizeSprite() {
         spriteWidth = Utils.getScreenWidth() * PART;
         int regionHeight = region.getTileHeight();
@@ -82,27 +86,45 @@ abstract public class GameObject extends Entity {
         spriteHeight = spriteWidth * (float) regionHeight / (float) regionWidth;
     }
 
+    /*
+    *   Возвращает текущую Активити
+    */
     public BaseGameActivity getActivity() {
         return activity;
     }
 
+    /**
+     *  Устанавливает новую позицию спрайта и объекта
+     */
     public void setNewPosition(float positionX, float positionY) {
         setPosition(positionX, positionY);
         getSprite().setPosition(getX(), getY());
     }
 
+    /*
+    *   Возвращает текущий движок
+    */
     public Engine getEngine() {
         return engine;
     }
 
+    /*
+    *   Возвращает текущий Атлас
+    */
     public BitmapTextureAtlas getAtlas() {
         return atlas;
     }
 
+    /*
+    *   Возвращает текущий регион
+    */
     public TiledTextureRegion getRegion() {
         return region;
     }
 
+    /*
+    *   Возвращает текущий спрайт
+    */
     public AnimatedSprite getSprite() {
         return sprite;
     }

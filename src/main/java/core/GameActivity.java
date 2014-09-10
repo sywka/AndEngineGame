@@ -18,45 +18,28 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.util.Log;
 import android.view.MotionEvent;
 
 public class GameActivity extends BaseGameActivity implements SensorEventListener, IOnSceneTouchListener {
 
-    /**
-     * Массив игровых объектов
-     */
-    private List<GameObject> objectList;
-    /**
-     * Объект игрока
-     */
-    private Player player;
-    /**
-     * Менеджер сенсора*
-     */
-    private SensorManager sensorManager;
-    /**
-     * Чувствительность акселерометра по ОY
-     */
-    private final int accelerometerYCencity = 2;
-    /**
-     * Коэфициент погрешности поворота по OZ
-     */
-    private double zRotation = 0;
-
-    private List<Integer> fingersId;
+    private List<GameObject> objectList;    //Список игровых объектов
+    private List<Integer> fingersId;        //Список Id пальцев (необходим для корректного мультитача)
+    private Player player;                  //Объект игрока
+    private SensorManager sensorManager;    //Менеджер сенсора
+    private final int accelerometerYCencity = 2;    //Чувствительность акселлерометра по OY
+    private double zRotation = 0;                   //Коэфициент погрешности поворота акс. по OZ
 
     /**
      * Инициализация движка
      */
     @Override
     public Engine onLoadEngine() {
-        fingersId = new ArrayList<Integer>();
-        final Camera camera = new Camera(0, 0, Utils.getScreenWidth(), Utils.getScreenHeight());
+        fingersId = new ArrayList<Integer>();   //Инициализируем список Id пальцев
+        final Camera camera = new Camera(0, 0, Utils.getScreenWidth(), Utils.getScreenHeight());    //Устанавливаем камеру
 
         return new Engine(
                 new EngineOptions(true, EngineOptions.ScreenOrientation.LANDSCAPE,
-                        new RatioResolutionPolicy(Utils.getScreenResolutionRatio()), camera));
+                        new RatioResolutionPolicy(Utils.getScreenResolutionRatio()), camera));      //Устанавливаем движок
     }
 
     /**
@@ -67,9 +50,9 @@ public class GameActivity extends BaseGameActivity implements SensorEventListene
         player = new Player(this, getEngine(), 0, 0);       //Добавляем игрока
         objectList = new ArrayList<GameObject>();           //Инициализируем массив игровых объектов
         objectList.add(player);                             //Добавляем к массиву игрока
-//        sensorManager = (SensorManager) this.getSystemService(this.SENSOR_SERVICE); //Определяем менеджер сенсора
+//        sensorManager = (SensorManager) this.getSystemService(this.SENSOR_SERVICE);   //Определяем менеджер сенсора
 //        sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
-//                sensorManager.SENSOR_DELAY_GAME);   //Устанавливаем менеджер сенсора как работника с акселерометром
+//                sensorManager.SENSOR_DELAY_GAME);         //Устанавливаем менеджер сенсора как работника с акселерометром
     }
 
     /**
@@ -81,22 +64,21 @@ public class GameActivity extends BaseGameActivity implements SensorEventListene
     public Scene onLoadScene() {
         getEngine().registerUpdateHandler(new FPSLogger());
 
-        final Scene scene = new Scene();
-        for (GameObject ob : objectList)
+        final Scene scene = new Scene();        //Устанавливаем сцену
+        for (GameObject ob : objectList)        //Привязываем все игровые объекты к сцене
             ob.attachTo(scene);
 
-        scene.setOnSceneTouchListener(this);
+        scene.setOnSceneTouchListener(this);    //Устанавливаем слушатель прикосновений на сцене
 
         scene.registerUpdateHandler(new IUpdateHandler() {
             @Override
             public void onUpdate(float v) {
                 for (GameObject ob : objectList)
                     ob.onUpdateState(v);
-            }
+            }                                   //Инициализируем update
 
             @Override
-            public void reset() {
-            }
+            public void reset() {}
         });
 
         return scene;
@@ -106,8 +88,7 @@ public class GameActivity extends BaseGameActivity implements SensorEventListene
      * Завершение загрузки
      */
     @Override
-    public void onLoadComplete() {
-    }
+    public void onLoadComplete() {}
 
     /**
      * Изменение значения датчика движения сенсора.
@@ -123,12 +104,12 @@ public class GameActivity extends BaseGameActivity implements SensorEventListene
                  * Помимо наклонов по ОY cледует учитывать наклоны по ОZ. Необходимый коэфициент наклона рассчитывается
                  * по формуле (1 - OZ / 10 ) / чувствительность экселероментра по ОY
                  */
-                zRotation = (1 - sensorEvent.values[0] / 10) / accelerometerYCencity;
+                zRotation = (1 - sensorEvent.values[0] / 10) / accelerometerYCencity;   //Устанавливаем погрешность OZ
                 if (sensorEvent.values[1] < accelerometerYCencity - zRotation && sensorEvent.values[1] > -accelerometerYCencity + zRotation)
-                    player.setMove(Player.IDLE);
+                    player.setMove(Player.IDLE);                //Если наклон не входит в промежуток, то не двигаем персонажа
                 else {
                     if (sensorEvent.values[1] > accelerometerYCencity - zRotation)
-                        player.setMove(Player.MOVE_RIGHT);
+                        player.setMove(Player.MOVE_RIGHT);      //Двигаем в зависимости от наклона телефона
                     if (sensorEvent.values[1] < -accelerometerYCencity + zRotation)
                         player.setMove(Player.MOVE_LEFT);
                 }
@@ -143,32 +124,45 @@ public class GameActivity extends BaseGameActivity implements SensorEventListene
     public void onAccuracyChanged(Sensor sensor, int i) {
     }
 
+    /**
+     * Ивент прикосновения экрана. При каждом новом прикосновении мы устанавливаем движение игрока
+     * согласно координатам первого пальца и добавляем в список пальцев новый палец. При поднятии
+     * мы удаляем из списка пальцев поднятый палец и устанавливаем движение либо по следующему пальцу
+     * из списка либо останавливаем игрока, если таких нет.
+     *
+     * @return true
+     */
     @Override
     public boolean onSceneTouchEvent(Scene scene, TouchEvent touchEvent) {
-        MotionEvent motionEvent = touchEvent.getMotionEvent();
+        MotionEvent motionEvent = touchEvent.getMotionEvent();  //Устанавливает событие движения
         switch (motionEvent.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
             case MotionEvent.ACTION_POINTER_DOWN:
-                fingersId.add(motionEvent.getPointerId(motionEvent.getActionIndex()));
-                checkMove(motionEvent);
+                fingersId.add(motionEvent.getPointerId(motionEvent.getActionIndex()));  //Добавляем новый Id в список Id пальцев
+                checkMovement(motionEvent);      //Устанавливаем направление персонажа согласно id первого пальца
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_POINTER_UP:
-                fingersId.remove(fingersId.indexOf(motionEvent.getPointerId(motionEvent.getActionIndex())));
-                checkMove(motionEvent);
+                fingersId.remove(fingersId.indexOf(motionEvent.getPointerId(motionEvent.getActionIndex())));    //Удаляем из списка палец с данным Id
+                checkMovement(motionEvent);     //Устанавливаем направление персонажа согласно id первого пальца
                 break;
         }
         return true;
     }
 
-    private void checkMove(MotionEvent motionEvent) {
+    /**
+     *  Проверяет, есть ли зажатия экрана. Если нет, останавливает игрока. Если есть, устанавливает
+     *  движение согласно Id первого в списке пальцев пальца. Вызывается при поднятии пальца
+     *  или нажатии нового пальца
+     */
+    private void checkMovement(MotionEvent motionEvent) {
         if (fingersId.isEmpty()) {
-            player.setMove(Player.IDLE);
+            player.setMove(Player.IDLE);            //Если список пальцев пуст, останавливает игрока
             return;
         }
         if (Utils.getScreenWidth() / 2 < motionEvent.getX(motionEvent.findPointerIndex(fingersId.get(0))))
-            player.setMove(Player.MOVE_RIGHT);
+            player.setMove(Player.MOVE_RIGHT);      //Устанавливает движение игрока вправо
         else if (Utils.getScreenWidth() / 2 > motionEvent.getX(motionEvent.findPointerIndex(fingersId.get(0))))
-            player.setMove(Player.MOVE_LEFT);
+            player.setMove(Player.MOVE_LEFT);       //Устанавливает движение игрока влево
     }
 }

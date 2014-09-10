@@ -22,43 +22,61 @@ import org.anddev.andengine.util.modifier.IModifier;
 
 public class Player extends GameObject implements IEntityModifier.IEntityModifierListener {
 
-    private MoveYModifier moveDown;
-    private MoveYModifier moveUp;
+    private MoveYModifier moveDown;         //Модификатор движения вниз
+    private MoveYModifier moveUp;           //Модификатор движения вверх
 
-    public static final int MOVE_RIGHT = 0;
-    public static final int MOVE_LEFT = 1;
-    public static final int IDLE = 2;
+    public static final int MOVE_RIGHT = 0; //Значение движения вправо
+    public static final int MOVE_LEFT = 1;  //Значение движения влево
+    public static final int IDLE = 2;       //Значение остановки
 
-    public static final int STEP = 10;
+    public static final int STEP = 10;      //Значение движения в пикселях
 
-    public int move = IDLE;
-    public int startSpriteFrame = 0;
-    public int endSpriteFrame = 3;
+    public int move = IDLE;                 //Значение  текущего движения
+    public int startSpriteFrame = 0;        //Значение начального фрейма у спрайта
+    public int endSpriteFrame = 3;          //Значение конечного фрейма у спрайта
 
+    /**
+     *  Конструктор
+     */
     public Player(BaseGameActivity activity, Engine engine, int positionX, int positionY) {
         super(activity, engine, positionX, positionY);
-
+        //Устанавливаем значения движений по OY
         moveDown = new MoveYModifier(1f, positionY, engine.getCamera().getHeight() - getSprite().getHeight(), this);
         moveUp = new MoveYModifier(1f, engine.getCamera().getHeight() - getSprite().getHeight(), positionY, this);
+        //Зацикливаем движение спрайта по OY
         getSprite().registerEntityModifier(new LoopEntityModifier(new SequenceEntityModifier(moveDown, moveUp)));
     }
 
+    /**
+     * Устанавливаем новый атлас
+     * @return atlas
+     */
     @Override
     protected BitmapTextureAtlas getNewAtlas() {
         return new BitmapTextureAtlas(4096, 4096, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
     }
 
+    /**
+     * Устанавливаем новый регион
+     */
     @Override
     protected TiledTextureRegion getNewRegion() {
         return BitmapTextureAtlasTextureRegionFactory.createTiledFromResource(getAtlas(), getActivity(), R.drawable.john, 0, 0, 8, 2);
     }
 
+    /**
+     * Привязываем спрайт к сцене и запускаем анимацию
+     * @param scene сцена
+     */
     @Override
     public void attachTo(Scene scene) {
         super.attachTo(scene);
         getSprite().animate(new long[]{100, 100, 100, 100}, 0, 3, true);
     }
 
+    /**
+     * Устанавливаем анимацию в зависимости от поворота персонажа
+     */
     @Override
     public void onModifierStarted(IModifier<IEntity> iEntityIModifier, IEntity iEntity) {
         if (iEntityIModifier == moveDown) {
@@ -77,6 +95,9 @@ public class Player extends GameObject implements IEntityModifier.IEntityModifie
 //        Log.d("isMoveUp", (iEntityIModifier == moveUp) ? "yes" : "no");
     }
 
+    /**
+     * Действие при прикосновении к персонажу пальцем
+     */
     @Override
     public void onAreaTouched(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY) {
         super.onAreaTouched(pSceneTouchEvent, pTouchAreaLocalX, pTouchAreaLocalY);
@@ -85,6 +106,9 @@ public class Player extends GameObject implements IEntityModifier.IEntityModifie
         Log.d("Y", pTouchAreaLocalY + "");
     }
 
+    /**
+     * Апдейт игрока
+     */
     @Override
     public void onUpdateState(float v) {
         super.onUpdateState(v);

@@ -1,21 +1,20 @@
 package core;
 
-import org.anddev.andengine.engine.Engine;
-import org.anddev.andengine.engine.camera.Camera;
-import org.anddev.andengine.engine.handler.IUpdateHandler;
-import org.anddev.andengine.engine.options.EngineOptions;
-import org.anddev.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
-import org.anddev.andengine.entity.scene.Scene;
-import org.anddev.andengine.entity.scene.Scene.IOnSceneTouchListener;
-import org.anddev.andengine.entity.sprite.Sprite;
-import org.anddev.andengine.entity.sprite.TiledSprite;
-import org.anddev.andengine.entity.util.FPSLogger;
-import org.anddev.andengine.input.touch.TouchEvent;
-import org.anddev.andengine.opengl.texture.TextureOptions;
-import org.anddev.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
-import org.anddev.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
-import org.anddev.andengine.opengl.texture.region.TextureRegion;
-import org.anddev.andengine.ui.activity.BaseGameActivity;
+import org.andengine.engine.camera.Camera;
+import org.andengine.engine.handler.IUpdateHandler;
+import org.andengine.engine.options.EngineOptions;
+import org.andengine.engine.options.ScreenOrientation;
+import org.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
+import org.andengine.entity.scene.IOnSceneTouchListener;
+import org.andengine.entity.scene.Scene;
+import org.andengine.entity.sprite.Sprite;
+import org.andengine.entity.util.FPSLogger;
+import org.andengine.input.touch.TouchEvent;
+import org.andengine.opengl.texture.TextureOptions;
+import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
+import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
+import org.andengine.opengl.texture.region.TextureRegion;
+import org.andengine.ui.activity.BaseGameActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,8 +24,6 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.view.MotionEvent;
-
-import com.el.game.R;
 
 public class GameActivity extends BaseGameActivity implements SensorEventListener, IOnSceneTouchListener {
 
@@ -42,20 +39,18 @@ public class GameActivity extends BaseGameActivity implements SensorEventListene
      * Инициализация движка
      */
     @Override
-    public Engine onLoadEngine() {
-        fingersId = new ArrayList<Integer>();   //Инициализируем список Id пальцев
-        final Camera camera = new Camera(0, 0, 300, 200);    //Устанавливаем камеру
-
-        return new Engine(
-                new EngineOptions(true, EngineOptions.ScreenOrientation.LANDSCAPE,
-                        new RatioResolutionPolicy(Utils.getScreenResolutionRatio()), camera));      //Устанавливаем движок
+    public EngineOptions onCreateEngineOptions() {
+        fingersId = new ArrayList<Integer>();
+        Camera camera = new Camera(0, 0, 300, 200);
+        return new EngineOptions(true, ScreenOrientation.LANDSCAPE_SENSOR,
+                new RatioResolutionPolicy(Utils.getScreenResolutionRatio()), camera);
     }
 
     /**
      * Инициализация игровых объектов
      */
     @Override
-    public void onLoadResources() {
+    public void onCreateResources(OnCreateResourcesCallback onCreateResourcesCallback) throws Exception {
         player = new Player(this, getEngine(), 0, 0);       //Добавляем игрока
         objectList = new ArrayList<GameObject>();           //Инициализируем массив игровых объектов
         objectList.add(player);                             //Добавляем к массиву игрока
@@ -63,34 +58,25 @@ public class GameActivity extends BaseGameActivity implements SensorEventListene
         controlButton = new ControlButton(this, getEngine(), 240, 0);
         objectList.add(controlButton);
         ///
-        sensorManager = (SensorManager) this.getSystemService(this.SENSOR_SERVICE);   //Определяем менеджер сенсора
+        sensorManager = (SensorManager) this.getSystemService(SENSOR_SERVICE);   //Определяем менеджер сенсора
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
-                sensorManager.SENSOR_DELAY_GAME);         //Устанавливаем менеджер сенсора как работника с акселерометром
+                SensorManager.SENSOR_DELAY_GAME);         //Устанавливаем менеджер сенсора как работника с акселерометром
+        onCreateResourcesCallback.onCreateResourcesFinished();
     }
 
-    /**
-     * Отрисовка игровых объектов на сцене
-     *
-     * @return готовая сцена
-     */
     @Override
-    public Scene onLoadScene() {
+    public void onCreateScene(OnCreateSceneCallback onCreateSceneCallback) throws Exception {
         getEngine().registerUpdateHandler(new FPSLogger());
 
         final Scene scene = new Scene();        //Устанавливаем сцену
 
-
         ///Отрисовка поля
         BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
-        BitmapTextureAtlas mBitmapTextureAtlas = new BitmapTextureAtlas(1024, 1024, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
+        BitmapTextureAtlas mBitmapTextureAtlas = new BitmapTextureAtlas(this.getTextureManager(), 1024, 1024, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
         TextureRegion myTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBitmapTextureAtlas, this, "screen.png", 0, 0);
         this.getEngine().getTextureManager().loadTexture(mBitmapTextureAtlas);
-        Sprite mySprite = new Sprite(0, 0, myTextureRegion);
+        Sprite mySprite = new Sprite(0, 0, myTextureRegion, getVertexBufferObjectManager());
         scene.attachChild(mySprite);
-        ///
-
-
-
 
         for (GameObject ob : objectList)        //Привязываем все игровые объекты к сцене
             ob.attachTo(scene);
@@ -105,17 +91,17 @@ public class GameActivity extends BaseGameActivity implements SensorEventListene
             }                                   //Инициализируем update
 
             @Override
-            public void reset() {}
+            public void reset() {
+            }
         });
 
-        return scene;
+        onCreateSceneCallback.onCreateSceneFinished(scene);
     }
 
-    /**
-     * Завершение загрузки
-     */
     @Override
-    public void onLoadComplete() {}
+    public void onPopulateScene(Scene scene, OnPopulateSceneCallback onPopulateSceneCallback) throws Exception {
+        onPopulateSceneCallback.onPopulateSceneFinished();
+    }
 
     /**
      * Изменение значения датчика движения сенсора.
@@ -174,25 +160,21 @@ public class GameActivity extends BaseGameActivity implements SensorEventListene
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_POINTER_UP:
-                try {
+                if (!fingersId.isEmpty())
                     fingersId.remove(fingersId.indexOf(motionEvent.getPointerId(motionEvent.getActionIndex())));    //Удаляем из списка палец с данным Id
-                    checkMovement(motionEvent);     //Устанавливаем направление персонажа согласно id первого пальца
-                }
-                catch(Exception e){
-                    fingersId.clear();
-                }
+                checkMovement(motionEvent);     //Устанавливаем направление персонажа согласно id первого пальца
                 break;
         }
         return true;
     }
 
     /**
-     *  Проверяет, есть ли зажатия экрана. Если нет, останавливает игрока. Если есть, устанавливает
-     *  движение согласно Id первого в списке пальцев пальца. Вызывается при поднятии пальца
-     *  или нажатии нового пальца
+     * Проверяет, есть ли зажатия экрана. Если нет, останавливает игрока. Если есть, устанавливает
+     * движение согласно Id первого в списке пальцев пальца. Вызывается при поднятии пальца
+     * или нажатии нового пальца
      */
     private void checkMovement(MotionEvent motionEvent) {
-        if (fingersId.isEmpty()) {
+        if (fingersId == null || fingersId.isEmpty()) {
             player.setMove(Player.IDLE);            //Если список пальцев пуст, останавливает игрока
             return;
         }

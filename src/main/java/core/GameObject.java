@@ -1,18 +1,17 @@
 package core;
 
-import org.anddev.andengine.engine.Engine;
-import org.anddev.andengine.entity.Entity;
-import org.anddev.andengine.entity.scene.Scene;
-import org.anddev.andengine.entity.sprite.AnimatedSprite;
-import org.anddev.andengine.input.touch.TouchEvent;
-import org.anddev.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
-import org.anddev.andengine.opengl.texture.region.TiledTextureRegion;
-import org.anddev.andengine.ui.activity.BaseGameActivity;
+import org.andengine.engine.Engine;
+import org.andengine.entity.scene.Scene;
+import org.andengine.entity.sprite.AnimatedSprite;
+import org.andengine.input.touch.TouchEvent;
+import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
+import org.andengine.opengl.texture.region.TiledTextureRegion;
+import org.andengine.ui.activity.BaseGameActivity;
 
 /**
  * Базовый класс для объектов
  */
-abstract public class GameObject extends Entity {
+abstract public class GameObject {
 
     private BaseGameActivity activity;      //Текущая активити
     private Engine engine;                  //Текущий движок
@@ -21,24 +20,21 @@ abstract public class GameObject extends Entity {
     private BitmapTextureAtlas atlas;       //Атлас обёекта
 
     private static final float PART = 0.1f;
-
-    ///Ширину и высоту спрайта оставим для коллизии!!!
-    private float spriteWidth = 0;          //Ширина спрайта
-    private float spriteHeight = 0;         //Высота спрайта
+    private float positionX;
+    private float positionY;
 
     /**
-     *  Конструктор
+     * Конструктор
      */
-    public GameObject(BaseGameActivity activity, Engine engine, int positionX, int positionY, int spriteWidth, int spriteHeight) {
-        super(positionX, positionY);
+    public GameObject(BaseGameActivity activity, Engine engine, float positionX, float positionY, int spriteWidth, int spriteHeight) {
         this.activity = activity;
         this.engine = engine;
+        this.positionX = positionX;
+        this.positionY = positionY;
         atlas = getNewAtlas();
         engine.getTextureManager().loadTexture(atlas);
         region = getNewRegion();
-        this.spriteWidth = spriteWidth;
-        this.spriteHeight = spriteHeight;
-        sprite = new AnimatedSprite(getX(), getY(), spriteWidth, spriteHeight, region) {
+        sprite = new AnimatedSprite(positionX, positionY, spriteWidth, spriteHeight, region, engine.getVertexBufferObjectManager()) {
             @Override
             public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY) {
                 GameObject.this.onAreaTouched(pSceneTouchEvent, pTouchAreaLocalX, pTouchAreaLocalY);
@@ -81,6 +77,32 @@ abstract public class GameObject extends Entity {
      */
     abstract protected TiledTextureRegion getNewRegion();
 
+    /**
+     * Устанавливает новую позицию спрайта и объекта
+     */
+    public void setPosition(float positionX, float positionY) {
+        setPositionX(positionX);
+        setPositionY(positionY);
+    }
+
+    public void setPositionX(float positionX) {
+        this.positionX = positionX;
+        getSprite().setPosition(positionX, getPositionY());
+    }
+
+    public float getPositionX() {
+        return positionX;
+    }
+
+    public void setPositionY(float positionY) {
+        this.positionY = positionY;
+        getSprite().setPosition(getPositionX(), positionY);
+    }
+
+    public float getPositionY() {
+        return positionY;
+    }
+
     /*
     *   Возвращает текущую Активити
     */
@@ -88,17 +110,9 @@ abstract public class GameObject extends Entity {
         return activity;
     }
 
-    /**
-     *  Устанавливает новую позицию спрайта и объекта
-     */
-    public void setNewPosition(float positionX, float positionY) {
-        setPosition(positionX, positionY);
-        getSprite().setPosition(getX(), getY());
-    }
-
     /*
-    *   Возвращает текущий движок
-    */
+        *   Возвращает текущий движок
+        */
     public Engine getEngine() {
         return engine;
     }

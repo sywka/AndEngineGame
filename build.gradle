@@ -17,6 +17,10 @@ android {
         minSdkVersion 9
         targetSdkVersion 19
     }
+
+    packagingOptions {
+        exclude 'AndroidManifest.xml'
+    }
 }
 
 dependencies {

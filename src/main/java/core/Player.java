@@ -4,21 +4,20 @@ import android.util.Log;
 
 import com.el.game.R;
 
-import org.anddev.andengine.engine.Engine;
-import org.anddev.andengine.entity.IEntity;
-import org.anddev.andengine.entity.modifier.IEntityModifier;
-import org.anddev.andengine.entity.modifier.LoopEntityModifier;
-import org.anddev.andengine.entity.modifier.MoveYModifier;
-import org.anddev.andengine.entity.modifier.SequenceEntityModifier;
-import org.anddev.andengine.entity.scene.Scene;
-import org.anddev.andengine.input.touch.TouchEvent;
-import org.anddev.andengine.opengl.texture.TextureOptions;
-import org.anddev.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
-import org.anddev.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
-import org.anddev.andengine.opengl.texture.region.TiledTextureRegion;
-import org.anddev.andengine.ui.activity.BaseGameActivity;
-import org.anddev.andengine.util.modifier.IModifier;
-
+import org.andengine.engine.Engine;
+import org.andengine.entity.IEntity;
+import org.andengine.entity.modifier.IEntityModifier;
+import org.andengine.entity.modifier.LoopEntityModifier;
+import org.andengine.entity.modifier.MoveYModifier;
+import org.andengine.entity.modifier.SequenceEntityModifier;
+import org.andengine.entity.scene.Scene;
+import org.andengine.input.touch.TouchEvent;
+import org.andengine.opengl.texture.TextureOptions;
+import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
+import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
+import org.andengine.opengl.texture.region.TiledTextureRegion;
+import org.andengine.ui.activity.BaseGameActivity;
+import org.andengine.util.modifier.IModifier;
 
 public class Player extends GameObject implements IEntityModifier.IEntityModifierListener {
 
@@ -43,7 +42,7 @@ public class Player extends GameObject implements IEntityModifier.IEntityModifie
     private static final int FIELD_EXTREME_LEFT_POINT = -14;
 
     /**
-     *  Конструктор
+     * Конструктор
      */
     public Player(BaseGameActivity activity, Engine engine, int positionX, int positionY) {
         super(activity, engine, positionX, positionY, PLAYER_WIDTH, PLAYER_HEIGHT);
@@ -56,11 +55,12 @@ public class Player extends GameObject implements IEntityModifier.IEntityModifie
 
     /**
      * Устанавливаем новый атлас
+     *
      * @return atlas
      */
     @Override
     protected BitmapTextureAtlas getNewAtlas() {
-        return new BitmapTextureAtlas(4096, 4096, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
+        return new BitmapTextureAtlas(getActivity().getTextureManager(), 4096, 4096, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
     }
 
     /**
@@ -73,6 +73,7 @@ public class Player extends GameObject implements IEntityModifier.IEntityModifie
 
     /**
      * Привязываем спрайт к сцене и запускаем анимацию
+     *
      * @param scene сцена
      */
     @Override
@@ -121,7 +122,7 @@ public class Player extends GameObject implements IEntityModifier.IEntityModifie
         super.onUpdateState(v);
         switch (move) {
             case MOVE_LEFT:
-                setNewPosition(getX() - STEP, getY());
+                setPositionX(getPositionX() - STEP);
                 if (startSpriteFrame < 5) {
                     startSpriteFrame += 8;
                     endSpriteFrame += 8;
@@ -129,7 +130,7 @@ public class Player extends GameObject implements IEntityModifier.IEntityModifie
                 }
                 break;
             case MOVE_RIGHT:
-                setNewPosition(getX() + STEP, getY());
+                setPositionX(getPositionX() + STEP);
                 if (startSpriteFrame > 5) {
                     startSpriteFrame -= 8;
                     endSpriteFrame -= 8;
@@ -139,10 +140,10 @@ public class Player extends GameObject implements IEntityModifier.IEntityModifie
             case IDLE:
                 break;
         }
-        if (getX() > FIELD_EXTREME_RIGHT_POINT)
-            setNewPosition(FIELD_EXTREME_LEFT_POINT, getY());
-        if (getX() < FIELD_EXTREME_LEFT_POINT)
-            setNewPosition(FIELD_EXTREME_RIGHT_POINT, getY());
+        if (getPositionX() > FIELD_EXTREME_RIGHT_POINT)
+            setPosition(FIELD_EXTREME_LEFT_POINT, getPositionY());
+        if (getPositionX() < FIELD_EXTREME_LEFT_POINT)
+            setPosition(FIELD_EXTREME_RIGHT_POINT, getPositionY());
     }
 
     public void setMove(int move) {

@@ -12,11 +12,11 @@ abstract public class Utils {
     private static float percentX = resolutionWidth / 100;
     private static float percentY = resolutionHeight / 100;
 
-    public static float getPixeltOfPercentX(float percentValue){
+    public static float getPixelsOfPercentX(float percentValue){
         return percentValue * percentX;
     }
 
-    public static float getPixeltOfPercentY(float percentValue){
+    public static float getPixelsOfPercentY(float percentValue){
         return percentValue * percentY;
     }
 

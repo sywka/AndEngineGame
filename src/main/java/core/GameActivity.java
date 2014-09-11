@@ -61,7 +61,7 @@ public class GameActivity extends BaseGameActivity implements SensorEventListene
         objectList = new ArrayList<GameObject>();           //Инициализируем массив игровых объектов
         objectList.add(player);                             //Добавляем к массиву игрока
         ///Добавление кнопки
-        controlButton = new ControlButton(this, getEngine(), Utils.getPixeltOfPercentX(80), 0, Utils.getPixeltOfPercentX(20), Utils.getPixeltOfPercentY(15));
+        controlButton = new ControlButton(this, getEngine(), Utils.getPixelsOfPercentX(80), 0, Utils.getPixelsOfPercentX(20), Utils.getPixelsOfPercentY(15));
         objectList.add(controlButton);
         ///
         sensorManager = (SensorManager) this.getSystemService(SENSOR_SERVICE);   //Определяем менеджер сенсора

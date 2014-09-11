@@ -46,15 +46,15 @@ public class Player extends GameObject {
      * Конструктор
      */
     public Player(BaseGameActivity activity, Engine engine, int positionX, int positionY) {
-        super(activity, engine, positionX, positionY, Utils.getPixeltOfPercentX(6), Utils.getPixeltOfPercentY(11));
+        super(activity, engine, positionX, positionY, Utils.getPixelsOfPercentX(6), Utils.getPixelsOfPercentY(11));
         //playerWidth = percentX * 6;
         //playerHeight = percentY * 11;
-        fieldExtremeRightPoint = Utils.getPixeltOfPercentX(105);
-        fieldExtremeLeftPoint = Utils.getPixeltOfPercentX(-5);
-        fieldExtremeUpPoint = Utils.getPixeltOfPercentY(15);
-        fieldExtremeDownPoint = Utils.getPixeltOfPercentY(85) - Utils.getPixeltOfPercentY(11);
-        step = Utils.getPixeltOfPercentX(2);
-        fallSpeed = Utils.getPixeltOfPercentY(1);
+        fieldExtremeRightPoint = Utils.getPixelsOfPercentX(105);
+        fieldExtremeLeftPoint = Utils.getPixelsOfPercentX(-5);
+        fieldExtremeUpPoint = Utils.getPixelsOfPercentY(15);
+        fieldExtremeDownPoint = Utils.getPixelsOfPercentY(85) - Utils.getPixelsOfPercentY(11);
+        step = Utils.getPixelsOfPercentX(2);
+        fallSpeed = Utils.getPixelsOfPercentY(1);
         //Устанавливаем значения движений по OY
         //moveDown = new MoveYModifier(percentY / 10, percentY * 15, percentY * 85 - playerHeight, this);
         //moveUp = new MoveYModifier(percentY / 10, percentY * 85 - playerHeight, percentY * 15, this);

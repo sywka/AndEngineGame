@@ -34,8 +34,8 @@ public class Player extends GameObject {
     public int startSpriteFrame = 0;        //Значение начального фрейма у спрайта
     public int endSpriteFrame = 3;          //Значение конечного фрейма у спрайта
 
-    private float playerWidth;
-    private float playerHeight;
+    //private float playerWidth;
+    //private float playerHeight;
     private float fieldExtremeRightPoint;
     private float fieldExtremeLeftPoint;
     private float fieldExtremeUpPoint;
@@ -45,16 +45,16 @@ public class Player extends GameObject {
     /**
      * Конструктор
      */
-    public Player(BaseGameActivity activity, Engine engine, int positionX, int positionY, float percentX, float percentY) {
-        super(activity, engine, positionX, positionY, percentX * 6, percentY * 11);
-        playerWidth = percentX * 6;
-        playerHeight = percentY * 11;
-        fieldExtremeRightPoint = percentX * 105;
-        fieldExtremeLeftPoint = percentX * -5;
-        fieldExtremeUpPoint = percentY * 15;
-        fieldExtremeDownPoint = percentY * 85 - playerHeight;
-        step = 2 * percentX;
-        fallSpeed = percentY * 1;
+    public Player(BaseGameActivity activity, Engine engine, int positionX, int positionY) {
+        super(activity, engine, positionX, positionY, Utils.getPixeltOfPercentX(6), Utils.getPixeltOfPercentY(11));
+        //playerWidth = percentX * 6;
+        //playerHeight = percentY * 11;
+        fieldExtremeRightPoint = Utils.getPixeltOfPercentX(105);
+        fieldExtremeLeftPoint = Utils.getPixeltOfPercentX(-5);
+        fieldExtremeUpPoint = Utils.getPixeltOfPercentY(15);
+        fieldExtremeDownPoint = Utils.getPixeltOfPercentY(85) - Utils.getPixeltOfPercentY(11);
+        step = Utils.getPixeltOfPercentX(2);
+        fallSpeed = Utils.getPixeltOfPercentY(1);
         //Устанавливаем значения движений по OY
         //moveDown = new MoveYModifier(percentY / 10, percentY * 15, percentY * 85 - playerHeight, this);
         //moveUp = new MoveYModifier(percentY / 10, percentY * 85 - playerHeight, percentY * 15, this);

@@ -19,8 +19,6 @@ abstract public class GameObject {
     private TiledTextureRegion region;      //Регион объекта
     private BitmapTextureAtlas atlas;       //Атлас обёекта
 
-    private static final float PART = 0.1f;
-
     /**
      * Конструктор
      */

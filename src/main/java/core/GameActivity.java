@@ -2,6 +2,8 @@ package core;
 
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.handler.IUpdateHandler;
+import org.andengine.engine.handler.timer.ITimerCallback;
+import org.andengine.engine.handler.timer.TimerHandler;
 import org.andengine.engine.options.EngineOptions;
 import org.andengine.engine.options.ScreenOrientation;
 import org.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
@@ -89,17 +91,13 @@ public class GameActivity extends BaseGameActivity implements SensorEventListene
 
         scene.setOnSceneTouchListener(this);    //Устанавливаем слушатель прикосновений на сцене
 
-        scene.registerUpdateHandler(new IUpdateHandler() {
-            @Override
-            public void onUpdate(float v) {
-                for (GameObject ob : objectList)
-                    ob.onUpdateState(v);
-            }                                   //Инициализируем update
-
-            @Override
-            public void reset() {
-            }
-        });
+        scene.registerUpdateHandler(new TimerHandler(0.033f, true, new ITimerCallback() {
+                @Override
+                public void onTimePassed(final TimerHandler pTimerHandler) {
+                    for (GameObject ob : objectList)
+                        ob.onUpdateState(0);
+                }
+            }));
 
         onCreateSceneCallback.onCreateSceneFinished(scene);
     }

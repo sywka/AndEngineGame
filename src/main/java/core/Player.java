@@ -19,10 +19,10 @@ import org.andengine.opengl.texture.region.TiledTextureRegion;
 import org.andengine.ui.activity.BaseGameActivity;
 import org.andengine.util.modifier.IModifier;
 
-public class Player extends GameObject implements IEntityModifier.IEntityModifierListener {
+public class Player extends GameObject {
 
-    private MoveYModifier moveDown;         //Модификатор движения вниз
-    private MoveYModifier moveUp;           //Модификатор движения вверх
+    //private MoveYModifier moveDown;         //Модификатор движения вниз
+    //private MoveYModifier moveUp;           //Модификатор движения вверх
 
     public static final int MOVE_RIGHT = 0; //Значение движения вправо
     public static final int MOVE_LEFT = 1;  //Значение движения влево
@@ -34,14 +34,13 @@ public class Player extends GameObject implements IEntityModifier.IEntityModifie
     public int startSpriteFrame = 0;        //Значение начального фрейма у спрайта
     public int endSpriteFrame = 3;          //Значение конечного фрейма у спрайта
 
-    //private float upperPoint;
-    //private static final int DOWNER_POINT = 143;
     private float playerWidth;
     private float playerHeight;
     private float fieldExtremeRightPoint;
     private float fieldExtremeLeftPoint;
-    //private static final int FIELD_EXTREME_RIGHT_POINT = 314;
-    //private static final int FIELD_EXTREME_LEFT_POINT = -14;
+    private float fieldExtremeUpPoint;
+    private float fieldExtremeDownPoint;
+    private float fallSpeed;
 
     /**
      * Конструктор
@@ -52,12 +51,15 @@ public class Player extends GameObject implements IEntityModifier.IEntityModifie
         playerHeight = percentY * 11;
         fieldExtremeRightPoint = percentX * 105;
         fieldExtremeLeftPoint = percentX * -5;
+        fieldExtremeUpPoint = percentY * 15;
+        fieldExtremeDownPoint = percentY * 85 - playerHeight;
         step = 2 * percentX;
+        fallSpeed = percentY * 1;
         //Устанавливаем значения движений по OY
-        moveDown = new MoveYModifier(percentY / 10, percentY * 15, percentY * 85 - playerHeight, this);
-        moveUp = new MoveYModifier(percentY / 10, percentY * 85 - playerHeight, percentY * 15, this);
+        //moveDown = new MoveYModifier(percentY / 10, percentY * 15, percentY * 85 - playerHeight, this);
+        //moveUp = new MoveYModifier(percentY / 10, percentY * 85 - playerHeight, percentY * 15, this);
         //Зацикливаем движение спрайта по OY
-        getSprite().registerEntityModifier(new LoopEntityModifier(new SequenceEntityModifier(moveDown, moveUp)));
+        //getSprite().registerEntityModifier(new LoopEntityModifier(new SequenceEntityModifier(moveDown, moveUp)));
     }
 
     /**
@@ -92,27 +94,29 @@ public class Player extends GameObject implements IEntityModifier.IEntityModifie
     /**
      * Устанавливаем анимацию в зависимости от поворота персонажа
      */
-    @Override
-    public void onModifierStarted(IModifier<IEntity> iEntityIModifier, IEntity iEntity) {
-        if (iEntityIModifier == moveDown) {
+    //@Override
+    //public void onModifierStarted(IModifier<IEntity> iEntityIModifier, IEntity iEntity) {
+        /*if (isFalling == moveDown) {
             startSpriteFrame = (startSpriteFrame < 5) ? 0 : 8;
             endSpriteFrame = (endSpriteFrame < 8) ? 3 : 11;
         } else {
             startSpriteFrame = (startSpriteFrame < 5) ? 4 : 12;
             endSpriteFrame = (endSpriteFrame < 8) ? 7 : 15;
         }
-        getSprite().animate(new long[]{100, 100, 100, 100}, startSpriteFrame, endSpriteFrame, true);
-    }
+        getSprite().animate(new long[]{100, 100, 100, 100}, startSpriteFrame, endSpriteFrame, true);*/
+    //}
 
-    @Override
-    public void onModifierFinished(IModifier<IEntity> iEntityIModifier, IEntity iEntity) {
+    //@Override
+    //public void onModifierFinished(IModifier<IEntity> iEntityIModifier, IEntity iEntity) {
 //        Log.d("isMoveDown", (iEntityIModifier == moveDown) ? "yes" : "no");
 //        Log.d("isMoveUp", (iEntityIModifier == moveUp) ? "yes" : "no");
-    }
+    //}
 
     /**
      * Действие при прикосновении к персонажу пальцем
      */
+
+
     @Override
     public void onAreaTouched(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY) {
         super.onAreaTouched(pSceneTouchEvent, pTouchAreaLocalX, pTouchAreaLocalY);
@@ -147,10 +151,29 @@ public class Player extends GameObject implements IEntityModifier.IEntityModifie
             case IDLE:
                 break;
         }
+
+        ///Устанавливаем движение по OY
+        if (fallSpeed > 0 && getPositionY() > fieldExtremeDownPoint){
+            fallSpeed *= -1;
+            startSpriteFrame = (startSpriteFrame < 5) ? 0 : 8;
+            endSpriteFrame = (endSpriteFrame < 8) ? 3 : 11;
+            getSprite().animate(new long[]{100, 100, 100, 100}, startSpriteFrame, endSpriteFrame, true);
+        }
+        if (fallSpeed < 0 && getPositionY() < fieldExtremeUpPoint) {
+            fallSpeed *= -1;
+            startSpriteFrame = (startSpriteFrame < 5) ? 4 : 12;
+            endSpriteFrame = (endSpriteFrame < 8) ? 7 : 15;
+            getSprite().animate(new long[]{100, 100, 100, 100}, startSpriteFrame, endSpriteFrame, true);
+        }
+        setPositionY(getPositionY() + fallSpeed);
+        ///Устанавливаем движение по OY
+
+        ///Ограничеваем движение за пределы поля по OX
         if (getPositionX() > fieldExtremeRightPoint)
             setPosition(fieldExtremeLeftPoint, getPositionY());
         if (getPositionX() < fieldExtremeLeftPoint)
             setPosition(fieldExtremeRightPoint, getPositionY());
+        ///Ограничеваем движение за пределы поля по OX
     }
 
     public void setMove(int move) {

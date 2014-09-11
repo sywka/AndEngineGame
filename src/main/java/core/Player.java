@@ -28,27 +28,34 @@ public class Player extends GameObject implements IEntityModifier.IEntityModifie
     public static final int MOVE_LEFT = 1;  //Значение движения влево
     public static final int IDLE = 2;       //Значение остановки
 
-    public static final int STEP = 10;      //Значение движения в пикселях
+    public float step;      //Значение движения в пикселях
 
     public int move = IDLE;                 //Значение  текущего движения
     public int startSpriteFrame = 0;        //Значение начального фрейма у спрайта
     public int endSpriteFrame = 3;          //Значение конечного фрейма у спрайта
 
-    private static final int UPPER_POINT = 25;
-    private static final int DOWNER_POINT = 143;
-    private static final int PLAYER_WIDTH = 18;
-    private static final int PLAYER_HEIGHT = 35;
-    private static final int FIELD_EXTREME_RIGHT_POINT = 314;
-    private static final int FIELD_EXTREME_LEFT_POINT = -14;
+    //private float upperPoint;
+    //private static final int DOWNER_POINT = 143;
+    private float playerWidth;
+    private float playerHeight;
+    private float fieldExtremeRightPoint;
+    private float fieldExtremeLeftPoint;
+    //private static final int FIELD_EXTREME_RIGHT_POINT = 314;
+    //private static final int FIELD_EXTREME_LEFT_POINT = -14;
 
     /**
      * Конструктор
      */
-    public Player(BaseGameActivity activity, Engine engine, int positionX, int positionY) {
-        super(activity, engine, positionX, positionY, PLAYER_WIDTH, PLAYER_HEIGHT);
+    public Player(BaseGameActivity activity, Engine engine, int positionX, int positionY, float percentX, float percentY) {
+        super(activity, engine, positionX, positionY, percentX * 6, percentY * 11);
+        playerWidth = percentX * 6;
+        playerHeight = percentY * 11;
+        fieldExtremeRightPoint = percentX * 105;
+        fieldExtremeLeftPoint = percentX * -5;
+        step = 2 * percentX;
         //Устанавливаем значения движений по OY
-        moveDown = new MoveYModifier(1f, UPPER_POINT, DOWNER_POINT, this);
-        moveUp = new MoveYModifier(1f, DOWNER_POINT, UPPER_POINT, this);
+        moveDown = new MoveYModifier(percentY / 10, percentY * 15, percentY * 85 - playerHeight, this);
+        moveUp = new MoveYModifier(percentY / 10, percentY * 85 - playerHeight, percentY * 15, this);
         //Зацикливаем движение спрайта по OY
         getSprite().registerEntityModifier(new LoopEntityModifier(new SequenceEntityModifier(moveDown, moveUp)));
     }
@@ -122,7 +129,7 @@ public class Player extends GameObject implements IEntityModifier.IEntityModifie
         super.onUpdateState(v);
         switch (move) {
             case MOVE_LEFT:
-                setPositionX(getPositionX() - STEP);
+                setPositionX(getPositionX() - step);
                 if (startSpriteFrame < 5) {
                     startSpriteFrame += 8;
                     endSpriteFrame += 8;
@@ -130,7 +137,7 @@ public class Player extends GameObject implements IEntityModifier.IEntityModifie
                 }
                 break;
             case MOVE_RIGHT:
-                setPositionX(getPositionX() + STEP);
+                setPositionX(getPositionX() + step);
                 if (startSpriteFrame > 5) {
                     startSpriteFrame -= 8;
                     endSpriteFrame -= 8;
@@ -140,10 +147,10 @@ public class Player extends GameObject implements IEntityModifier.IEntityModifie
             case IDLE:
                 break;
         }
-        if (getPositionX() > FIELD_EXTREME_RIGHT_POINT)
-            setPosition(FIELD_EXTREME_LEFT_POINT, getPositionY());
-        if (getPositionX() < FIELD_EXTREME_LEFT_POINT)
-            setPosition(FIELD_EXTREME_RIGHT_POINT, getPositionY());
+        if (getPositionX() > fieldExtremeRightPoint)
+            setPosition(fieldExtremeLeftPoint, getPositionY());
+        if (getPositionX() < fieldExtremeLeftPoint)
+            setPosition(fieldExtremeRightPoint, getPositionY());
     }
 
     public void setMove(int move) {

@@ -32,8 +32,14 @@ public class GameActivity extends BaseGameActivity implements SensorEventListene
     private Player player;                  //Объект игрока
     private SensorManager sensorManager;    //Менеджер сенсора
     private final int accelerometerYCencity = 2;    //Чувствительность акселлерометра по OY
-    private double zRotation = 0;                   //Коэфициент погрешности поворота акс. по OZ
+    private float zRotation = 0;                   //Коэфициент погрешности поворота акс. по OZ
     private ControlButton controlButton;
+
+    private float resolutionWidth = Utils.getScreenWidth();
+    private float resolutionHeight = Utils.getScreenHeight() * Utils.getScreenResolutionRatio();
+
+    private float percentX = resolutionWidth / 100;
+    private float percentY = resolutionHeight / 100;
 
     /**
      * Инициализация движка
@@ -41,7 +47,7 @@ public class GameActivity extends BaseGameActivity implements SensorEventListene
     @Override
     public EngineOptions onCreateEngineOptions() {
         fingersId = new ArrayList<Integer>();
-        Camera camera = new Camera(0, 0, 300, 200);
+        Camera camera = new Camera(0, 0, resolutionWidth, resolutionHeight);
         return new EngineOptions(true, ScreenOrientation.LANDSCAPE_SENSOR,
                 new RatioResolutionPolicy(Utils.getScreenResolutionRatio()), camera);
     }
@@ -51,11 +57,11 @@ public class GameActivity extends BaseGameActivity implements SensorEventListene
      */
     @Override
     public void onCreateResources(OnCreateResourcesCallback onCreateResourcesCallback) throws Exception {
-        player = new Player(this, getEngine(), 0, 0);       //Добавляем игрока
+        player = new Player(this, getEngine(), 0, 0, percentX, percentY);       //Добавляем игрока
         objectList = new ArrayList<GameObject>();           //Инициализируем массив игровых объектов
         objectList.add(player);                             //Добавляем к массиву игрока
         ///Добавление кнопки
-        controlButton = new ControlButton(this, getEngine(), 240, 0);
+        controlButton = new ControlButton(this, getEngine(), 80 * percentX, 0, 20 * percentX, 15 * percentY);
         objectList.add(controlButton);
         ///
         sensorManager = (SensorManager) this.getSystemService(SENSOR_SERVICE);   //Определяем менеджер сенсора
@@ -75,7 +81,7 @@ public class GameActivity extends BaseGameActivity implements SensorEventListene
         BitmapTextureAtlas mBitmapTextureAtlas = new BitmapTextureAtlas(this.getTextureManager(), 1024, 1024, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
         TextureRegion myTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBitmapTextureAtlas, this, "screen.png", 0, 0);
         this.getEngine().getTextureManager().loadTexture(mBitmapTextureAtlas);
-        Sprite mySprite = new Sprite(0, 0, myTextureRegion, getVertexBufferObjectManager());
+        Sprite mySprite = new Sprite(0, 0, resolutionWidth, resolutionHeight, myTextureRegion, getVertexBufferObjectManager());
         scene.attachChild(mySprite);
 
         for (GameObject ob : objectList)        //Привязываем все игровые объекты к сцене

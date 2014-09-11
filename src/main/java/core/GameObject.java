@@ -24,7 +24,7 @@ abstract public class GameObject {
     /**
      * Конструктор
      */
-    public GameObject(BaseGameActivity activity, Engine engine, float positionX, float positionY, int spriteWidth, int spriteHeight) {
+    public GameObject(BaseGameActivity activity, Engine engine, float positionX, float positionY, float spriteWidth, float spriteHeight) {
         this.activity = activity;
         this.engine = engine;
         atlas = getNewAtlas();

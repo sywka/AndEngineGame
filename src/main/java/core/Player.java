@@ -28,17 +28,15 @@ public class Player extends GameObject {
     private float fieldExtremeLeftPoint;
     private float fieldExtremeUpPoint;
     private float fieldExtremeDownPoint;
-
     private float fallSpeed;
 
-    private boolean isDead = false;
+    private boolean isDie = false;
 
     /**
      * Конструктор
      */
     public Player(BaseGameActivity activity, Engine engine, int positionX, int positionY) {
-        super(activity, engine, Utils.getPixelsOfPercentX(positionX), Utils.getPixelsOfPercentX(positionY),
-                Utils.getPixelsOfPercentX(6), Utils.getPixelsOfPercentY(11));
+        super(activity, engine, positionX, positionY, Utils.getPixelsOfPercentX(6), Utils.getPixelsOfPercentY(11));
         fieldExtremeRightPoint = Utils.getPixelsOfPercentX(105);
         fieldExtremeLeftPoint = Utils.getPixelsOfPercentX(-5);
         fieldExtremeUpPoint = Utils.getPixelsOfPercentY(15);
@@ -83,7 +81,7 @@ public class Player extends GameObject {
     @Override
     public void onUpdateState(float v) {
         super.onUpdateState(v);
-        if (isDead) return;
+        if (isDie) return;
         switch (move) {
             case MOVE_LEFT:
                 setPositionX(getPositionX() - step);
@@ -134,6 +132,6 @@ public class Player extends GameObject {
     }
 
     public void die() {
-        isDead = true;
+        isDie = true;
     }
 }

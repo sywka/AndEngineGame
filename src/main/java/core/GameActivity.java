@@ -54,7 +54,7 @@ public class GameActivity extends BaseGameActivity implements SensorEventListene
      */
     @Override
     public void onCreateResources(OnCreateResourcesCallback onCreateResourcesCallback) throws Exception {
-        player = new Player(this, getEngine(), 50, 50);       //Добавляем игрока
+        player = new Player(this, getEngine(), 0, 0);       //Добавляем игрока
         objectList = new ArrayList<GameObject>();           //Инициализируем массив игровых объектов
         objectList.add(player);                             //Добавляем к массиву игрока
         ///Добавление кнопки

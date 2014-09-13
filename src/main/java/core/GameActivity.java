@@ -1,7 +1,6 @@
 package core;
 
 import org.andengine.engine.camera.Camera;
-import org.andengine.engine.handler.IUpdateHandler;
 import org.andengine.engine.handler.timer.ITimerCallback;
 import org.andengine.engine.handler.timer.TimerHandler;
 import org.andengine.engine.options.EngineOptions;
@@ -9,14 +8,9 @@ import org.andengine.engine.options.ScreenOrientation;
 import org.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
 import org.andengine.entity.scene.IOnSceneTouchListener;
 import org.andengine.entity.scene.Scene;
-import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.util.FPSLogger;
 import org.andengine.input.touch.TouchEvent;
-import org.andengine.opengl.texture.TextureOptions;
-import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
-import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
-import org.andengine.opengl.texture.region.TextureRegion;
-import org.andengine.ui.activity.BaseGameActivity;
+import org.andengine.ui.activity.LayoutGameActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,29 +21,45 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.view.MotionEvent;
 
-public class GameActivity extends BaseGameActivity implements SensorEventListener, IOnSceneTouchListener {
+import com.el.game.R;
 
-    private List<GameObject> objectList;    //Список игровых объектов
-    private List<Integer> fingersId;        //Список Id пальцев (необходим для корректного мультитача)
-    private Player player;                  //Объект игрока
-    private SensorManager sensorManager;    //Менеджер сенсора
-    private final int accelerometerYCencity = 2;    //Чувствительность акселлерометра по OY
-    private float zRotation = 0;                   //Коэфициент погрешности поворота акс. по OZ
+public class GameActivity extends LayoutGameActivity implements SensorEventListener, IOnSceneTouchListener {
+
+    private List<GameObject> objectList;                //Список игровых объектов
+    private List<CollisionObject> collisionObjects;     //Список объектов для обработки collision, входит в состав objectList
+    private List<Integer> fingersId;                    //Список Id пальцев (необходим для корректного мультитача)
+    private Player player;                              //Объект игрока
+    private SensorManager sensorManager;                //Менеджер сенсора
+    private final int accelerometerYCencity = 2;        //Чувствительность акселлерометра по OY
+    private float zRotation = 0;
     private ControlButton controlButton;
 
+    @Override
+    protected int getLayoutID() {
+        return R.layout.activity_game;
+    }
 
+    @Override
+    protected int getRenderSurfaceViewID() {
+        return R.id.game_field;
+    }
 
-
+    @Override
+    protected void onSetContentView() {
+        super.onSetContentView();
+        controlButton = new ControlButton(this);
+    }
 
     /**
      * Инициализация движка
      */
     @Override
     public EngineOptions onCreateEngineOptions() {
+        Utils.calculateResolution(this);
         fingersId = new ArrayList<Integer>();
         Camera camera = new Camera(0, 0, Utils.getResolutionWidth(), Utils.getResolutionHeight());
         return new EngineOptions(true, ScreenOrientation.LANDSCAPE_SENSOR,
-                new RatioResolutionPolicy(Utils.getScreenResolutionRatio()), camera);
+                new RatioResolutionPolicy(Utils.getScreenResolutionRatio(this)), camera);
     }
 
     /**
@@ -60,10 +70,15 @@ public class GameActivity extends BaseGameActivity implements SensorEventListene
         player = new Player(this, getEngine(), 0, 0);       //Добавляем игрока
         objectList = new ArrayList<GameObject>();           //Инициализируем массив игровых объектов
         objectList.add(player);                             //Добавляем к массиву игрока
-        ///Добавление кнопки
-        controlButton = new ControlButton(this, getEngine(), Utils.getPixelsOfPercentX(80), 0, Utils.getPixelsOfPercentX(20), Utils.getPixelsOfPercentY(15));
-        objectList.add(controlButton);
+
+        ///Добавление объектов для collision
+        collisionObjects = new ArrayList<CollisionObject>();
+        collisionObjects.add(new Enemy(this, getEngine(), Utils.getPixelsOfPercentX(50), Utils.getPixelsOfPercentY(50)));
+        objectList.addAll(collisionObjects);
+        for (CollisionObject colOb : collisionObjects)
+            colOb.setPlayer(player);
         ///
+
         sensorManager = (SensorManager) this.getSystemService(SENSOR_SERVICE);   //Определяем менеджер сенсора
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
                 SensorManager.SENSOR_DELAY_GAME);         //Устанавливаем менеджер сенсора как работника с акселерометром
@@ -76,26 +91,18 @@ public class GameActivity extends BaseGameActivity implements SensorEventListene
 
         final Scene scene = new Scene();        //Устанавливаем сцену
 
-        ///Отрисовка поля
-        BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
-        BitmapTextureAtlas mBitmapTextureAtlas = new BitmapTextureAtlas(this.getTextureManager(), 1024, 1024, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
-        TextureRegion myTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBitmapTextureAtlas, this, "screen.png", 0, 0);
-        this.getEngine().getTextureManager().loadTexture(mBitmapTextureAtlas);
-        Sprite mySprite = new Sprite(0, 0, Utils.getResolutionWidth(), Utils.getResolutionHeight(), myTextureRegion, getVertexBufferObjectManager());
-        scene.attachChild(mySprite);
-
         for (GameObject ob : objectList)        //Привязываем все игровые объекты к сцене
             ob.attachTo(scene);
 
         scene.setOnSceneTouchListener(this);    //Устанавливаем слушатель прикосновений на сцене
 
         scene.registerUpdateHandler(new TimerHandler(0.033f, true, new ITimerCallback() {
-                @Override
-                public void onTimePassed(final TimerHandler pTimerHandler) {
-                    for (GameObject ob : objectList)
-                        ob.onUpdateState(0);
-                }
-            }));
+            @Override
+            public void onTimePassed(final TimerHandler pTimerHandler) {
+                for (GameObject ob : objectList)
+                    ob.onUpdateState(0);
+            }
+        }));
 
         onCreateSceneCallback.onCreateSceneFinished(scene);
     }
@@ -113,7 +120,7 @@ public class GameActivity extends BaseGameActivity implements SensorEventListene
      */
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
-        if (controlButton.getButtonState() == 2 || controlButton.getButtonState() == 3)
+        if (controlButton.getControl() == ControlButton.CONRTOL_TOUCH)
             return;
         switch (sensorEvent.sensor.getType()) {
             case Sensor.TYPE_ACCELEROMETER:
@@ -151,7 +158,7 @@ public class GameActivity extends BaseGameActivity implements SensorEventListene
      */
     @Override
     public boolean onSceneTouchEvent(Scene scene, TouchEvent touchEvent) {
-        if (controlButton.getButtonState() == 0 || controlButton.getButtonState() == 1)
+        if (controlButton.getControl() == ControlButton.CONTROL_ACCELEROMETER)
             return true;
         MotionEvent motionEvent = touchEvent.getMotionEvent();  //Устанавливает событие движения
         switch (motionEvent.getActionMasked()) {

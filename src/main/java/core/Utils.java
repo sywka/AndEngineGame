@@ -1,30 +1,42 @@
 package core;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.util.DisplayMetrics;
 
+import com.el.game.R;
+
 abstract public class Utils {
 
+    private static float resolutionWidth;
+    private static float resolutionHeight;
 
-    private static float resolutionWidth = Utils.getScreenWidth() * Utils.getScreenResolutionRatio();
-    private static float resolutionHeight = Utils.getScreenHeight();
+    private static float percentX;
+    private static float percentY;
 
-    private static float percentX = resolutionWidth / 100;
-    private static float percentY = resolutionHeight / 100;
+    public static void calculateResolution(Context context) {
+        resolutionWidth = Utils.getScreenWidth() * Utils.getScreenResolutionRatio(context);
+        resolutionHeight = Utils.getScreenHeight() -
+                context.getResources().getDimension(R.dimen.header_menu_height) -
+                context.getResources().getDimension(R.dimen.footer_menu_height);
 
-    public static float getPixelsOfPercentX(float percentValue){
+        percentX = resolutionWidth / 100;
+        percentY = resolutionHeight / 100;
+    }
+
+    public static float getPixelsOfPercentX(float percentValue) {
         return percentValue * percentX;
     }
 
-    public static float getPixelsOfPercentY(float percentValue){
+    public static float getPixelsOfPercentY(float percentValue) {
         return percentValue * percentY;
     }
 
-    public static float getResolutionWidth(){
+    public static float getResolutionWidth() {
         return resolutionWidth;
     }
 
-    public static float getResolutionHeight(){
+    public static float getResolutionHeight() {
         return resolutionHeight;
     }
 
@@ -32,9 +44,11 @@ abstract public class Utils {
     /**
      * Возвращает соотношение сторон дисплея (ширина на высоту)
      */
-    public static float getScreenResolutionRatio() {
+    public static float getScreenResolutionRatio(Context context) {
         DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
-        return ((float) metrics.widthPixels) / ((float) metrics.heightPixels);
+        return ((float) metrics.widthPixels) / ((float) metrics.heightPixels -
+                context.getResources().getDimension(R.dimen.header_menu_height) -
+                context.getResources().getDimension(R.dimen.footer_menu_height));
     }
 
     /**

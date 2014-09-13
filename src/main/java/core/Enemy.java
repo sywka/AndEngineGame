@@ -13,6 +13,7 @@ public class Enemy extends CollisionObject {
 
     public Enemy(BaseGameActivity activity, Engine engine, float positionX, float positionY) {
         super(activity, engine, positionX, positionY, Utils.getPixelsOfPercentX(6), Utils.getPixelsOfPercentY(11));
+        getSprite().animate(new long[]{100, 100, 100, 100}, 0, 3, true);
     }
 
     @Override
@@ -22,7 +23,7 @@ public class Enemy extends CollisionObject {
 
     @Override
     protected TiledTextureRegion getNewRegion() {
-        return BitmapTextureAtlasTextureRegionFactory.createTiledFromResource(getAtlas(), getActivity(), R.drawable.john, 0, 0, 8, 2);
+        return BitmapTextureAtlasTextureRegionFactory.createTiledFromResource(getAtlas(), getActivity(), R.drawable.enemy, 0, 0, 4, 1);
     }
 
     @Override

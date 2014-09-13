@@ -44,7 +44,7 @@ public class GameActivity extends BaseGameActivity implements SensorEventListene
     @Override
     public EngineOptions onCreateEngineOptions() {
         fingersId = new ArrayList<Integer>();
-        Camera camera = new Camera(0, 0, Utils.getResolutionWidth(), Utils.getResolutionHeight());
+        Camera camera = new Camera(0, 0, Utils.getScreenWidth(), Utils.getScreenResolutionRatio());
         return new EngineOptions(true, ScreenOrientation.LANDSCAPE_SENSOR,
                 new RatioResolutionPolicy(Utils.getScreenResolutionRatio()), camera);
     }

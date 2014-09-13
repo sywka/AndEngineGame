@@ -12,14 +12,13 @@ import org.andengine.opengl.texture.region.TiledTextureRegion;
 import org.andengine.ui.activity.BaseGameActivity;
 
 public class ControlButton extends GameObject {
-
     private int buttonState = 0;    //0 - включен акселерометр, 1 - отжат акс., 2 - включен тач, 3 - отжат тач
     Rectangle buttonRectangle;          //Квадрат коллизии кнопки
     boolean isButtonPressed = false;    //Нажата ли кнопка
 
     public ControlButton(BaseGameActivity activity, Engine engine, float positionX, float positionY, float buttonWidth, float buttonHeight) {
         super(activity, engine, positionX, positionY, buttonWidth, buttonHeight);
-        buttonRectangle = new Rectangle(buttonWidth / 10, buttonHeight / 10, buttonWidth * 0.8f, buttonHeight * 0.8f,
+        buttonRectangle = new Rectangle( buttonWidth / 10, buttonHeight / 10, buttonWidth * 0.8f, buttonHeight * 0.8f,
                 activity.getVertexBufferObjectManager());
         getSprite().stopAnimation(0);
     }

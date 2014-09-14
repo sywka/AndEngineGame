@@ -107,7 +107,7 @@ public class GameActivity extends LayoutGameActivity implements SensorEventListe
         for (GameObject ob : objectList)        //Привязываем все игровые объекты к сцене
             ob.attachTo(scene);
 
-        for(GameObject enemy: enemyFactory.getEnemyList())
+        for (GameObject enemy : enemyFactory.getEnemyList())
             enemy.attachTo(scene);
 
         scene.setOnSceneTouchListener(this);    //Устанавливаем слушатель прикосновений на сцене
@@ -211,6 +211,20 @@ public class GameActivity extends LayoutGameActivity implements SensorEventListe
             player.setMove(Player.MOVE_RIGHT);      //Устанавливает движение игрока вправо
         else if (Utils.getScreenWidth() / 2 > motionEvent.getX(motionEvent.findPointerIndex(fingersId.get(0))))
             player.setMove(Player.MOVE_LEFT);       //Устанавливает движение игрока влево
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (backgroundMusic != null)
+            backgroundMusic.pause();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (backgroundMusic != null)
+            backgroundMusic.resume();
     }
 
     public Music getBackgroundMusic() {

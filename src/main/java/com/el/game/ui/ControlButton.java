@@ -1,4 +1,4 @@
-package core;
+package com.el.game.ui;
 
 import android.app.Activity;
 import android.view.View;

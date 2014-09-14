@@ -1,4 +1,4 @@
-package core;
+package com.el.game.utils;
 
 import android.content.Context;
 import android.content.res.Resources;

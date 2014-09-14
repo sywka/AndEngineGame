@@ -1,8 +1,5 @@
-package core;
+package com.el.game.utils;
 
-/**
- * Created by User on 13.09.2014.
- */
 public class Vector2 {
 
     public float x;

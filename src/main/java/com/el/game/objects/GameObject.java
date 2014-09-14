@@ -1,4 +1,4 @@
-package core;
+package com.el.game.objects;
 
 import org.andengine.engine.Engine;
 import org.andengine.entity.scene.Scene;
@@ -7,6 +7,8 @@ import org.andengine.input.touch.TouchEvent;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
 import org.andengine.opengl.texture.region.TiledTextureRegion;
 import org.andengine.ui.activity.BaseGameActivity;
+
+import com.el.game.utils.Vector2;
 
 /**
  * Базовый класс для объектов
@@ -18,8 +20,6 @@ abstract public class GameObject {
     private AnimatedSprite sprite;          //Анимированный спрайт объекта
     private TiledTextureRegion region;      //Регион объекта
     private BitmapTextureAtlas atlas;       //Атлас обёекта
-
-    private static final float PART = 0.1f;
 
     /**
      * Конструктор

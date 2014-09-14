@@ -1,9 +1,11 @@
-package core;
+package com.el.game.objects;
 
 import org.andengine.engine.Engine;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
 import org.andengine.opengl.texture.region.TiledTextureRegion;
 import org.andengine.ui.activity.BaseGameActivity;
+
+import com.el.game.utils.Vector2;
 
 abstract public class CollisionObject extends GameObject {
 

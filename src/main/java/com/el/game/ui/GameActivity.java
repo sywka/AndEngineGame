@@ -1,4 +1,4 @@
-package core;
+package com.el.game.ui;
 
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.handler.timer.ITimerCallback;
@@ -22,6 +22,13 @@ import android.hardware.SensorManager;
 import android.view.MotionEvent;
 
 import com.el.game.R;
+import com.el.game.utils.Utils;
+import com.el.game.objects.CollisionObject;
+import com.el.game.objects.Enemy;
+import com.el.game.objects.GameObject;
+import com.el.game.objects.Player;
+
+import com.el.game.utils.Vector2;
 
 public class GameActivity extends LayoutGameActivity implements SensorEventListener, IOnSceneTouchListener {
 

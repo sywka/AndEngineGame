@@ -1,8 +1,9 @@
-package core;
+package com.el.game.objects;
 
 import android.util.Log;
 
 import com.el.game.R;
+import com.el.game.utils.Utils;
 
 import org.andengine.engine.Engine;
 import org.andengine.entity.scene.Scene;
@@ -12,6 +13,8 @@ import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
 import org.andengine.opengl.texture.region.TiledTextureRegion;
 import org.andengine.ui.activity.BaseGameActivity;
+
+import com.el.game.utils.Vector2;
 
 public class Player extends GameObject {
 

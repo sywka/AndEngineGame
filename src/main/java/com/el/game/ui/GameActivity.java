@@ -24,8 +24,6 @@ import android.view.MotionEvent;
 import com.el.game.R;
 import com.el.game.etc.EnemyFactory;
 import com.el.game.utils.Utils;
-import com.el.game.objects.CollisionObject;
-import com.el.game.objects.Enemy;
 import com.el.game.objects.GameObject;
 import com.el.game.objects.Player;
 
@@ -34,15 +32,15 @@ import com.el.game.utils.Vector2;
 public class GameActivity extends LayoutGameActivity implements SensorEventListener, IOnSceneTouchListener {
 
     private List<GameObject> objectList;                //Список игровых объектов
-    private List<CollisionObject> collisionObjects;     //Список объектов для обработки collision, входит в состав objectList
     private List<Integer> fingersId;                    //Список Id пальцев (необходим для корректного мультитача)
+    private EnemyFactory enemyFactory;
     private Player player;                              //Объект игрока
     private SensorManager sensorManager;                //Менеджер сенсора
     private final int accelerometerYCencity = 2;        //Чувствительность акселлерометра по OY
     private float zRotation = 0;
+
     private ControlButton controlButton;
     private MenuButton menuButton;
-    private EnemyFactory enemyFactory;
 
     @Override
     protected int getLayoutID() {
@@ -56,7 +54,6 @@ public class GameActivity extends LayoutGameActivity implements SensorEventListe
 
     @Override
     protected void onSetContentView() {
-        super.onSetContentView();
         super.onSetContentView();
         controlButton = new ControlButton(this, R.id.button_control);
         menuButton = new MenuButton(this, R.id.button_menu);
@@ -85,13 +82,6 @@ public class GameActivity extends LayoutGameActivity implements SensorEventListe
         objectList = new ArrayList<GameObject>();           //Инициализируем массив игровых объектов
         objectList.add(player);                             //Добавляем к массиву игрока
 
-        ///Добавление объектов для collision
-        //collisionObjects = new ArrayList<CollisionObject>();
-        //collisionObjects.add(new Enemy(this, getEngine(), new Vector2(Utils.getPixelsOfPercentX(50), Utils.getPixelsOfPercentY(50))));
-        //objectList.addAll(collisionObjects);
-        //for (CollisionObject colOb : collisionObjects)
-        //    colOb.setPlayer(player);
-        ///
         enemyFactory = new EnemyFactory(this, getEngine(), player);
 
         sensorManager = (SensorManager) this.getSystemService(SENSOR_SERVICE);   //Определяем менеджер сенсора
@@ -194,6 +184,7 @@ public class GameActivity extends LayoutGameActivity implements SensorEventListe
                 break;
             case MotionEvent.ACTION_MOVE:
                 checkMovement(motionEvent);
+                break;
         }
         return true;
     }

@@ -11,7 +11,25 @@
         android:layout_alignParentTop="true"
         android:background="#FC9">
 
-        <include layout="@layout/button" />
+        <FrameLayout
+            android:id="@+id/button_menu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true">
+
+            <include layout="@layout/button" />
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/button_control"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true">
+
+            <include layout="@layout/button" />
+
+        </FrameLayout>
 
     </RelativeLayout>
 
@@ -22,6 +40,58 @@
         android:layout_alignParentBottom="true"
         android:background="#FC0"
         android:gravity="center">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true">
+
+            <TextView
+                android:id="@+id/current_score_text_field"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingRight="5dp"
+                android:paddingLeft="5dp"
+                android:gravity="center_vertical"
+                android:text="@string/current_score_text" />
+
+            <TextView
+                android:id="@+id/current_score"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingRight="5dp"
+                android:paddingLeft="5dp"
+                android:gravity="center_vertical"
+                android:text="@string/null_score" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true">
+
+            <TextView
+                android:id="@+id/high_score_text_field"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingRight="5dp"
+                android:paddingLeft="5dp"
+                android:gravity="center_vertical"
+                android:text="@string/high_score_text"/>
+
+            <TextView
+                android:id="@+id/high_score"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingRight="5dp"
+                android:paddingLeft="5dp"
+                android:gravity="center_vertical"
+                android:text="@string/null_score" />
+
+        </LinearLayout>
 
     </RelativeLayout>
 

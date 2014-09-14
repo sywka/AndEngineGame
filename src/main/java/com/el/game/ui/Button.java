@@ -1,45 +1,49 @@
 package com.el.game.ui;
 
-import android.app.Activity;
 import android.view.View;
 import android.widget.FrameLayout;
 
 import com.el.game.R;
 
-public class Button implements View.OnClickListener {
+import org.andengine.ui.activity.BaseGameActivity;
+
+abstract public class Button implements View.OnClickListener {
 
     private FrameLayout buttonLayout;           // контейнер для содержимого кнопки
     private View buttonView;                    // слой поверх содержимого кнопки, служит для индикации нажатия на кнопку
-    private Activity activity;                  // активность к которой привязана кнопка
+    private BaseGameActivity activity;                  // активность к которой привязана кнопка
 
-    public Button(Activity activity) {
+    public Button(BaseGameActivity activity, int resourceIdButton) {
         this.activity = activity;
-        initVar();
+        initVar(resourceIdButton);
+        setDefaultValues(buttonLayout);
     }
+
+    /**
+     * Метод для инициализации начальных значений, фона и тп.
+     *
+     * @param buttonLayout view кнопки для изменения фона.
+     */
+    abstract protected void setDefaultValues(FrameLayout buttonLayout);
 
     /**
      * получаем ссылки на View, назначаем onClickListner
      */
-    private void initVar() {
-        buttonLayout = (FrameLayout) activity.findViewById(R.id.button_layout);
-        buttonView = activity.findViewById(R.id.button_onclick_view);
+    private void initVar(int resourceIdButton) {
+        View button = activity.findViewById(resourceIdButton);
+        buttonLayout = (FrameLayout) button.findViewById(R.id.button_layout);
+        buttonView = button.findViewById(R.id.button_onclick_view);
         buttonView.setOnClickListener(this);
     }
 
     @Override
-    public void onClick(View view) {
-
-    }
-
-    public View getButtonView() {
-        return buttonView;
-    }
+    abstract public void onClick(View view);
 
     public FrameLayout getButtonLayout() {
         return buttonLayout;
     }
 
-    public Activity getActivity() {
+    public BaseGameActivity getActivity() {
         return activity;
     }
 }

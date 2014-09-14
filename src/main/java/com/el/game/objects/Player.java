@@ -3,6 +3,7 @@ package com.el.game.objects;
 import android.util.Log;
 
 import com.el.game.R;
+import com.el.game.utils.ScoreHelper;
 import com.el.game.utils.Utils;
 
 import org.andengine.engine.Engine;
@@ -36,6 +37,8 @@ public class Player extends GameObject {
 
     private boolean isDead = false;
 
+    private ScoreHelper scoreHelper;
+
     /**
      * Конструктор
      */
@@ -47,7 +50,9 @@ public class Player extends GameObject {
         fieldExtremeDownPoint = Utils.getPixelsOfPercentY(100) - Utils.getPixelsOfPercentY(11);
         step = Utils.getPixelsOfPercentX(1);
         fallSpeed = Utils.getPixelsOfPercentY(1);
-        setHitBox(new Vector2(Utils.getPixelsOfPercentX(3), Utils.getPixelsOfPercentY(6)), new Vector2(Utils.getPixelsOfPercentX(2), Utils.getPixelsOfPercentY(2)));
+        setHitBox(new Vector2(Utils.getPixelsOfPercentX(3), Utils.getPixelsOfPercentY(6)),
+                new Vector2(Utils.getPixelsOfPercentX(2), Utils.getPixelsOfPercentY(2)));
+        scoreHelper = new ScoreHelper(getActivity());
     }
 
     /**
@@ -90,7 +95,7 @@ public class Player extends GameObject {
         Log.d("Y", pTouchAreaLocalY + "");
     }
 
-    private boolean playDeadAnimation(){
+    private boolean playDeadAnimation() {
         if (getSprite().isAnimationRunning() == false) {
             setPositionX(Utils.getPixelsOfPercentX(10));
             isDead = false;
@@ -107,9 +112,13 @@ public class Player extends GameObject {
     @Override
     public void onUpdateState(float v) {
         super.onUpdateState(v);
-        if (isDead)
-            if (playDeadAnimation())
+        if (isDead) {
+            if (playDeadAnimation()) {
+                scoreHelper.resetScore();
                 return;
+            }
+        } else scoreHelper.updateScore();
+
         switch (move) {
             case MOVE_LEFT:
                 setPositionX(getPositionX() - step);
@@ -166,5 +175,7 @@ public class Player extends GameObject {
         isDead = true;
     }
 
-    public boolean getIsDead(){ return isDead; }
+    public boolean getIsDead() {
+        return isDead;
+    }
 }

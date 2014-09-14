@@ -14,6 +14,8 @@ import com.el.game.utils.Vector2;
 
 public class Enemy extends CollisionObject {
 
+    private float xSpeed = -1f;
+
     public Enemy(BaseGameActivity activity, Engine engine, Vector2 position) {
         super(activity, engine, position, new Vector2(Utils.getPixelsOfPercentX(6), Utils.getPixelsOfPercentY(11)));
         getSprite().animate(new long[]{100, 100, 100, 100}, 0, 3, true);
@@ -32,6 +34,12 @@ public class Enemy extends CollisionObject {
 
     @Override
     public void onUpdateState(float v) {
+        if (!getIsAlife())
+            return;
+        if ((getPositionX() < Utils.getPixelsOfPercentX(-20) && xSpeed < 0) ||
+            getPositionX() > Utils.getPixelsOfPercentX(120) && xSpeed > 0)  //Проверка вылета за экран при скорости способствующей этому
+                setIsAlife(false);
+        setPositionX(getPositionX() + Utils.getPixelsOfPercentX(xSpeed));
         updateHitBox();
         super.onUpdateState(v);
     }
@@ -40,5 +48,9 @@ public class Enemy extends CollisionObject {
     protected void onCollision(Player player) {
         if (!player.getIsDead())    //Достаточно один раз убить персонажа
             player.die();
+    }
+
+    public void setXSpeed(float newXSpeed){
+        xSpeed = newXSpeed;
     }
 }

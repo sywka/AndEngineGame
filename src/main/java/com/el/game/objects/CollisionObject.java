@@ -10,6 +10,7 @@ import com.el.game.utils.Vector2;
 abstract public class CollisionObject extends GameObject {
 
     private Player player;
+    private boolean isAlife = false;
 
     public CollisionObject(BaseGameActivity activity, Engine engine, Vector2 position, Vector2 scale) {
         super(activity, engine, position, scale);
@@ -37,4 +38,11 @@ abstract public class CollisionObject extends GameObject {
     public Player getPlayer() {
         return player;
     }
+
+    public boolean getIsAlife() {return isAlife;}
+
+    public void setIsAlife(boolean state){
+        isAlife = state;
+    }
+
 }

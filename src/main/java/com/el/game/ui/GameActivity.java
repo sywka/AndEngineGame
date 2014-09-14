@@ -1,5 +1,7 @@
 package com.el.game.ui;
 
+import org.andengine.audio.music.Music;
+import org.andengine.audio.music.MusicFactory;
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.handler.timer.ITimerCallback;
 import org.andengine.engine.handler.timer.TimerHandler;
@@ -41,6 +43,7 @@ public class GameActivity extends LayoutGameActivity implements SensorEventListe
 
     private ControlButton controlButton;
     private MenuButton menuButton;
+    private Music backgroundMusic;
 
     @Override
     protected int getLayoutID() {
@@ -67,8 +70,10 @@ public class GameActivity extends LayoutGameActivity implements SensorEventListe
         Utils.calculateResolution(this);
         fingersId = new ArrayList<Integer>();
         Camera camera = new Camera(0, 0, Utils.getResolutionWidth(), Utils.getResolutionHeight());
-        return new EngineOptions(true, ScreenOrientation.LANDSCAPE_SENSOR,
+        EngineOptions options = new EngineOptions(true, ScreenOrientation.LANDSCAPE_SENSOR,
                 new RatioResolutionPolicy(Utils.getScreenResolutionRatio(this)), camera);
+        options.getAudioOptions().setNeedsMusic(true);
+        return options;
     }
 
     /**
@@ -87,6 +92,9 @@ public class GameActivity extends LayoutGameActivity implements SensorEventListe
         sensorManager = (SensorManager) this.getSystemService(SENSOR_SERVICE);   //Определяем менеджер сенсора
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
                 SensorManager.SENSOR_DELAY_GAME);         //Устанавливаем менеджер сенсора как работника с акселерометром
+
+        backgroundMusic = MusicFactory.createMusicFromAsset(getMusicManager(), this, "snd/background_music.mp3");
+        backgroundMusic.setLooping(true);
         onCreateResourcesCallback.onCreateResourcesFinished();
     }
 
@@ -112,7 +120,7 @@ public class GameActivity extends LayoutGameActivity implements SensorEventListe
                 enemyFactory.Update();
             }
         }));
-
+        backgroundMusic.play();
         onCreateSceneCallback.onCreateSceneFinished(scene);
     }
 
@@ -203,5 +211,9 @@ public class GameActivity extends LayoutGameActivity implements SensorEventListe
             player.setMove(Player.MOVE_RIGHT);      //Устанавливает движение игрока вправо
         else if (Utils.getScreenWidth() / 2 > motionEvent.getX(motionEvent.findPointerIndex(fingersId.get(0))))
             player.setMove(Player.MOVE_LEFT);       //Устанавливает движение игрока влево
+    }
+
+    public Music getBackgroundMusic() {
+        return backgroundMusic;
     }
 }

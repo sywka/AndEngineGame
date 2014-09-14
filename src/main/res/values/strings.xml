@@ -2,7 +2,7 @@
 
     <string name="app_name">Game</string>
 
-    <string name="current_score_text">Тукущий счет:</string>
+    <string name="current_score_text">Текущий счет:</string>
     <string name="high_score_text">Лучший счет:</string>
 
     <string name="null_score">0</string>

@@ -95,17 +95,6 @@ public class Player extends GameObject {
         Log.d("Y", pTouchAreaLocalY + "");
     }
 
-    private boolean playDeadAnimation() {
-        if (getSprite().isAnimationRunning() == false) {
-            setPositionX(Utils.getPixelsOfPercentX(10));
-            isDead = false;
-            getSprite().animate(new long[]{100, 100, 100, 100}, 0, 3, true);
-            fallSpeed = Math.abs(fallSpeed);
-            return false;
-        }
-        return true;
-    }
-
     /**
      * Апдейт игрока
      */
@@ -113,11 +102,10 @@ public class Player extends GameObject {
     public void onUpdateState(float v) {
         super.onUpdateState(v);
         if (isDead) {
-            if (playDeadAnimation()) {
+            //if (playDeadAnimation()) {
                 scoreHelper.resetScore();
                 return;
-            }
-        } else scoreHelper.updateScore();
+            } else scoreHelper.updateScore();
 
         switch (move) {
             case MOVE_LEFT:
@@ -174,6 +162,17 @@ public class Player extends GameObject {
         getSprite().animate(new long[]{200, 200, 200, 200}, 16, 19, false);
         isDead = true;
     }
+
+    public void setIsDead(boolean state){
+        isDead = state;
+    }
+
+
+    public void setFallSpeed(float speed){
+        fallSpeed = speed;
+    }
+
+    public float getFallSpeed(){ return fallSpeed; }
 
     public boolean getIsDead() {
         return isDead;

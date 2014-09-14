@@ -71,7 +71,7 @@ abstract public class GameObject {
             TextureRegion myTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBitmapTextureAtlas, getActivity(), "hitbox.png", 0, 0);
             this.getEngine().getTextureManager().loadTexture(mBitmapTextureAtlas);
             hitBoxSprite = new Sprite(0, 0, hitBoxRectangle.getWidth(), hitBoxRectangle.getHeight(), myTextureRegion, getActivity().getVertexBufferObjectManager());
-            scene.attachChild(hitBoxSprite);
+            //scene.attachChild(hitBoxSprite);
         }
 
         scene.attachChild(sprite);

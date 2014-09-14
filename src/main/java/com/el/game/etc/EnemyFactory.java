@@ -16,9 +16,12 @@ public class EnemyFactory {
 
     private ArrayList<Enemy> enemyList;
     private Random random = new Random();
+    private Player player;
+    private boolean isThereEnemyes = false;
 
     public EnemyFactory(BaseGameActivity activity, Engine engine, Player player){
         enemyList = new ArrayList<Enemy>();
+        this.player = player;
         for (int i = 0; i < 20; i++)
             enemyList.add(new Enemy(activity, engine, new Vector2(0, 0)));
         for(Enemy enemy: enemyList)
@@ -26,10 +29,33 @@ public class EnemyFactory {
     }
 
     public void Update(){
-        if (!enemyList.get(enemyList.size() - 4).getIsAlife())
+        if (player.getIsDead()){
+            UpdateUntilPlayerDead();
+            return;
+        }
+        if (!enemyList.get(enemyList.size() - 1).getIsAlife())
             GenerateEnemysPositions();
         for(Enemy enemy: enemyList)
             enemy.onUpdateState(0);
+    }
+
+    public void UpdateUntilPlayerDead(){
+        isThereEnemyes = false;
+        for(Enemy enemy: enemyList){
+            if ((enemy.getPositionX() > Utils.getPixelsOfPercentX(120)) ||
+                    (enemy.getPositionX() < Utils.getPixelsOfPercentX(-20)))
+                enemy.setIsAlife(false);
+            enemy.onUpdateState(0);
+            if (!isThereEnemyes)
+                isThereEnemyes = enemy.getIsAlife();
+        }
+        if (isThereEnemyes == false && !player.getSprite().isAnimationRunning()){
+            player.setPositionX(Utils.getPixelsOfPercentX(50));
+            player.setPositionY(Utils.getPixelsOfPercentY(50));
+            player.setIsDead(false);
+            player.getSprite().animate(new long[]{100, 100, 100, 100}, 0, 3, true);
+            player.setFallSpeed(Math.abs(player.getFallSpeed()));
+        }
     }
 
     public void GenerateEnemysPositions(){

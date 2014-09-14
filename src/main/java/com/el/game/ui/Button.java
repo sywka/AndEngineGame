@@ -26,7 +26,9 @@ abstract public class Button implements View.OnClickListener {
      *
      * @param buttonLayout view кнопки для изменения фона.
      */
-    abstract protected void setDefaultValues(FrameLayout buttonLayout);
+    protected void setDefaultValues(FrameLayout buttonLayout){
+        buttonLayout.setBackgroundResource(R.drawable.button);
+    }
 
     /**
      * получаем ссылки на View, назначаем onClickListner

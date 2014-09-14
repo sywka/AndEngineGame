@@ -159,7 +159,7 @@ public class Player extends GameObject {
     }
 
     public void die() {
-        getSprite().animate(new long[]{200, 200, 200, 200}, 16, 19, false);
+        getSprite().animate(new long[]{200, 200, 200, 200, 200}, 16, 20, false);
         isDead = true;
     }
 

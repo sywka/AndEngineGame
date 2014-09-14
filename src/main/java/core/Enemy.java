@@ -11,8 +11,8 @@ import org.andengine.ui.activity.BaseGameActivity;
 
 public class Enemy extends CollisionObject {
 
-    public Enemy(BaseGameActivity activity, Engine engine, float positionX, float positionY) {
-        super(activity, engine, positionX, positionY, Utils.getPixelsOfPercentX(6), Utils.getPixelsOfPercentY(11));
+    public Enemy(BaseGameActivity activity, Engine engine, Vector2 position) {
+        super(activity, engine, position, new Vector2(Utils.getPixelsOfPercentX(6), Utils.getPixelsOfPercentY(11)));
 //        getSprite().animate(new long[]{100, 100, 100, 100}, 0, 3, true);
     }
 

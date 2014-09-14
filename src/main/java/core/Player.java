@@ -36,8 +36,8 @@ public class Player extends GameObject {
     /**
      * Конструктор
      */
-    public Player(BaseGameActivity activity, Engine engine, int positionX, int positionY) {
-        super(activity, engine, positionX, positionY, Utils.getPixelsOfPercentX(6), Utils.getPixelsOfPercentY(11));
+    public Player(BaseGameActivity activity, Engine engine, Vector2 position) {
+        super(activity, engine, position, new Vector2(Utils.getPixelsOfPercentX(6), Utils.getPixelsOfPercentY(11)));
         fieldExtremeRightPoint = Utils.getPixelsOfPercentX(105);
         fieldExtremeLeftPoint = Utils.getPixelsOfPercentX(-5);
         fieldExtremeUpPoint = Utils.getPixelsOfPercentY(0);
@@ -53,7 +53,7 @@ public class Player extends GameObject {
      */
     @Override
     protected BitmapTextureAtlas getNewAtlas() {
-        return new BitmapTextureAtlas(getActivity().getTextureManager(), 1024, 512, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
+        return new BitmapTextureAtlas(getActivity().getTextureManager(), 728, 512, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
     }
 
     /**

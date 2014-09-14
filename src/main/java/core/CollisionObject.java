@@ -9,8 +9,8 @@ abstract public class CollisionObject extends GameObject {
 
     private Player player;
 
-    public CollisionObject(BaseGameActivity activity, Engine engine, float positionX, float positionY, float width, float height) {
-        super(activity, engine, positionX, positionY, width, height);
+    public CollisionObject(BaseGameActivity activity, Engine engine, Vector2 position, Vector2 scale) {
+        super(activity, engine, position, scale);
     }
 
     @Override

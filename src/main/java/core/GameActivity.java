@@ -67,13 +67,13 @@ public class GameActivity extends LayoutGameActivity implements SensorEventListe
      */
     @Override
     public void onCreateResources(OnCreateResourcesCallback onCreateResourcesCallback) throws Exception {
-        player = new Player(this, getEngine(), 0, 0);       //Добавляем игрока
+        player = new Player(this, getEngine(), new Vector2(0, Utils.getPixelsOfPercentY(50)));       //Добавляем игрока
         objectList = new ArrayList<GameObject>();           //Инициализируем массив игровых объектов
         objectList.add(player);                             //Добавляем к массиву игрока
 
         ///Добавление объектов для collision
         collisionObjects = new ArrayList<CollisionObject>();
-        collisionObjects.add(new Enemy(this, getEngine(), Utils.getPixelsOfPercentX(50), Utils.getPixelsOfPercentY(50)));
+        collisionObjects.add(new Enemy(this, getEngine(), new Vector2(Utils.getPixelsOfPercentX(50), Utils.getPixelsOfPercentY(50))));
         objectList.addAll(collisionObjects);
         for (CollisionObject colOb : collisionObjects)
             colOb.setPlayer(player);

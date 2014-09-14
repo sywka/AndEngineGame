@@ -24,13 +24,13 @@ abstract public class GameObject {
     /**
      * Конструктор
      */
-    public GameObject(BaseGameActivity activity, Engine engine, float positionX, float positionY, float spriteWidth, float spriteHeight) {
+    public GameObject(BaseGameActivity activity, Engine engine, Vector2 position, Vector2 spriteScale) {
         this.activity = activity;
         this.engine = engine;
         atlas = getNewAtlas();
         engine.getTextureManager().loadTexture(atlas);
         region = getNewRegion();
-        sprite = new AnimatedSprite(positionX, positionY, spriteWidth, spriteHeight, region, engine.getVertexBufferObjectManager()) {
+        sprite = new AnimatedSprite(position.x, position.y, spriteScale.x, spriteScale.y, region, engine.getVertexBufferObjectManager()) {
             @Override
             public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY) {
                 GameObject.this.onAreaTouched(pSceneTouchEvent, pTouchAreaLocalX, pTouchAreaLocalY);

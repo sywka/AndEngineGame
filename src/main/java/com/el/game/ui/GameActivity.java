@@ -39,7 +39,9 @@ public class GameActivity extends LayoutGameActivity implements SensorEventListe
     private SensorManager sensorManager;                //Менеджер сенсора
     private final int accelerometerYCencity = 2;        //Чувствительность акселлерометра по OY
     private float zRotation = 0;
+
     private ControlButton controlButton;
+    private MenuButton menuButton;
 
     @Override
     protected int getLayoutID() {
@@ -54,7 +56,8 @@ public class GameActivity extends LayoutGameActivity implements SensorEventListe
     @Override
     protected void onSetContentView() {
         super.onSetContentView();
-        controlButton = new ControlButton(this);
+        controlButton = new ControlButton(this, R.id.button_control);
+        menuButton = new MenuButton(this, R.id.button_menu);
     }
 
     /**

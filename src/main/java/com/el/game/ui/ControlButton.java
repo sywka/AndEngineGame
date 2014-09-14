@@ -1,9 +1,12 @@
 package com.el.game.ui;
 
-import android.app.Activity;
 import android.view.View;
+import android.widget.FrameLayout;
+
 import com.el.game.R;
 import com.el.game.objects.Player;
+
+import org.andengine.ui.activity.BaseGameActivity;
 
 public class ControlButton extends Button {
 
@@ -12,14 +15,14 @@ public class ControlButton extends Button {
     private int control;
     private Player player;
 
-    public ControlButton(Activity activity) {
-        super(activity);
-        setDefaultValues();
+    public ControlButton(BaseGameActivity activity, int resourceIdButton) {
+        super(activity, resourceIdButton);
     }
 
-    private void setDefaultValues() {
+    @Override
+    protected void setDefaultValues(FrameLayout buttonLayout) {
         control = CONRTOL_TOUCH;
-        getButtonLayout().setBackgroundResource(R.drawable.control_touch);
+        buttonLayout.setBackgroundResource(R.drawable.control_touch);
     }
 
     @Override

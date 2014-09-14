@@ -53,6 +53,7 @@
                 android:layout_height="wrap_content"
                 android:paddingRight="5dp"
                 android:paddingLeft="5dp"
+                android:textSize="@dimen/score_text_size"
                 android:gravity="center_vertical"
                 android:text="@string/current_score_text" />
 
@@ -62,6 +63,7 @@
                 android:layout_height="wrap_content"
                 android:paddingRight="5dp"
                 android:paddingLeft="5dp"
+                android:textSize="@dimen/score_text_size"
                 android:gravity="center_vertical"
                 android:text="@string/null_score" />
 
@@ -79,6 +81,7 @@
                 android:layout_height="wrap_content"
                 android:paddingRight="5dp"
                 android:paddingLeft="5dp"
+                android:textSize="@dimen/score_text_size"
                 android:gravity="center_vertical"
                 android:text="@string/high_score_text"/>
 
@@ -88,6 +91,7 @@
                 android:layout_height="wrap_content"
                 android:paddingRight="5dp"
                 android:paddingLeft="5dp"
+                android:textSize="@dimen/score_text_size"
                 android:gravity="center_vertical"
                 android:text="@string/null_score" />
 

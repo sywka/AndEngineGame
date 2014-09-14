@@ -7,4 +7,6 @@
 
     <string name="null_score">0</string>
 
+    <string name="button_menu">Меню</string>
+
 </resources>

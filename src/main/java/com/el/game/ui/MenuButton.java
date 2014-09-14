@@ -14,11 +14,12 @@ public class MenuButton extends Button {
 
     public MenuButton(BaseGameActivity activity, int resourceIdButton) {
         super(activity, resourceIdButton);
+        getButtonText().setText(R.string.button_menu);
     }
 
     @Override
     protected void setDefaultValues(FrameLayout buttonLayout) {
-        buttonLayout.setBackgroundResource(R.drawable.menu);
+        buttonLayout.setBackgroundResource(R.drawable.button);
     }
 
     @Override

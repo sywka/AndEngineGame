@@ -2,6 +2,7 @@ package com.el.game.ui;
 
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import com.el.game.R;
 
@@ -9,8 +10,9 @@ import org.andengine.ui.activity.BaseGameActivity;
 
 abstract public class Button implements View.OnClickListener {
 
-    private FrameLayout buttonLayout;           // контейнер для содержимого кнопки
-    private View buttonView;                    // слой поверх содержимого кнопки, служит для индикации нажатия на кнопку
+    private FrameLayout buttonLayout;                   // контейнер для содержимого кнопки
+    private View buttonView;                            // слой поверх содержимого кнопки, служит для индикации нажатия на кнопку
+    private TextView buttonText;                        // контейнер для текста
     private BaseGameActivity activity;                  // активность к которой привязана кнопка
 
     public Button(BaseGameActivity activity, int resourceIdButton) {
@@ -33,6 +35,7 @@ abstract public class Button implements View.OnClickListener {
         View button = activity.findViewById(resourceIdButton);
         buttonLayout = (FrameLayout) button.findViewById(R.id.button_layout);
         buttonView = button.findViewById(R.id.button_onclick_view);
+        buttonText = (TextView) button.findViewById(R.id.button_text);
         buttonView.setOnClickListener(this);
     }
 
@@ -45,5 +48,9 @@ abstract public class Button implements View.OnClickListener {
 
     public BaseGameActivity getActivity() {
         return activity;
+    }
+
+    public TextView getButtonText() {
+        return buttonText;
     }
 }

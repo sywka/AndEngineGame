@@ -2,5 +2,6 @@
 <resources>
 
     <color name="pressed_control_button">#90AAAAAA</color>
+    <color name="text_color">#FF000000</color>
 
 </resources>

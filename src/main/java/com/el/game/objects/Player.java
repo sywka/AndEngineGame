@@ -65,7 +65,7 @@ public class Player extends GameObject {
      */
     @Override
     protected TiledTextureRegion getNewRegion() {
-        return BitmapTextureAtlasTextureRegionFactory.createTiledFromResource(getAtlas(), getActivity(), R.drawable.john, 0, 0, 8, 2);
+        return BitmapTextureAtlasTextureRegionFactory.createTiledFromResource(getAtlas(), getActivity(), R.drawable.john, 0, 0, 8, 3);
     }
 
     /**
@@ -90,13 +90,26 @@ public class Player extends GameObject {
         Log.d("Y", pTouchAreaLocalY + "");
     }
 
+    private boolean playDeadAnimation(){
+        if (getSprite().isAnimationRunning() == false) {
+            setPositionX(Utils.getPixelsOfPercentX(10));
+            isDead = false;
+            getSprite().animate(new long[]{100, 100, 100, 100}, 0, 3, true);
+            fallSpeed = Math.abs(fallSpeed);
+            return false;
+        }
+        return true;
+    }
+
     /**
      * Апдейт игрока
      */
     @Override
     public void onUpdateState(float v) {
         super.onUpdateState(v);
-        if (isDead) return;
+        if (isDead)
+            if (playDeadAnimation())
+                return;
         switch (move) {
             case MOVE_LEFT:
                 setPositionX(getPositionX() - step);
@@ -149,6 +162,9 @@ public class Player extends GameObject {
     }
 
     public void die() {
+        getSprite().animate(new long[]{200, 200, 200, 200}, 16, 19, false);
         isDead = true;
     }
+
+    public boolean getIsDead(){ return isDead; }
 }

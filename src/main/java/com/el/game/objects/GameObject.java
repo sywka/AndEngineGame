@@ -13,7 +13,6 @@ import org.andengine.opengl.texture.region.TextureRegion;
 import org.andengine.opengl.texture.region.TiledTextureRegion;
 import org.andengine.ui.activity.BaseGameActivity;
 
-import com.el.game.utils.Utils;
 import com.el.game.utils.Vector2;
 
 /**
@@ -91,6 +90,7 @@ abstract public class GameObject {
         hitBoxRectangle.setPosition(this.getPositionX() + hitBoxMargin.x, this.getPositionY() + hitBoxMargin.y);
         hitBoxSprite.setPosition(hitBoxRectangle.getX(), hitBoxRectangle.getY());
     }
+
     /**
      * @return атлас для хранения спрайта
      */

@@ -75,6 +75,8 @@ public class GameActivity extends LayoutGameActivity implements SensorEventListe
     @Override
     public void onCreateResources(OnCreateResourcesCallback onCreateResourcesCallback) throws Exception {
         player = new Player(this, getEngine(), new Vector2(0, Utils.getPixelsOfPercentY(50)));       //Добавляем игрока
+        controlButton.setPlayer(player);
+
         objectList = new ArrayList<GameObject>();           //Инициализируем массив игровых объектов
         objectList.add(player);                             //Добавляем к массиву игрока
 
@@ -103,7 +105,7 @@ public class GameActivity extends LayoutGameActivity implements SensorEventListe
 
         scene.setOnSceneTouchListener(this);    //Устанавливаем слушатель прикосновений на сцене
 
-        scene.registerUpdateHandler(new TimerHandler(0.033f, true, new ITimerCallback() {
+        scene.registerUpdateHandler(new TimerHandler(0.015f, true, new ITimerCallback() {
             @Override
             public void onTimePassed(final TimerHandler pTimerHandler) {
                 for (GameObject ob : objectList)
@@ -180,8 +182,6 @@ public class GameActivity extends LayoutGameActivity implements SensorEventListe
                     fingersId.remove(fingersId.indexOf(motionEvent.getPointerId(motionEvent.getActionIndex())));    //Удаляем из списка палец с данным Id
                 checkMovement(motionEvent);     //Устанавливаем направление персонажа согласно id первого пальца
                 break;
-            case MotionEvent.ACTION_MOVE:
-                checkMovement(motionEvent);
         }
         return true;
     }

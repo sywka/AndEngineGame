@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/button_layout"
+    android:layout_width="@dimen/button_width"
+    android:layout_height="wrap_content"
+    android:layout_alignParentRight="true">
+
+    <View
+        android:id="@+id/button_onclick_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/control_button_background" />
+
+</FrameLayout>

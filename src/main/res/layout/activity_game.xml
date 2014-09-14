@@ -11,19 +11,7 @@
         android:layout_alignParentTop="true"
         android:background="#FC9">
 
-        <FrameLayout
-            android:id="@+id/button_layout"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true">
-
-            <View
-                android:id="@+id/button_onclick_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/control_button_background" />
-
-        </FrameLayout>
+        <include layout="@layout/button" />
 
     </RelativeLayout>
 

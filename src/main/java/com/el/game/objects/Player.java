@@ -45,7 +45,7 @@ public class Player extends GameObject {
         fieldExtremeLeftPoint = Utils.getPixelsOfPercentX(-5);
         fieldExtremeUpPoint = Utils.getPixelsOfPercentY(0);
         fieldExtremeDownPoint = Utils.getPixelsOfPercentY(100) - Utils.getPixelsOfPercentY(11);
-        step = Utils.getPixelsOfPercentX(2);
+        step = Utils.getPixelsOfPercentX(1);
         fallSpeed = Utils.getPixelsOfPercentY(1);
         setHitBox(new Vector2(Utils.getPixelsOfPercentX(3), Utils.getPixelsOfPercentY(6)), new Vector2(Utils.getPixelsOfPercentX(2), Utils.getPixelsOfPercentY(2)));
     }

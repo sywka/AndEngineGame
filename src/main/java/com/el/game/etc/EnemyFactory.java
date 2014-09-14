@@ -44,7 +44,7 @@ public class EnemyFactory {
             }
             else{
                 enemyList.get(i).setXSpeed(1f);
-                enemyList.get(i).setPositionX(- i * Utils.getPixelsOfPercentX(20) - Utils.getPixelsOfPercentX(-20));
+                enemyList.get(i).setPositionX(- i * Utils.getPixelsOfPercentX(20) - Utils.getPixelsOfPercentX(20));
             }
         }
     }

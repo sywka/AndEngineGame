@@ -180,6 +180,8 @@ public class GameActivity extends LayoutGameActivity implements SensorEventListe
                     fingersId.remove(fingersId.indexOf(motionEvent.getPointerId(motionEvent.getActionIndex())));    //Удаляем из списка палец с данным Id
                 checkMovement(motionEvent);     //Устанавливаем направление персонажа согласно id первого пальца
                 break;
+            case MotionEvent.ACTION_MOVE:
+                checkMovement(motionEvent);
         }
         return true;
     }

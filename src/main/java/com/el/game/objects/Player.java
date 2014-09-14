@@ -47,6 +47,7 @@ public class Player extends GameObject {
         fieldExtremeDownPoint = Utils.getPixelsOfPercentY(100) - Utils.getPixelsOfPercentY(11);
         step = Utils.getPixelsOfPercentX(2);
         fallSpeed = Utils.getPixelsOfPercentY(1);
+        setHitBox(new Vector2(Utils.getPixelsOfPercentX(3), Utils.getPixelsOfPercentY(6)), new Vector2(Utils.getPixelsOfPercentX(2), Utils.getPixelsOfPercentY(2)));
     }
 
     /**
@@ -139,6 +140,8 @@ public class Player extends GameObject {
         if (getPositionX() < fieldExtremeLeftPoint)
             setPosition(fieldExtremeRightPoint, getPositionY());
         ///Ограничеваем движение за пределы поля по OX
+
+        updateHitBox();
     }
 
     public void setMove(int move) {

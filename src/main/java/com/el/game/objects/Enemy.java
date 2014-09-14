@@ -17,6 +17,7 @@ public class Enemy extends CollisionObject {
     public Enemy(BaseGameActivity activity, Engine engine, Vector2 position) {
         super(activity, engine, position, new Vector2(Utils.getPixelsOfPercentX(6), Utils.getPixelsOfPercentY(11)));
 //        getSprite().animate(new long[]{100, 100, 100, 100}, 0, 3, true);
+        setHitBox(new Vector2(Utils.getPixelsOfPercentX(4), Utils.getPixelsOfPercentY(8)), new Vector2(Utils.getPixelsOfPercentX(1), Utils.getPixelsOfPercentY(1)));
     }
 
     @Override
@@ -31,6 +32,7 @@ public class Enemy extends CollisionObject {
 
     @Override
     public void onUpdateState(float v) {
+        updateHitBox();
         super.onUpdateState(v);
     }
 

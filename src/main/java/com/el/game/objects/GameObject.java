@@ -1,13 +1,19 @@
 package com.el.game.objects;
 
 import org.andengine.engine.Engine;
+import org.andengine.entity.primitive.Rectangle;
 import org.andengine.entity.scene.Scene;
 import org.andengine.entity.sprite.AnimatedSprite;
+import org.andengine.entity.sprite.Sprite;
 import org.andengine.input.touch.TouchEvent;
+import org.andengine.opengl.texture.TextureOptions;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
+import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
+import org.andengine.opengl.texture.region.TextureRegion;
 import org.andengine.opengl.texture.region.TiledTextureRegion;
 import org.andengine.ui.activity.BaseGameActivity;
 
+import com.el.game.utils.Utils;
 import com.el.game.utils.Vector2;
 
 /**
@@ -19,7 +25,10 @@ abstract public class GameObject {
     private Engine engine;                  //Текущий движок
     private AnimatedSprite sprite;          //Анимированный спрайт объекта
     private TiledTextureRegion region;      //Регион объекта
-    private BitmapTextureAtlas atlas;       //Атлас обёекта
+    private BitmapTextureAtlas atlas;       //Атлас объекта
+    private Rectangle hitBoxRectangle;
+    private Vector2 hitBoxMargin;
+    private Sprite hitBoxSprite;          //Анимированный спрайт объекта
 
     /**
      * Конструктор
@@ -56,6 +65,16 @@ abstract public class GameObject {
      * @param scene сцена
      */
     public void attachTo(Scene scene) {
+
+        if (hitBoxMargin != null) {
+            BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
+            BitmapTextureAtlas mBitmapTextureAtlas = new BitmapTextureAtlas(getActivity().getTextureManager(), 256, 128, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
+            TextureRegion myTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBitmapTextureAtlas, getActivity(), "hitbox.png", 0, 0);
+            this.getEngine().getTextureManager().loadTexture(mBitmapTextureAtlas);
+            hitBoxSprite = new Sprite(0, 0, hitBoxRectangle.getWidth(), hitBoxRectangle.getHeight(), myTextureRegion, getActivity().getVertexBufferObjectManager());
+            scene.attachChild(hitBoxSprite);
+        }
+
         scene.attachChild(sprite);
         scene.registerTouchArea(sprite);
     }
@@ -63,6 +82,15 @@ abstract public class GameObject {
     public void onUpdateState(float v) {
     }
 
+    public void setHitBox(Vector2 hitBoxScale, Vector2 hitBoxMargin){
+        hitBoxRectangle = new Rectangle(0f, 0f, hitBoxScale.x, hitBoxScale.y, activity.getVertexBufferObjectManager());
+        this.hitBoxMargin = hitBoxMargin;
+    }
+
+    public void updateHitBox(){
+        hitBoxRectangle.setPosition(this.getPositionX() + hitBoxMargin.x, this.getPositionY() + hitBoxMargin.y);
+        hitBoxSprite.setPosition(hitBoxRectangle.getX(), hitBoxRectangle.getY());
+    }
     /**
      * @return атлас для хранения спрайта
      */
@@ -131,4 +159,6 @@ abstract public class GameObject {
     public AnimatedSprite getSprite() {
         return sprite;
     }
+
+    public Rectangle getHitboxRectangle(){ return hitBoxRectangle; }
 }

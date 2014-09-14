@@ -24,7 +24,7 @@ abstract public class CollisionObject extends GameObject {
     @Override
     public void onUpdateState(float v) {
         super.onUpdateState(v);
-        if (player != null && getSprite().collidesWith(player.getSprite()))
+        if (player != null && this.getHitboxRectangle().collidesWith(player.getHitboxRectangle()))
             onCollision(player);
     }
 

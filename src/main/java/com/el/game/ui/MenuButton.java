@@ -23,7 +23,7 @@ public class MenuButton extends Button {
         if (engine == null) return;
 
         engine.stop();
-        backgroundMusic.pause();
+        backgroundMusic.setVolume(0.2f, 0.2f);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Что-то вроде меню")
@@ -33,7 +33,7 @@ public class MenuButton extends Button {
                     @Override
                     public void onCancel(DialogInterface dialogInterface) {
                         engine.start();
-                        backgroundMusic.resume();
+                        backgroundMusic.setVolume(1f, 1f);
                     }
                 });
         AlertDialog alert = builder.create();

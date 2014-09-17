@@ -17,7 +17,7 @@ public class EnemyFactory {
     private ArrayList<Enemy> enemyList;
     private Random random = new Random();
     private Player player;
-    private boolean isThereEnemyes = false;
+    private boolean isThereEnemyes = false;     //Остались ли на экрана враги
 
     public EnemyFactory(BaseGameActivity activity, Engine engine, Player player){
         enemyList = new ArrayList<Enemy>();
@@ -43,8 +43,10 @@ public class EnemyFactory {
         isThereEnemyes = false;
         for(Enemy enemy: enemyList){
             if ((enemy.getPositionX() > Utils.getPixelsOfPercentX(120)) ||
-                    (enemy.getPositionX() < Utils.getPixelsOfPercentX(-20)))
+                    (enemy.getPositionX() < Utils.getPixelsOfPercentX(-20))) {
                 enemy.setIsAlife(false);
+                enemy.getArrowSprite().setVisible(false);
+            }
             enemy.onUpdateState(0);
             if (!isThereEnemyes)
                 isThereEnemyes = enemy.getIsAlife();

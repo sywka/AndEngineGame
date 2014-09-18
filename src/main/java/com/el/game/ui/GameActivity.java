@@ -24,9 +24,7 @@ import android.hardware.SensorManager;
 import android.view.MotionEvent;
 
 import com.el.game.R;
-import com.el.game.etc.EnemyFactory;
-import com.el.game.objects.CollisionObject;
-import com.el.game.objects.Enemy;
+import com.el.game.etc.MovingCollisionObjectFactory;
 import com.el.game.objects.MovingCollisionObject;
 import com.el.game.utils.Utils;
 import com.el.game.objects.GameObject;
@@ -38,7 +36,7 @@ public class GameActivity extends LayoutGameActivity implements SensorEventListe
 
     private List<GameObject> objectList;                //Список игровых объектов
     private List<Integer> fingersId;                    //Список Id пальцев (необходим для корректного мультитача)
-    private EnemyFactory enemyFactory;
+    private MovingCollisionObjectFactory movingCollisionObjectFactory;
     private Player player;                              //Объект игрока
     private SensorManager sensorManager;                //Менеджер сенсора
     private final int accelerometerYCencity = 2;        //Чувствительность акселлерометра по OY
@@ -90,7 +88,7 @@ public class GameActivity extends LayoutGameActivity implements SensorEventListe
         objectList = new ArrayList<GameObject>();           //Инициализируем массив игровых объектов
         objectList.add(player);                             //Добавляем к массиву игрока
 
-        enemyFactory = new EnemyFactory(this, getEngine(), player);
+        movingCollisionObjectFactory = new MovingCollisionObjectFactory(this, getEngine(), player);
 
         sensorManager = (SensorManager) this.getSystemService(SENSOR_SERVICE);   //Определяем менеджер сенсора
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
@@ -110,7 +108,7 @@ public class GameActivity extends LayoutGameActivity implements SensorEventListe
         for (GameObject ob : objectList)        //Привязываем все игровые объекты к сцене
             ob.attachTo(scene);
 
-        for (MovingCollisionObject enemy : enemyFactory.getMovingObjectsList()) {
+        for (MovingCollisionObject enemy : movingCollisionObjectFactory.getMovingObjectsList()) {
             enemy.attachTo(scene);
             scene.attachChild(enemy.getArrowSprite());
         }
@@ -125,7 +123,7 @@ public class GameActivity extends LayoutGameActivity implements SensorEventListe
             public void onTimePassed(final TimerHandler pTimerHandler) {
                 for (GameObject ob : objectList)
                     ob.onUpdateState(0);
-                enemyFactory.Update();
+                movingCollisionObjectFactory.Update();
             }
         }));
         backgroundMusic.play();

@@ -13,7 +13,7 @@ import org.andengine.ui.activity.BaseGameActivity;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class EnemyFactory {
+public class MovingCollisionObjectFactory {
 
     private ArrayList<MovingCollisionObject> movingObjectsList;
     //0 - 19 enemy
@@ -24,7 +24,7 @@ public class EnemyFactory {
     public float currentSpeed = 0.6f;
     //private BonusLife bonusLife;
 
-    public EnemyFactory(BaseGameActivity activity, Engine engine, Player player) {
+    public MovingCollisionObjectFactory(BaseGameActivity activity, Engine engine, Player player) {
         movingObjectsList = new ArrayList<MovingCollisionObject>();
         this.player = player;
         for (int i = 0; i < 20; i++)
@@ -33,7 +33,7 @@ public class EnemyFactory {
         for (MovingCollisionObject movingObject : movingObjectsList)
             movingObject.setPlayer(player);
         //bonusLife = new BonusLife();
-       // bonusLife.setPlayer(player);
+        // bonusLife.setPlayer(player);
     }
 
 
@@ -102,8 +102,7 @@ public class EnemyFactory {
         if (random.nextInt(2) == 1) {
             movingObjectsList.get(20).setXSpeed(Utils.getPixelsOfPercentX(currentSpeed));
             movingObjectsList.get(20).setPositionX(-random.nextInt(20) * Utils.getPixelsOfPercentX(20) - Utils.getPixelsOfPercentX(20));
-        }
-        else{
+        } else {
             movingObjectsList.get(20).setXSpeed(Utils.getPixelsOfPercentX(-currentSpeed));
             movingObjectsList.get(20).setPositionX(random.nextInt(20) * Utils.getPixelsOfPercentX(20) + Utils.getPixelsOfPercentX(120));
         }

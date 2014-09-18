@@ -8,10 +8,12 @@ import com.el.game.utils.Utils;
 
 import org.andengine.engine.Engine;
 import org.andengine.entity.scene.Scene;
+import org.andengine.entity.sprite.AnimatedSprite;
 import org.andengine.input.touch.TouchEvent;
 import org.andengine.opengl.texture.TextureOptions;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
+import org.andengine.opengl.texture.bitmap.BitmapTexture;
 import org.andengine.opengl.texture.region.TiledTextureRegion;
 import org.andengine.ui.activity.BaseGameActivity;
 
@@ -40,6 +42,7 @@ public class Player extends GameObject {
 
     private boolean isDead = false;
 
+    private AnimatedSprite lifeAuraSpite;
     private ScoreHelper scoreHelper;
 
     /**
@@ -84,6 +87,14 @@ public class Player extends GameObject {
     @Override
     public void attachTo(Scene scene) {
         super.attachTo(scene);
+        BitmapTextureAtlas atlas = new BitmapTextureAtlas(getActivity().getTextureManager(), 512, 512, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
+        TiledTextureRegion region = BitmapTextureAtlasTextureRegionFactory.createTiledFromResource(atlas, getActivity(), R.drawable.sphere, 0, 0, 4, 1);
+        lifeAuraSpite = new AnimatedSprite(getPositionX(), getPositionY(),
+                Utils.getPixelsOfPercentX(6), Utils.getPixelsOfPercentY(11), region, getEngine().getVertexBufferObjectManager());
+        atlas.load();
+        scene.attachChild(lifeAuraSpite);
+        lifeAuraSpite.setVisible(false);
+
         getObjectSprite().animate(new long[]{100, 100, 100, 100}, 0, 3, true);
     }
 
@@ -159,7 +170,27 @@ public class Player extends GameObject {
         this.move = move;
     }
 
+    @Override
+    public void setPosition(float positionX, float positionY) {
+        super.setPosition(positionX, positionY);
+        lifeAuraSpite.setPosition(positionX, positionY);
+    }
+
+    @Override
+    public void setPositionX(float positionX) {
+        super.setPositionX(positionX);
+        lifeAuraSpite.setPosition(positionX, lifeAuraSpite.getY());
+    }
+
+    @Override
+    public void setPositionY(float positionY) {
+        super.setPositionY(positionY);
+        lifeAuraSpite.setPosition(lifeAuraSpite.getX(), positionY);
+    }
+
     public void die() {
+        lifeAuraSpite.setVisible(false);
+        lifeAuraSpite.stopAnimation();
         countLife--;
         if (countLife != 0) return;
         getObjectSprite().animate(new long[]{200, 200, 200, 200, 200}, 16, 20, false);
@@ -169,7 +200,6 @@ public class Player extends GameObject {
     public void setIsDead(boolean state) {
         isDead = state;
     }
-
 
     public void setFallSpeed(float speed) {
         fallSpeed = speed;
@@ -193,5 +223,11 @@ public class Player extends GameObject {
 
     public void setCountLife(int countLife) {
         this.countLife = countLife;
+    }
+
+    public void addLife() {
+        lifeAuraSpite.setVisible(true);
+        lifeAuraSpite.animate(100, true);
+        this.countLife++;
     }
 }

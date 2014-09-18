@@ -81,12 +81,12 @@ abstract public class GameObject {
     public void onUpdateState(float v) {
     }
 
-    public void setHitBox(Vector2 hitBoxScale, Vector2 hitBoxMargin){
+    public void setHitBox(Vector2 hitBoxScale, Vector2 hitBoxMargin) {
         hitBoxRectangle = new Rectangle(0f, 0f, hitBoxScale.x, hitBoxScale.y, activity.getVertexBufferObjectManager());
         this.hitBoxMargin = hitBoxMargin;
     }
 
-    public void updateHitBox(){
+    public void updateHitBox() {
         hitBoxRectangle.setPosition(this.getPositionX() + hitBoxMargin.x, this.getPositionY() + hitBoxMargin.y);
         hitBoxSprite.setPosition(hitBoxRectangle.getX(), hitBoxRectangle.getY());
     }
@@ -160,5 +160,7 @@ abstract public class GameObject {
         return sprite;
     }
 
-    public Rectangle getHitboxRectangle(){ return hitBoxRectangle; }
+    public Rectangle getHitboxRectangle() {
+        return hitBoxRectangle;
+    }
 }

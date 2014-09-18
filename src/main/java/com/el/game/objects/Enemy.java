@@ -42,9 +42,10 @@ public class Enemy extends MovingCollisionObject {
 
     @Override
     protected void onCollision(Player player) {
-        if (!player.getIsDead()) {   //Достаточно один раз убить персонажа
+        if (!player.getIsDead()) {              //Достаточно один раз убить персонажа
             player.die();
-            setPositionX(Utils.getPixelsOfPercentX(-20));
+            if (player.getCountLife() != 0)     //Если у персонажа кончились жизни, не убираем блок об который он убился
+                setPositionX(Utils.getPixelsOfPercentX(-20));
         }
     }
 }

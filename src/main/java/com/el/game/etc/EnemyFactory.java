@@ -18,7 +18,7 @@ public class EnemyFactory {
     private Random random = new Random();
     private Player player;
     private boolean isThereEnemyes = false;     //Остались ли на экрана враги
-    public float currentSpeed = Utils.getPixelsOfPercentX(0.08f);
+    public float currentSpeed = 0.6f;
 
     public EnemyFactory(BaseGameActivity activity, Engine engine, Player player){
         enemyList = new ArrayList<Enemy>();
@@ -35,7 +35,15 @@ public class EnemyFactory {
             return;
         }
         if (!enemyList.get(enemyList.size() - 1).getIsAlife()) {
-            currentSpeed += currentSpeed / 100; //Устанавливаем уровень скорости блоков
+            if (currentSpeed < 0.8f)
+                currentSpeed += 0.1f;
+            else{
+                if (currentSpeed < 1.0f)
+                    currentSpeed += 0.05f;
+                else
+                    currentSpeed += 0.01f;
+            }
+
             GenerateEnemysPositions();
         }
         for(Enemy enemy: enemyList)
@@ -61,6 +69,7 @@ public class EnemyFactory {
             player.getSprite().animate(new long[]{100, 100, 100, 100}, 0, 3, true);
             player.setFallSpeed(Math.abs(player.getFallSpeed()));
             player.getScoreHelper().resetScore();
+            currentSpeed = 0.6f;
         }
     }
 
@@ -71,11 +80,11 @@ public class EnemyFactory {
             enemyList.get(i).setPositionY(random.nextInt(10) * Utils.getPixelsOfPercentY(10));
             enemyList.get(i).setIsAlife(true);
             if (random.nextInt(2) == 1){
-                enemyList.get(i).setXSpeed(-currentSpeed);
+                enemyList.get(i).setXSpeed(Utils.getPixelsOfPercentX(-currentSpeed));
                 enemyList.get(i).setPositionX(i * Utils.getPixelsOfPercentX(20) + Utils.getPixelsOfPercentX(120));
             }
             else{
-                enemyList.get(i).setXSpeed(currentSpeed);
+                enemyList.get(i).setXSpeed(Utils.getPixelsOfPercentX(currentSpeed));
                 enemyList.get(i).setPositionX(- i * Utils.getPixelsOfPercentX(20) - Utils.getPixelsOfPercentX(20));
             }
         }

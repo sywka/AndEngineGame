@@ -97,19 +97,19 @@ public class EnemyFactory {
                 movingObjectsList.get(i).setXSpeed(Utils.getPixelsOfPercentX(currentSpeed));
                 movingObjectsList.get(i).setPositionX(-i * Utils.getPixelsOfPercentX(20) - Utils.getPixelsOfPercentX(20));
             }
-            //if (random.nextInt(5) == 3) {
-                if (random.nextInt(2) == 1) {
-                    movingObjectsList.get(20).setXSpeed(Utils.getPixelsOfPercentX(currentSpeed));
-                    movingObjectsList.get(20).setPositionX(-random.nextInt(20) * Utils.getPixelsOfPercentX(20) - Utils.getPixelsOfPercentX(20));
-                }
-                else{
-                    movingObjectsList.get(20).setXSpeed(Utils.getPixelsOfPercentX(-currentSpeed));
-                    movingObjectsList.get(20).setPositionX(random.nextInt(20) * Utils.getPixelsOfPercentX(20) + Utils.getPixelsOfPercentX(20));
-                }
-                movingObjectsList.get(20).setPositionY(random.nextInt(10) * Utils.getPixelsOfPercentY(10));
-                movingObjectsList.get(20).setIsAlife(true);
-            //}
         }
+        //if (random.nextInt(5) == 3) {
+        if (random.nextInt(2) == 1) {
+            movingObjectsList.get(20).setXSpeed(Utils.getPixelsOfPercentX(currentSpeed));
+            movingObjectsList.get(20).setPositionX(-random.nextInt(20) * Utils.getPixelsOfPercentX(20) - Utils.getPixelsOfPercentX(20));
+        }
+        else{
+            movingObjectsList.get(20).setXSpeed(Utils.getPixelsOfPercentX(-currentSpeed));
+            movingObjectsList.get(20).setPositionX(random.nextInt(20) * Utils.getPixelsOfPercentX(20) + Utils.getPixelsOfPercentX(120));
+        }
+        movingObjectsList.get(20).setPositionY(random.nextInt(10) * Utils.getPixelsOfPercentY(10));
+        movingObjectsList.get(20).setIsAlife(true);
+        //}
     }
 
     public ArrayList<MovingCollisionObject> getMovingObjectsList() {

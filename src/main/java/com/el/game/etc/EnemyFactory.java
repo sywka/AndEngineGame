@@ -18,7 +18,7 @@ public class EnemyFactory {
     private Random random = new Random();
     private Player player;
     private boolean isThereEnemyes = false;     //Остались ли на экрана враги
-    public float currentSpeed = Utils.getPixelsOfPercentX(0.01f);
+    public float currentSpeed = Utils.getPixelsOfPercentX(0.08f);
 
     public EnemyFactory(BaseGameActivity activity, Engine engine, Player player){
         enemyList = new ArrayList<Enemy>();
@@ -35,9 +35,7 @@ public class EnemyFactory {
             return;
         }
         if (!enemyList.get(enemyList.size() - 1).getIsAlife()) {
-            ///Устанавливаем уровень скорости блоков
-            currentSpeed = (currentSpeed < 0.015f) ? currentSpeed + 0.0002f : currentSpeed + 0.00005f;
-            ///Устанавливаем уровень скорости блоков
+            currentSpeed += currentSpeed / 100; //Устанавливаем уровень скорости блоков
             GenerateEnemysPositions();
         }
         for(Enemy enemy: enemyList)
@@ -73,11 +71,11 @@ public class EnemyFactory {
             enemyList.get(i).setPositionY(random.nextInt(10) * Utils.getPixelsOfPercentY(10));
             enemyList.get(i).setIsAlife(true);
             if (random.nextInt(2) == 1){
-                enemyList.get(i).setXSpeed(Utils.getPixelsOfPercentX(-currentSpeed));
+                enemyList.get(i).setXSpeed(-currentSpeed);
                 enemyList.get(i).setPositionX(i * Utils.getPixelsOfPercentX(20) + Utils.getPixelsOfPercentX(120));
             }
             else{
-                enemyList.get(i).setXSpeed(Utils.getPixelsOfPercentX(currentSpeed));
+                enemyList.get(i).setXSpeed(currentSpeed);
                 enemyList.get(i).setPositionX(- i * Utils.getPixelsOfPercentX(20) - Utils.getPixelsOfPercentX(20));
             }
         }

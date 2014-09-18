@@ -81,8 +81,8 @@ public class Enemy extends CollisionObject {
 
     @Override
     protected void onCollision(Player player) {
-        if (!player.getIsDead())    //Достаточно один раз убить персонажа
-            player.die();
+        //if (!player.getIsDead())    //Достаточно один раз убить персонажа
+        //    player.die();
     }
 
     public void setXSpeed(float newXSpeed){

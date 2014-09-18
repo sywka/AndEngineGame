@@ -15,6 +15,8 @@ public class BonusLife extends MovingCollisionObject {
 
     public BonusLife(BaseGameActivity activity, Engine engine, Vector2 position) {
         super(activity, engine, position, new Vector2(Utils.getPixelsOfPercentX(6), Utils.getPixelsOfPercentY(11)));
+        getObjectSprite().animate(new long[]{100, 100, 100, 100}, 0, 3, true);
+        setHitBox(new Vector2(Utils.getPixelsOfPercentX(4), Utils.getPixelsOfPercentY(7)), new Vector2(Utils.getPixelsOfPercentX(1), Utils.getPixelsOfPercentY(2)));
     }
 
     @Override
@@ -34,12 +36,14 @@ public class BonusLife extends MovingCollisionObject {
 
     @Override
     protected TiledTextureRegion getNewArrowRegion(BitmapTextureAtlas arrowAtlas) {
-        return BitmapTextureAtlasTextureRegionFactory.createTiledFromResource(arrowAtlas, getActivity(), R.drawable.arrow, 0, 0, 4, 1);
+        return BitmapTextureAtlasTextureRegionFactory.createTiledFromResource(arrowAtlas, getActivity(), R.drawable.life_arrow, 0, 0, 4, 1);
     }
 
     @Override
     protected void onCollision(Player player) {
         if (player.getCountLife() == Player.DEFAULT_COUNT_LIFE)
             player.setCountLife(Player.DEFAULT_COUNT_LIFE + 1);
+        this.setPositionX(Utils.getPixelsOfPercentX(120));
+        this.setIsAlife(false);
     }
 }

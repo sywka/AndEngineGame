@@ -25,7 +25,9 @@ import android.view.MotionEvent;
 
 import com.el.game.R;
 import com.el.game.etc.EnemyFactory;
+import com.el.game.objects.CollisionObject;
 import com.el.game.objects.Enemy;
+import com.el.game.objects.MovingCollisionObject;
 import com.el.game.utils.Utils;
 import com.el.game.objects.GameObject;
 import com.el.game.objects.Player;
@@ -108,10 +110,13 @@ public class GameActivity extends LayoutGameActivity implements SensorEventListe
         for (GameObject ob : objectList)        //Привязываем все игровые объекты к сцене
             ob.attachTo(scene);
 
-        for (Enemy enemy : enemyFactory.getEnemyList()) {
+        for (MovingCollisionObject enemy : enemyFactory.getMovingObjectsList()) {
             enemy.attachTo(scene);
             scene.attachChild(enemy.getArrowSprite());
         }
+
+        //scene.attachChild(enemyFactory.getBonusLife().getArrowSprite());
+        //enemyFactory.getBonusLife().attachTo(scene);
 
         scene.setOnSceneTouchListener(this);    //Устанавливаем слушатель прикосновений на сцене
 

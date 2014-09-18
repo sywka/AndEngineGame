@@ -23,8 +23,8 @@ abstract public class GameObject {
     private BaseGameActivity activity;      //Текущая активити
     private Engine engine;                  //Текущий движок
     private AnimatedSprite sprite;          //Анимированный спрайт объекта
-    private TiledTextureRegion region;      //Регион объекта
-    private BitmapTextureAtlas atlas;       //Атлас объекта
+    private TiledTextureRegion objectRegion;      //Регион объекта
+    private BitmapTextureAtlas objectAtlas;       //Атлас объекта
     private Rectangle hitBoxRectangle;
     private Vector2 hitBoxMargin;
     private Sprite hitBoxSprite;          //Анимированный спрайт объекта
@@ -35,16 +35,16 @@ abstract public class GameObject {
     public GameObject(BaseGameActivity activity, Engine engine, Vector2 position, Vector2 spriteScale) {
         this.activity = activity;
         this.engine = engine;
-        atlas = getNewAtlas();
-        engine.getTextureManager().loadTexture(atlas);
-        region = getNewRegion();
-        sprite = new AnimatedSprite(position.x, position.y, spriteScale.x, spriteScale.y, region, engine.getVertexBufferObjectManager()) {
+        objectAtlas = getNewObjectAtlas();
+        objectRegion = getNewObjectRegion(objectAtlas);
+        sprite = new AnimatedSprite(position.x, position.y, spriteScale.x, spriteScale.y, objectRegion, engine.getVertexBufferObjectManager()) {
             @Override
             public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY) {
                 GameObject.this.onAreaTouched(pSceneTouchEvent, pTouchAreaLocalX, pTouchAreaLocalY);
                 return super.onAreaTouched(pSceneTouchEvent, pTouchAreaLocalX, pTouchAreaLocalY);
             }
         };
+        objectAtlas.load();
     }
 
     /**
@@ -94,12 +94,12 @@ abstract public class GameObject {
     /**
      * @return атлас для хранения спрайта
      */
-    abstract protected BitmapTextureAtlas getNewAtlas();
+    abstract protected BitmapTextureAtlas getNewObjectAtlas();
 
     /**
      * @return объект хранящий отдельные регионы
      */
-    abstract protected TiledTextureRegion getNewRegion();
+    abstract protected TiledTextureRegion getNewObjectRegion(BitmapTextureAtlas objectAtlas);
 
     /**
      * Устанавливает новую позицию спрайта и объекта
@@ -110,19 +110,19 @@ abstract public class GameObject {
     }
 
     public void setPositionX(float positionX) {
-        getSprite().setPosition(positionX, getPositionY());
+        getObjectSprite().setPosition(positionX, getPositionY());
     }
 
     public float getPositionX() {
-        return getSprite().getX();
+        return getObjectSprite().getX();
     }
 
     public void setPositionY(float positionY) {
-        getSprite().setPosition(getPositionX(), positionY);
+        getObjectSprite().setPosition(getPositionX(), positionY);
     }
 
     public float getPositionY() {
-        return getSprite().getY();
+        return getObjectSprite().getY();
     }
 
     /*
@@ -142,21 +142,21 @@ abstract public class GameObject {
     /*
     *   Возвращает текущий Атлас
     */
-    public BitmapTextureAtlas getAtlas() {
-        return atlas;
+    public BitmapTextureAtlas getObjectAtlas() {
+        return objectAtlas;
     }
 
     /*
     *   Возвращает текущий регион
     */
-    public TiledTextureRegion getRegion() {
-        return region;
+    public TiledTextureRegion getObjectRegion() {
+        return objectRegion;
     }
 
     /*
     *   Возвращает текущий спрайт
     */
-    public AnimatedSprite getSprite() {
+    public AnimatedSprite getObjectSprite() {
         return sprite;
     }
 

@@ -2,6 +2,7 @@ package com.el.game.objects;
 
 import com.el.game.R;
 import com.el.game.utils.Utils;
+import com.el.game.utils.Vector2;
 
 import org.andengine.engine.Engine;
 import org.andengine.opengl.texture.TextureOptions;
@@ -10,24 +11,20 @@ import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegion
 import org.andengine.opengl.texture.region.TiledTextureRegion;
 import org.andengine.ui.activity.BaseGameActivity;
 
-import com.el.game.utils.Vector2;
+public class BonusLife extends MovingCollisionObject {
 
-public class Enemy extends MovingCollisionObject {
-
-    public Enemy(BaseGameActivity activity, Engine engine, Vector2 position) {
+    public BonusLife(BaseGameActivity activity, Engine engine, Vector2 position) {
         super(activity, engine, position, new Vector2(Utils.getPixelsOfPercentX(6), Utils.getPixelsOfPercentY(11)));
-        getObjectSprite().animate(new long[]{100, 100, 100, 100}, 0, 3, true);
-        setHitBox(new Vector2(Utils.getPixelsOfPercentX(4), Utils.getPixelsOfPercentY(7)), new Vector2(Utils.getPixelsOfPercentX(1), Utils.getPixelsOfPercentY(2)));
     }
 
     @Override
     protected BitmapTextureAtlas getNewObjectAtlas() {
-        return new BitmapTextureAtlas(getActivity().getTextureManager(), 1024, 512, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
+        return new BitmapTextureAtlas(getActivity().getTextureManager(), 512, 512, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
     }
 
     @Override
     protected TiledTextureRegion getNewObjectRegion(BitmapTextureAtlas objectAtlas) {
-        return BitmapTextureAtlasTextureRegionFactory.createTiledFromResource(objectAtlas, getActivity(), R.drawable.enemy, 0, 0, 4, 1);
+        return BitmapTextureAtlasTextureRegionFactory.createTiledFromResource(objectAtlas, getActivity(), R.drawable.bonus_life, 0, 0, 4, 1);
     }
 
     @Override
@@ -42,9 +39,7 @@ public class Enemy extends MovingCollisionObject {
 
     @Override
     protected void onCollision(Player player) {
-        if (!player.getIsDead()) {   //Достаточно один раз убить персонажа
-            player.die();
-            setPositionX(Utils.getPixelsOfPercentX(-20));
-        }
+        if (player.getCountLife() == Player.DEFAULT_COUNT_LIFE)
+            player.setCountLife(Player.DEFAULT_COUNT_LIFE + 1);
     }
 }

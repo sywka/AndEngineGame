@@ -23,6 +23,8 @@ public class Player extends GameObject {
     public static final int MOVE_LEFT = 1;  //Значение движения влево
     public static final int IDLE = 2;       //Значение остановки
 
+    public static final int DEFAULT_COUNT_LIFE = 1;
+
     public float step;      //Значение движения в пикселях
 
     public int move = IDLE;                 //Значение  текущего движения
@@ -34,6 +36,7 @@ public class Player extends GameObject {
     private float fieldExtremeUpPoint;
     private float fieldExtremeDownPoint;
     private float fallSpeed;
+    private int countLife = DEFAULT_COUNT_LIFE;
 
     private boolean isDead = false;
 
@@ -61,7 +64,7 @@ public class Player extends GameObject {
      * @return atlas
      */
     @Override
-    protected BitmapTextureAtlas getNewAtlas() {
+    protected BitmapTextureAtlas getNewObjectAtlas() {
         return new BitmapTextureAtlas(getActivity().getTextureManager(), 728, 512, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
     }
 
@@ -69,8 +72,8 @@ public class Player extends GameObject {
      * Устанавливаем новый регион
      */
     @Override
-    protected TiledTextureRegion getNewRegion() {
-        return BitmapTextureAtlasTextureRegionFactory.createTiledFromResource(getAtlas(), getActivity(), R.drawable.john, 0, 0, 8, 3);
+    protected TiledTextureRegion getNewObjectRegion(BitmapTextureAtlas objectAtlas) {
+        return BitmapTextureAtlasTextureRegionFactory.createTiledFromResource(objectAtlas, getActivity(), R.drawable.john, 0, 0, 8, 3);
     }
 
     /**
@@ -81,7 +84,7 @@ public class Player extends GameObject {
     @Override
     public void attachTo(Scene scene) {
         super.attachTo(scene);
-        getSprite().animate(new long[]{100, 100, 100, 100}, 0, 3, true);
+        getObjectSprite().animate(new long[]{100, 100, 100, 100}, 0, 3, true);
     }
 
     /**
@@ -102,8 +105,8 @@ public class Player extends GameObject {
     public void onUpdateState(float v) {
         super.onUpdateState(v);
         if (isDead) {
-                return;
-            } else scoreHelper.updateScore();
+            return;
+        } else scoreHelper.updateScore();
 
         switch (move) {
             case MOVE_LEFT:
@@ -111,7 +114,7 @@ public class Player extends GameObject {
                 if (startSpriteFrame < 5) {
                     startSpriteFrame += 8;
                     endSpriteFrame += 8;
-                    getSprite().animate(new long[]{100, 100, 100, 100}, startSpriteFrame, endSpriteFrame, true);
+                    getObjectSprite().animate(new long[]{100, 100, 100, 100}, startSpriteFrame, endSpriteFrame, true);
                 }
                 break;
             case MOVE_RIGHT:
@@ -119,7 +122,7 @@ public class Player extends GameObject {
                 if (startSpriteFrame > 5) {
                     startSpriteFrame -= 8;
                     endSpriteFrame -= 8;
-                    getSprite().animate(new long[]{100, 100, 100, 100}, startSpriteFrame, endSpriteFrame, true);
+                    getObjectSprite().animate(new long[]{100, 100, 100, 100}, startSpriteFrame, endSpriteFrame, true);
                 }
                 break;
             case IDLE:
@@ -131,13 +134,13 @@ public class Player extends GameObject {
             fallSpeed *= -1;
             startSpriteFrame = (startSpriteFrame < 5) ? 0 : 8;
             endSpriteFrame = (endSpriteFrame < 8) ? 3 : 11;
-            getSprite().animate(new long[]{100, 100, 100, 100}, startSpriteFrame, endSpriteFrame, true);
+            getObjectSprite().animate(new long[]{100, 100, 100, 100}, startSpriteFrame, endSpriteFrame, true);
         }
         if (fallSpeed < 0 && getPositionY() < fieldExtremeUpPoint) {
             fallSpeed *= -1;
             startSpriteFrame = (startSpriteFrame < 5) ? 4 : 12;
             endSpriteFrame = (endSpriteFrame < 8) ? 7 : 15;
-            getSprite().animate(new long[]{100, 100, 100, 100}, startSpriteFrame, endSpriteFrame, true);
+            getObjectSprite().animate(new long[]{100, 100, 100, 100}, startSpriteFrame, endSpriteFrame, true);
         }
         setPositionY(getPositionY() + fallSpeed);
         ///Устанавливаем движение по OY
@@ -157,24 +160,38 @@ public class Player extends GameObject {
     }
 
     public void die() {
-        getSprite().animate(new long[]{200, 200, 200, 200, 200}, 16, 20, false);
+        countLife--;
+        if (countLife != 0) return;
+        getObjectSprite().animate(new long[]{200, 200, 200, 200, 200}, 16, 20, false);
         isDead = true;
     }
 
-    public void setIsDead(boolean state){
+    public void setIsDead(boolean state) {
         isDead = state;
     }
 
 
-    public void setFallSpeed(float speed){
+    public void setFallSpeed(float speed) {
         fallSpeed = speed;
     }
 
-    public float getFallSpeed(){ return fallSpeed; }
+    public float getFallSpeed() {
+        return fallSpeed;
+    }
 
     public boolean getIsDead() {
         return isDead;
     }
 
-    public ScoreHelper getScoreHelper() { return scoreHelper; }
+    public ScoreHelper getScoreHelper() {
+        return scoreHelper;
+    }
+
+    public int getCountLife() {
+        return countLife;
+    }
+
+    public void setCountLife(int countLife) {
+        this.countLife = countLife;
+    }
 }

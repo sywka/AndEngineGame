@@ -9,7 +9,6 @@ import org.andengine.engine.Engine;
 import org.andengine.ui.activity.BaseGameActivity;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 public class EnemyFactory {
@@ -20,24 +19,24 @@ public class EnemyFactory {
     private boolean isThereEnemyes = false;     //Остались ли на экрана враги
     public float currentSpeed = 0.6f;
 
-    public EnemyFactory(BaseGameActivity activity, Engine engine, Player player){
+    public EnemyFactory(BaseGameActivity activity, Engine engine, Player player) {
         enemyList = new ArrayList<Enemy>();
         this.player = player;
         for (int i = 0; i < 20; i++)
             enemyList.add(new Enemy(activity, engine, new Vector2(0, 0)));
-        for(Enemy enemy: enemyList)
+        for (Enemy enemy : enemyList)
             enemy.setPlayer(player);
     }
 
-    public void Update(){
-        if (player.getIsDead()){
+    public void Update() {
+        if (player.getIsDead()) {
             UpdateUntilPlayerDead();
             return;
         }
         if (!enemyList.get(enemyList.size() - 1).getIsAlife()) {
             if (currentSpeed < 0.8f)
                 currentSpeed += 0.1f;
-            else{
+            else {
                 if (currentSpeed < 1.0f)
                     currentSpeed += 0.05f;
                 else
@@ -46,14 +45,14 @@ public class EnemyFactory {
 
             GenerateEnemysPositions();
         }
-        for(Enemy enemy: enemyList)
+        for (Enemy enemy : enemyList)
             enemy.onUpdateState(0);
     }
 
-    public void UpdateUntilPlayerDead(){
+    public void UpdateUntilPlayerDead() {
         isThereEnemyes = false;
-        currentSpeed = (Math.abs(currentSpeed) < 1.0f)? 1 : currentSpeed;
-        for(Enemy enemy: enemyList){
+        currentSpeed = 1.5f;
+        for (Enemy enemy : enemyList) {
             if ((enemy.getPositionX() > Utils.getPixelsOfPercentX(120)) ||
                     (enemy.getPositionX() < Utils.getPixelsOfPercentX(-20))) {
                 enemy.setIsAlife(false);
@@ -64,33 +63,35 @@ public class EnemyFactory {
             if (!isThereEnemyes)
                 isThereEnemyes = enemy.getIsAlife();
         }
-        if (isThereEnemyes == false && !player.getSprite().isAnimationRunning()){
+        if (isThereEnemyes == false && !player.getObjectSprite().isAnimationRunning()) {
             player.setPositionX(Utils.getPixelsOfPercentX(50));
             player.setPositionY(Utils.getPixelsOfPercentY(50));
             player.setIsDead(false);
-            player.getSprite().animate(new long[]{100, 100, 100, 100}, 0, 3, true);
+            player.getObjectSprite().animate(new long[]{100, 100, 100, 100}, 0, 3, true);
             player.setFallSpeed(Math.abs(player.getFallSpeed()));
             player.getScoreHelper().resetScore();
+            player.setCountLife(Player.DEFAULT_COUNT_LIFE);
             currentSpeed = 0.6f;
         }
     }
 
-    public void GenerateEnemysPositions(){
+    public void GenerateEnemysPositions() {
         for (int i = 0; i < enemyList.size(); i++) {
             if (enemyList.get(i).getIsAlife())
                 return;
             enemyList.get(i).setPositionY(random.nextInt(10) * Utils.getPixelsOfPercentY(10));
             enemyList.get(i).setIsAlife(true);
-            if (random.nextInt(2) == 1){
+            if (random.nextInt(2) == 1) {
                 enemyList.get(i).setXSpeed(Utils.getPixelsOfPercentX(-currentSpeed));
                 enemyList.get(i).setPositionX(i * Utils.getPixelsOfPercentX(20) + Utils.getPixelsOfPercentX(120));
-            }
-            else{
+            } else {
                 enemyList.get(i).setXSpeed(Utils.getPixelsOfPercentX(currentSpeed));
-                enemyList.get(i).setPositionX(- i * Utils.getPixelsOfPercentX(20) - Utils.getPixelsOfPercentX(20));
+                enemyList.get(i).setPositionX(-i * Utils.getPixelsOfPercentX(20) - Utils.getPixelsOfPercentX(20));
             }
         }
     }
 
-    public ArrayList<Enemy> getEnemyList(){ return enemyList; }
+    public ArrayList<Enemy> getEnemyList() {
+        return enemyList;
+    }
 }

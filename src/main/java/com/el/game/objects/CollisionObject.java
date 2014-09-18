@@ -17,10 +17,10 @@ abstract public class CollisionObject extends GameObject {
     }
 
     @Override
-    abstract protected BitmapTextureAtlas getNewAtlas();
+    abstract protected BitmapTextureAtlas getNewObjectAtlas();
 
     @Override
-    abstract protected TiledTextureRegion getNewRegion();
+    abstract protected TiledTextureRegion getNewObjectRegion(BitmapTextureAtlas objectAtlas);
 
     @Override
     public void onUpdateState(float v) {

@@ -52,12 +52,14 @@ public class EnemyFactory {
 
     public void UpdateUntilPlayerDead(){
         isThereEnemyes = false;
+        currentSpeed = (Math.abs(currentSpeed) < 1.0f)? 1 : currentSpeed;
         for(Enemy enemy: enemyList){
             if ((enemy.getPositionX() > Utils.getPixelsOfPercentX(120)) ||
                     (enemy.getPositionX() < Utils.getPixelsOfPercentX(-20))) {
                 enemy.setIsAlife(false);
                 enemy.getArrowSprite().setVisible(false);
             }
+            enemy.setXSpeed(Utils.getPixelsOfPercentX(currentSpeed) * enemy.getXSpeed() / Math.abs(enemy.getXSpeed()));
             enemy.onUpdateState(0);
             if (!isThereEnemyes)
                 isThereEnemyes = enemy.getIsAlife();

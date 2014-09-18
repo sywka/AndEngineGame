@@ -88,4 +88,6 @@ public class Enemy extends CollisionObject {
     public void setXSpeed(float newXSpeed){
         xSpeed = newXSpeed;
     }
+
+    public float getXSpeed(){ return xSpeed; }
 }

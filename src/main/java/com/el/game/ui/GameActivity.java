@@ -82,7 +82,7 @@ public class GameActivity extends LayoutGameActivity implements SensorEventListe
      */
     @Override
     public void onCreateResources(OnCreateResourcesCallback onCreateResourcesCallback) throws Exception {
-        player = new Player(this, getEngine(), new Vector2(0, Utils.getPixelsOfPercentY(50)));       //Добавляем игрока
+        player = new Player(this, getEngine(), new Vector2(Utils.getPixelsOfPercentX(50), Utils.getPixelsOfPercentY(50)));       //Добавляем игрока
         controlButton.setPlayer(player);
 
         objectList = new ArrayList<GameObject>();           //Инициализируем массив игровых объектов

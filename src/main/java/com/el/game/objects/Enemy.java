@@ -15,7 +15,7 @@ import com.el.game.utils.Vector2;
 
 public class Enemy extends CollisionObject {
 
-    private float xSpeed = -1f;
+    private float xSpeed;
     private AnimatedSprite arrowSprite;
 
     public Enemy(BaseGameActivity activity, Engine engine, Vector2 position) {

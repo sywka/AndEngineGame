@@ -102,8 +102,6 @@ public class Player extends GameObject {
     public void onUpdateState(float v) {
         super.onUpdateState(v);
         if (isDead) {
-            //if (playDeadAnimation()) {
-                scoreHelper.resetScore();
                 return;
             } else scoreHelper.updateScore();
 
@@ -177,4 +175,6 @@ public class Player extends GameObject {
     public boolean getIsDead() {
         return isDead;
     }
+
+    public ScoreHelper getScoreHelper() { return scoreHelper; }
 }

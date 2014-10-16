@@ -41,8 +41,16 @@ abstract public class MovingCollisionObject extends CollisionObject {
 
     @Override
     public void onUpdateState(float v) {
-        if (!getIsAlife())
+        if (!getIsAlife()) {
+            if (getObjectSprite().getCurrentTileIndex() > 3) {  //Если у объекта проигрывается анимация смерти
+                if (!getObjectSprite().isAnimationRunning()) {      //Если объект на сцене, но неанимирован, убираем его за пределы
+                    setPositionX(Utils.getPixelsOfPercentX(-20));
+                    getObjectSprite().animate(new long[]{100, 100, 100, 100}, 0, 3, true);
+                } else
+                    setPositionX(getPositionX() + xSpeed);
+            }
             return;
+        }
         if ((getPositionX() < Utils.getPixelsOfPercentX(-20) && xSpeed < 0) ||
                 getPositionX() > Utils.getPixelsOfPercentX(120) && xSpeed > 0) {  //Проверка вылета за экран при скорости способствующей этому
             setIsAlife(false);

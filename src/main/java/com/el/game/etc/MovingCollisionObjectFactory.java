@@ -1,5 +1,6 @@
 package com.el.game.etc;
 
+import com.el.game.objects.BonusC5;
 import com.el.game.objects.BonusLife;
 import com.el.game.objects.Enemy;
 import com.el.game.objects.MovingCollisionObject;
@@ -18,11 +19,11 @@ public class MovingCollisionObjectFactory {
     private ArrayList<MovingCollisionObject> movingObjectsList;
     //0 - 19 enemy
     //20 bonusLife
+    //21 bonusC5
     private Random random = new Random();
     private Player player;
     private boolean isThereObjects = false;     //Остались ли на экрана враги
     public float currentSpeed = 0.6f;
-    //private BonusLife bonusLife;
 
     public MovingCollisionObjectFactory(BaseGameActivity activity, Engine engine, Player player) {
         movingObjectsList = new ArrayList<MovingCollisionObject>();
@@ -30,10 +31,9 @@ public class MovingCollisionObjectFactory {
         for (int i = 0; i < 20; i++)
             movingObjectsList.add(new Enemy(activity, engine, new Vector2(0, 0)));
         movingObjectsList.add(new BonusLife(activity, engine, new Vector2(0, 0)));
+        movingObjectsList.add(new BonusC5(activity, engine, new Vector2(0, 0), movingObjectsList));
         for (MovingCollisionObject movingObject : movingObjectsList)
             movingObject.setPlayer(player);
-        //bonusLife = new BonusLife();
-        // bonusLife.setPlayer(player);
     }
 
 
@@ -42,7 +42,12 @@ public class MovingCollisionObjectFactory {
             UpdateUntilPlayerDead();
             return;
         }
-        if (!movingObjectsList.get(movingObjectsList.size() - 2).getIsAlife()) {
+        if (!movingObjectsList.get(movingObjectsList.size() - 3).getIsAlife() &&     //Обновляем летящие объекты только в том случае, если
+            movingObjectsList.get(movingObjectsList.size() - 3).getObjectSprite().getCurrentTileIndex() < 4 &&//Мертвы 3 последних врага. Это спасёт от неоправданного
+                !movingObjectsList.get(movingObjectsList.size() - 4).getIsAlife() &&  //Увеличения скорости
+                    movingObjectsList.get(movingObjectsList.size() - 4).getObjectSprite().getCurrentTileIndex() < 4 &&//Также проверяем, не проигрывается ли у них
+                        !movingObjectsList.get(movingObjectsList.size() - 5).getIsAlife() &&
+                            movingObjectsList.get(movingObjectsList.size() - 5).getObjectSprite().getCurrentTileIndex() < 4){
             if (currentSpeed < 0.8f)
                 currentSpeed += 0.1f;
             else {
@@ -85,9 +90,10 @@ public class MovingCollisionObjectFactory {
     }
 
     public void generateObjectsPositions() {
-        for (int i = 0; i < movingObjectsList.size() - 1; i++) {
-            if (movingObjectsList.get(i).getIsAlife())
-                return;
+        for (int i = 0; i < movingObjectsList.size() - 2; i++) {
+            if (movingObjectsList.get(i).getIsAlife() || //Если враг жив, или проигрывает анимацию смерти, то не трогаем его
+                    (!movingObjectsList.get(i).getIsAlife() && movingObjectsList.get(movingObjectsList.size() - 4).getObjectSprite().getCurrentTileIndex() > 3))
+                continue;
             movingObjectsList.get(i).setPositionY(random.nextInt(10) * Utils.getPixelsOfPercentY(10));
             movingObjectsList.get(i).setIsAlife(true);
             if (random.nextInt(2) == 1) {
@@ -99,15 +105,26 @@ public class MovingCollisionObjectFactory {
             }
         }
         //if (random.nextInt(5) == 3) {
-        if (random.nextInt(2) == 1) {
-            movingObjectsList.get(20).setXSpeed(Utils.getPixelsOfPercentX(currentSpeed));
-            movingObjectsList.get(20).setPositionX(-random.nextInt(20) * Utils.getPixelsOfPercentX(20) - Utils.getPixelsOfPercentX(20));
-        } else {
-            movingObjectsList.get(20).setXSpeed(Utils.getPixelsOfPercentX(-currentSpeed));
-            movingObjectsList.get(20).setPositionX(random.nextInt(20) * Utils.getPixelsOfPercentX(20) + Utils.getPixelsOfPercentX(120));
+        if (!movingObjectsList.get(20).getIsAlife()) {      //Только если бонусный предмет мёртв, можем обновлять его
+            if (random.nextInt(2) == 1) {
+                movingObjectsList.get(20).setXSpeed(Utils.getPixelsOfPercentX(currentSpeed));
+                movingObjectsList.get(20).setPositionX(-random.nextInt(20) * Utils.getPixelsOfPercentX(20) - Utils.getPixelsOfPercentX(20));
+
+                movingObjectsList.get(21).setXSpeed(Utils.getPixelsOfPercentX(currentSpeed));
+                movingObjectsList.get(21).setPositionX(-random.nextInt(20) * Utils.getPixelsOfPercentX(20) - Utils.getPixelsOfPercentX(20));
+            } else {
+                movingObjectsList.get(20).setXSpeed(Utils.getPixelsOfPercentX(-currentSpeed));
+                movingObjectsList.get(20).setPositionX(random.nextInt(20) * Utils.getPixelsOfPercentX(20) + Utils.getPixelsOfPercentX(120));
+
+                movingObjectsList.get(21).setXSpeed(Utils.getPixelsOfPercentX(-currentSpeed));
+                movingObjectsList.get(21).setPositionX(random.nextInt(20) * Utils.getPixelsOfPercentX(20) + Utils.getPixelsOfPercentX(120));
+            }
+            movingObjectsList.get(20).setPositionY(random.nextInt(10) * Utils.getPixelsOfPercentY(10));
+            movingObjectsList.get(20).setIsAlife(true);
+
+            movingObjectsList.get(21).setPositionY(random.nextInt(11) * Utils.getPixelsOfPercentY(10));
+            movingObjectsList.get(21).setIsAlife(true);
         }
-        movingObjectsList.get(20).setPositionY(random.nextInt(10) * Utils.getPixelsOfPercentY(10));
-        movingObjectsList.get(20).setIsAlife(true);
         //}
     }
 

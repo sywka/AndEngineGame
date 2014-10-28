@@ -21,6 +21,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.util.Log;
 import android.view.MotionEvent;
 
 import com.el.game.R;
@@ -41,6 +42,8 @@ public class GameActivity extends LayoutGameActivity implements SensorEventListe
     private SensorManager sensorManager;                //Менеджер сенсора
     private final int accelerometerYCencity = 2;        //Чувствительность акселлерометра по OY
     private float zRotation = 0;
+
+    private int startLandscapeOrientation;
 
     private ControlButton controlButton;
     private MenuButton menuButton;
@@ -69,6 +72,7 @@ public class GameActivity extends LayoutGameActivity implements SensorEventListe
     @Override
     public EngineOptions onCreateEngineOptions() {
         Utils.calculateResolution(this);
+        startLandscapeOrientation = 1;
         fingersId = new ArrayList<Integer>();
         Camera camera = new Camera(0, 0, Utils.getResolutionWidth(), Utils.getResolutionHeight());
         EngineOptions options = new EngineOptions(true, ScreenOrientation.LANDSCAPE_SENSOR,
@@ -145,6 +149,7 @@ public class GameActivity extends LayoutGameActivity implements SensorEventListe
     public void onSensorChanged(SensorEvent sensorEvent) {
         if (controlButton.getControl() == ControlButton.CONRTOL_TOUCH)
             return;
+
         switch (sensorEvent.sensor.getType()) {
             case Sensor.TYPE_ACCELEROMETER:
                 /**
@@ -155,10 +160,18 @@ public class GameActivity extends LayoutGameActivity implements SensorEventListe
                 if (sensorEvent.values[1] < accelerometerYCencity - zRotation && sensorEvent.values[1] > -accelerometerYCencity + zRotation)
                     player.setMove(Player.IDLE);                //Если наклон не входит в промежуток, то не двигаем персонажа
                 else {
-                    if (sensorEvent.values[1] > accelerometerYCencity - zRotation)
-                        player.setMove(Player.MOVE_RIGHT);      //Двигаем в зависимости от наклона телефона
-                    if (sensorEvent.values[1] < -accelerometerYCencity + zRotation)
-                        player.setMove(Player.MOVE_LEFT);
+                    if(getWindowManager().getDefaultDisplay().getRotation() == startLandscapeOrientation) {     //При стандартном повороте экрана
+                        if (sensorEvent.values[1] > accelerometerYCencity - zRotation)
+                            player.setMove(Player.MOVE_RIGHT);      //Двигаем в зависимости от наклона телефона
+                        if (sensorEvent.values[1] < -accelerometerYCencity + zRotation)
+                            player.setMove(Player.MOVE_LEFT);
+                    }
+                    else{
+                        if (sensorEvent.values[1] > accelerometerYCencity - zRotation)
+                            player.setMove(Player.MOVE_LEFT);      //Двигаем в зависимости от наклона телефона
+                        if (sensorEvent.values[1] < -accelerometerYCencity + zRotation)
+                            player.setMove(Player.MOVE_RIGHT);
+                    }
                 }
                 break;
         }

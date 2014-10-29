@@ -19,11 +19,13 @@ import java.util.ArrayList;
 public class BonusPortal  extends MovingCollisionObject {
 
     private MovingCollisionObject anotherPortal;
+    private int animationPosition;
 
     public BonusPortal(BaseGameActivity activity, Engine engine, Vector2 position, int animationPosition) {
         super(activity, engine, position, new Vector2(Utils.getPixelsOfPercentX(6), Utils.getPixelsOfPercentY(11)));
         getObjectSprite().animate(new long[]{100, 100, 100, 100}, animationPosition, animationPosition + 3, true);
         setHitBox(new Vector2(Utils.getPixelsOfPercentX(4), Utils.getPixelsOfPercentY(7)), new Vector2(Utils.getPixelsOfPercentX(1), Utils.getPixelsOfPercentY(2)));
+        this.animationPosition = animationPosition;
     }
 
     public void setAnotherPortal(MovingCollisionObject anotherPortal){
@@ -32,12 +34,12 @@ public class BonusPortal  extends MovingCollisionObject {
 
     @Override
     protected BitmapTextureAtlas getNewObjectAtlas() {
-        return new BitmapTextureAtlas(getActivity().getTextureManager(), 512, 256, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
+        return new BitmapTextureAtlas(getActivity().getTextureManager(), 512, 512, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
     }
 
     @Override
     protected TiledTextureRegion getNewObjectRegion(BitmapTextureAtlas objectAtlas) {
-        return BitmapTextureAtlasTextureRegionFactory.createTiledFromResource(objectAtlas, getActivity(), R.drawable.portals, 0, 0, 4, 2);
+        return BitmapTextureAtlasTextureRegionFactory.createTiledFromResource(objectAtlas, getActivity(), R.drawable.portals, 0, 0, 4, 4);
     }
 
     @Override
@@ -57,13 +59,9 @@ public class BonusPortal  extends MovingCollisionObject {
         player.setPosition(anotherPortal.getPositionX(), anotherPortal.getPositionY());
         this.setIsAlife(false);
         anotherPortal.setIsAlife(false);
-        if (this.getXSpeed() > 0) {
-            this.setPositionX(Utils.getPixelsOfPercentX(120));
-            anotherPortal.setPositionX(Utils.getPixelsOfPercentX(-120));
-        }
-        else {
-            this.setPositionX(Utils.getPixelsOfPercentX(-120));
-            anotherPortal.setPositionX(Utils.getPixelsOfPercentX(120));
-        }
+        this.setXSpeed(0);
+        anotherPortal.setXSpeed(0);
+        getObjectSprite().animate(new long[]{100, 100, 100, 100}, animationPosition + 8, animationPosition + 11, false);
+        anotherPortal.getObjectSprite().animate(new long[]{100, 100, 100, 100}, animationPosition + 8, animationPosition + 11, false);
     }
 }

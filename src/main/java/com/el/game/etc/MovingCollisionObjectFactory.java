@@ -52,8 +52,16 @@ public class MovingCollisionObjectFactory {
     public void Update() {
         if (player.getIsDead()) {
             UpdateUntilPlayerDead();
-            if (!movingObjectsList.get(23).getIsAlife())
-                movingObjectsList.get(23).getObjectSprite().setVisible(false);
+            ///Костыли
+            {
+                if (!movingObjectsList.get(23).getIsAlife())
+                    movingObjectsList.get(23).getObjectSprite().setVisible(false);      //Фикс Вылета мёртвого портала на экран
+                for(int i = 0; i < 20; i++)     //Фикс Вылета на экран живого врага, но проигрывающего анимацию смерти.
+                    if (movingObjectsList.get(i).getObjectSprite().getCurrentTileIndex() > 3 &&
+                            movingObjectsList.get(i).getIsAlife())
+                        movingObjectsList.get(i).getObjectSprite().animate(new long[]{100, 100, 100, 100}, 0, 3, true);
+            }
+            ///Костыли
             return;
         }
         if (!movingObjectsList.get(movingObjectsList.size() - 5).getIsAlife() &&     //Обновляем летящие объекты только в том случае, если
@@ -155,6 +163,9 @@ public class MovingCollisionObjectFactory {
                 movingObjectsList.get(23).setXSpeed(Utils.getPixelsOfPercentX(-currentSpeed));
 
                 movingObjectsList.get(23).getObjectSprite().setVisible(true);
+
+                movingObjectsList.get(22).getObjectSprite().animate(new long[]{100, 100, 100, 100}, 0, 3, true);
+                movingObjectsList.get(23).getObjectSprite().animate(new long[]{100, 100, 100, 100}, 4, 7, true);
             }
         }
     }

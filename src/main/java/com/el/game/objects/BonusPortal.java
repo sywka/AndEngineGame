@@ -62,6 +62,12 @@ public class BonusPortal  extends MovingCollisionObject {
         this.setXSpeed(0);
         anotherPortal.setXSpeed(0);
         getObjectSprite().animate(new long[]{100, 100, 100, 100}, animationPosition + 8, animationPosition + 11, false);
-        anotherPortal.getObjectSprite().animate(new long[]{100, 100, 100, 100}, animationPosition + 8, animationPosition + 11, false);
+        anotherPortal.getObjectSprite().animate(new long[]{100, 100, 100, 100},
+                ((BonusPortal)anotherPortal).getAnimationPosition() + 8, ((BonusPortal)anotherPortal).getAnimationPosition() + 11, false);
     }
+
+    public int getAnimationPosition(){
+        return animationPosition;
+    }
+
 }

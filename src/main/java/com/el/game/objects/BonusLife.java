@@ -41,6 +41,8 @@ public class BonusLife extends MovingCollisionObject {
 
     @Override
     protected void onCollision(Player player) {
+        if (player.getIsDead())
+            return;
         if (player.getCountLife() == Player.DEFAULT_COUNT_LIFE)
             player.addLife();
         this.setPositionX(Utils.getPixelsOfPercentX(120));

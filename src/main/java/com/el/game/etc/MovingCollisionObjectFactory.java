@@ -128,10 +128,6 @@ public class MovingCollisionObjectFactory {
                 generateBoxPositionsForEnemy();
                 break;
         }
-        //generateRandomPositionsForEnemy();
-        //generateStairPositionsForEnemy();
-        //generateTrianglePositionsForEnemy();
-        //generateBoxPositionsForEnemy
         //if (random.nextInt(5) == 3) {
         if (!movingObjectsList.get(20).getIsAlife()) {      //Только если бонусный предмет мёртв, можем обновлять его
             if (random.nextInt(2) == 1) {
@@ -245,6 +241,9 @@ public class MovingCollisionObjectFactory {
             if (i == 18) {
                 movingObjectsList.get(i).setPositionY(y18);
                 movingObjectsList.get(i).setPositionX(x18);
+            }
+            if (i == 4 || i == 13) {
+                movingObjectsList.get(i).setPosition(movingObjectsList.get(0).getPositionX(), movingObjectsList.get(0).getPositionY());
             }
             movingObjectsList.get(i).setIsAlife(true);
             movingObjectsList.get(i).getObjectSprite().animate(new long[]{100, 100, 100, 100}, 0, 3, true);

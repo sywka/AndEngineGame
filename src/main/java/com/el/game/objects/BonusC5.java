@@ -49,6 +49,8 @@ public class BonusC5  extends MovingCollisionObject {
 
     @Override
     protected void onCollision(Player player) {
+        if (player.getIsDead())
+            return;
         for (int i = 0; i < 20; i++){
             if (!movingObjectsList.get(i).getIsAlife())
                 continue;

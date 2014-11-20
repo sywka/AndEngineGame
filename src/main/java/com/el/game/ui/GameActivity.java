@@ -17,6 +17,8 @@ import org.andengine.ui.activity.LayoutGameActivity;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -160,13 +162,12 @@ public class GameActivity extends LayoutGameActivity implements SensorEventListe
                 if (sensorEvent.values[1] < accelerometerYCencity - zRotation && sensorEvent.values[1] > -accelerometerYCencity + zRotation)
                     player.setMove(Player.IDLE);                //Если наклон не входит в промежуток, то не двигаем персонажа
                 else {
-                    if(getWindowManager().getDefaultDisplay().getRotation() == startLandscapeOrientation) {     //При стандартном повороте экрана
+                    if (getWindowManager().getDefaultDisplay().getRotation() == startLandscapeOrientation) {     //При стандартном повороте экрана
                         if (sensorEvent.values[1] > accelerometerYCencity - zRotation)
                             player.setMove(Player.MOVE_RIGHT);      //Двигаем в зависимости от наклона телефона
                         if (sensorEvent.values[1] < -accelerometerYCencity + zRotation)
                             player.setMove(Player.MOVE_LEFT);
-                    }
-                    else{
+                    } else {
                         if (sensorEvent.values[1] > accelerometerYCencity - zRotation)
                             player.setMove(Player.MOVE_LEFT);      //Двигаем в зависимости от наклона телефона
                         if (sensorEvent.values[1] < -accelerometerYCencity + zRotation)
@@ -240,10 +241,28 @@ public class GameActivity extends LayoutGameActivity implements SensorEventListe
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        if (backgroundMusic != null)
-            backgroundMusic.resume();
+    protected synchronized void onResume() {
+        super.onResume();
+        if (getEngine() != null && getEngine().getScene() != null)
+            showResumeDialog();
+    }
+
+    private void showResumeDialog() {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        dialogBuilder.setTitle(R.string.dialog_on_pause_title);
+
+        getEngine().getScene().setIgnoreUpdate(true);
+        dialogBuilder
+                .setPositiveButton(R.string.dialog_yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (backgroundMusic != null)
+                            backgroundMusic.resume();
+                        getEngine().getScene().setIgnoreUpdate(false);
+                    }
+                });
+        AlertDialog dialog = dialogBuilder.create();
+        dialog.show();
     }
 
     public Music getBackgroundMusic() {

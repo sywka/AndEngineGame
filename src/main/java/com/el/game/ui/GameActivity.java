@@ -191,13 +191,13 @@ public class GameActivity extends LayoutGameActivity implements SensorEventListe
                  * Помимо наклонов по ОY cледует учитывать наклоны по ОZ. Необходимый коэфициент наклона рассчитывается
                  * по формуле (1 - OZ / 10 ) / чувствительность экселероментра по ОY
                  */
-                zRotation = (1 - sensorEvent.values[0] / 10) / accelerometerYCencity;   //Устанавливаем погрешность OZ
+                zRotation = (1 - Math.abs(sensorEvent.values[0]) / 10) / accelerometerYCencity;   //Устанавливаем погрешность OZ
 
                     if (sensorEvent.values[1] < accelerometerYCencity - zRotation && sensorEvent.values[1] > -accelerometerYCencity + zRotation)
                         player.setMove(Player.IDLE);                //Если наклон не входит в промежуток, то не двигаем персонажа
                     else {
                         if (isAdaptiveAccelerometr) {
-                            if (Math.abs(sensorEvent.values[1]) > accelerometerYCencity - zRotation){
+                            if (Math.abs(sensorEvent.values[1]) > accelerometerYCencity - zRotation) {
                                 if (Math.abs(sensorEvent.values[1]) > accelerometerMaxYCencity - zRotation)
                                     player.setNewStep(1);
                                 else

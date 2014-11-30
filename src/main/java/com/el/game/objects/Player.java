@@ -40,9 +40,14 @@ public class Player extends GameObject {
     private float fallSpeed;
     private int countLife = DEFAULT_COUNT_LIFE;
 
+    private float fireTime = 0f;
+
     private boolean isDead = false;
 
     private AnimatedSprite lifeAuraSpite;
+    private AnimatedSprite redFireSprite;
+    private AnimatedSprite blueFireSprite;
+
     private ScoreHelper scoreHelper;
 
     /**
@@ -96,6 +101,23 @@ public class Player extends GameObject {
         lifeAuraSpite.setVisible(false);
 
         getObjectSprite().animate(new long[]{100, 100, 100, 100}, 0, 3, true);
+
+        BitmapTextureAtlas redAtlas = new BitmapTextureAtlas(getActivity().getTextureManager(), 512, 512, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
+        TiledTextureRegion redRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromResource(redAtlas, getActivity(), R.drawable.red_fire, 0, 0, 1, 4);
+        redFireSprite = new AnimatedSprite(0, Utils.getPixelsOfPercentY(0),
+                Utils.getPixelsOfPercentX(100), Utils.getPixelsOfPercentY(10), redRegion, getEngine().getVertexBufferObjectManager());
+        redAtlas.load();
+        scene.attachChild(redFireSprite);
+
+        BitmapTextureAtlas blueAtlas = new BitmapTextureAtlas(getActivity().getTextureManager(), 512, 512, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
+        TiledTextureRegion blueRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromResource(blueAtlas, getActivity(), R.drawable.blue_fire, 0, 0, 1, 4);
+        blueFireSprite = new AnimatedSprite(0, Utils.getPixelsOfPercentY(90),
+                Utils.getPixelsOfPercentX(100), Utils.getPixelsOfPercentY(10), blueRegion, getEngine().getVertexBufferObjectManager());
+        blueAtlas.load();
+        scene.attachChild(blueFireSprite);
+        redFireSprite.setVisible(false);
+        blueFireSprite.setVisible(false);
+
     }
 
     /**
@@ -141,17 +163,32 @@ public class Player extends GameObject {
         }
 
         ///Устанавливаем движение по OY
-        if (fallSpeed > 0 && getPositionY() > fieldExtremeDownPoint) {
-            fallSpeed *= -1;
-            startSpriteFrame = (startSpriteFrame < 5) ? 0 : 8;
-            endSpriteFrame = (endSpriteFrame < 8) ? 3 : 11;
-            getObjectSprite().animate(new long[]{100, 100, 100, 100}, startSpriteFrame, endSpriteFrame, true);
-        }
-        if (fallSpeed < 0 && getPositionY() < fieldExtremeUpPoint) {
-            fallSpeed *= -1;
-            startSpriteFrame = (startSpriteFrame < 5) ? 4 : 12;
-            endSpriteFrame = (endSpriteFrame < 8) ? 7 : 15;
-            getObjectSprite().animate(new long[]{100, 100, 100, 100}, startSpriteFrame, endSpriteFrame, true);
+        if (fireTime <= 0) {
+            if (fallSpeed > 0 && getPositionY() > fieldExtremeDownPoint) {
+                fallSpeed *= -1;
+                startSpriteFrame = (startSpriteFrame < 5) ? 0 : 8;
+                endSpriteFrame = (endSpriteFrame < 8) ? 3 : 11;
+                getObjectSprite().animate(new long[]{100, 100, 100, 100}, startSpriteFrame, endSpriteFrame, true);
+            }
+            if (fallSpeed < 0 && getPositionY() < fieldExtremeUpPoint) {
+                fallSpeed *= -1;
+                startSpriteFrame = (startSpriteFrame < 5) ? 4 : 12;
+                endSpriteFrame = (endSpriteFrame < 8) ? 7 : 15;
+                getObjectSprite().animate(new long[]{100, 100, 100, 100}, startSpriteFrame, endSpriteFrame, true);
+            }
+        } else {
+            fireTime -= 0.015f;
+            if (fireTime <= 0) {
+                stopFire();
+            }
+            if (fallSpeed > 0 && getPositionY() > fieldExtremeDownPoint) {
+                setPositionY(fieldExtremeUpPoint);
+                return;
+            }
+            if (fallSpeed < 0 && getPositionY() < fieldExtremeUpPoint) {
+                setPositionY(fieldExtremeDownPoint);
+                return;
+            }
         }
         setPositionY(getPositionY() + fallSpeed);
         ///Устанавливаем движение по OY
@@ -231,13 +268,26 @@ public class Player extends GameObject {
         this.countLife++;
     }
 
-    public void setStandartStep(){
+    public void setStandartStep() {
         step = Utils.getPixelsOfPercentX(1);
     }
 
-    public void setNewStep(float newStep){
+    public void setNewStep(float newStep) {
         step = Utils.getPixelsOfPercentX(newStep);
     }
 
+    public void startFire() {
+        redFireSprite.setVisible(true);
+        blueFireSprite.setVisible(true);
+        redFireSprite.animate(new long[]{100, 100, 100, 100}, 0, 3, true);
+        blueFireSprite.animate(new long[]{100, 100, 100, 100}, 0, 3, true);
+        fireTime = 5.0f;
+    }
 
+    public void stopFire() {
+        redFireSprite.setVisible(false);
+        blueFireSprite.setVisible(false);
+        redFireSprite.stopAnimation();
+        redFireSprite.stopAnimation();
+    }
 }

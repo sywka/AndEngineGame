@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.LinearLayout;
 
 import com.el.game.R;
 
@@ -19,6 +20,7 @@ public class MainMenuActivity extends Activity implements OnButtonClick {
     public static final int RESULT_EXIT = 2;
 
     private int modification;
+    private LinearLayout mainMenulayout;
     private TextButton startResumeButton;
     private TextButton settingsButton;
     private TextButton exitButton;
@@ -29,42 +31,39 @@ public class MainMenuActivity extends Activity implements OnButtonClick {
         checkMenuModification();
         setContentView(R.layout.activity_main_menu);
 
+        mainMenulayout = (LinearLayout) findViewById(R.id.main_menu_layout);
+
         if (modification == START_MENU) {
-            findViewById(R.id.main_menu_layout).setBackgroundColor(getResources().getColor(R.color.main_menu_background));
+            mainMenulayout.setBackgroundColor(getResources().getColor(R.color.main_menu_background));
             startResumeButton = new TextButton(this, R.id.button_start_resume, R.string.button_menu_start, this);
         } else {
-            findViewById(R.id.main_menu_layout).setBackgroundColor(getResources().getColor(R.color.main_menu_background_with_alpha));
+            mainMenulayout.setBackgroundColor(getResources().getColor(R.color.main_menu_background_with_alpha));
             startResumeButton = new TextButton(this, R.id.button_start_resume, R.string.button_menu_resume, this);
         }
         settingsButton = new TextButton(this, R.id.button_settings, R.string.button_menu_settings, this);
         exitButton = new TextButton(this, R.id.button_exit, R.string.button_menu_exit, this);
 
         initPosition();
-        startOpenAnimation();
+        showAnimation(R.anim.main_menu_open_background, R.anim.main_menu_open, null);
     }
 
     @Override
     public void onClick(Button button, View view) {
         if (button == startResumeButton) {
-            finish();
-            overridePendingTransition(0, 0);
-            if (modification == START_MENU)
-                startActivity(new Intent(this, GameActivity.class));
+            showCloseAnimation();
 
         } else if (button == settingsButton) {
 
         } else if (button == exitButton) {
             setResult(RESULT_EXIT);
-            finish();
-            overridePendingTransition(0, 0);
+            showCloseAnimation();
         }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        finish();
-        overridePendingTransition(0, 0);
+        showCloseAnimation();
     }
 
     /**
@@ -82,15 +81,16 @@ public class MainMenuActivity extends Activity implements OnButtonClick {
     /**
      * Показываем анимацию открытия
      */
-    private void startOpenAnimation() {
-        final Animation backgroundAnimation = AnimationUtils.loadAnimation(this, R.anim.main_menu_open_background);
-        findViewById(R.id.main_menu_layout).post(new Runnable() {
+    private void showAnimation(int animIdBackground, int animIdMenu, Animation.AnimationListener listener) {
+        final Animation backgroundAnimation = AnimationUtils.loadAnimation(this, animIdBackground);
+        backgroundAnimation.setAnimationListener(listener);
+        mainMenulayout.post(new Runnable() {
             @Override
             public void run() {
-                findViewById(R.id.main_menu_layout).startAnimation(backgroundAnimation);
+                mainMenulayout.startAnimation(backgroundAnimation);
             }
         });
-        final Animation startResumeButtonAnimation = AnimationUtils.loadAnimation(this, R.anim.main_menu_open);
+        final Animation startResumeButtonAnimation = AnimationUtils.loadAnimation(this, animIdMenu);
         startResumeButton.getButtonLayout().post(new Runnable() {
             @Override
             public void run() {
@@ -98,7 +98,7 @@ public class MainMenuActivity extends Activity implements OnButtonClick {
             }
         });
 
-        final Animation settingsButtonAnimation = AnimationUtils.loadAnimation(this, R.anim.main_menu_open);
+        final Animation settingsButtonAnimation = AnimationUtils.loadAnimation(this, animIdMenu);
         settingsButtonAnimation.setStartOffset(100);
         settingsButton.getButtonLayout().post(new Runnable() {
             @Override
@@ -107,12 +107,35 @@ public class MainMenuActivity extends Activity implements OnButtonClick {
             }
         });
 
-        final Animation exitButtonAnimation = AnimationUtils.loadAnimation(this, R.anim.main_menu_open);
+        final Animation exitButtonAnimation = AnimationUtils.loadAnimation(this, animIdMenu);
         exitButtonAnimation.setStartOffset(200);
         exitButton.getButtonLayout().post(new Runnable() {
             @Override
             public void run() {
                 exitButton.getButtonLayout().startAnimation(exitButtonAnimation);
+            }
+        });
+    }
+
+    private void showCloseAnimation() {
+        showAnimation(R.anim.main_menu_close_background, R.anim.main_menu_close, new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                finish();
+                overridePendingTransition(0, 0);
+
+                if (modification == START_MENU)
+                    startActivity(new Intent(MainMenuActivity.this, GameActivity.class));
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
             }
         });
     }

@@ -132,8 +132,7 @@ public class MovingCollisionObjectFactory {
     }
 
     public void generateObjectsPositions() {
-        //int i = random.nextInt(4);
-        int i = 3;
+        int i = random.nextInt(4);
         switch (i) {
             case 0:
                 generateRandomPositionsForEnemy();

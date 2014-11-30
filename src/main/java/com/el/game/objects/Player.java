@@ -230,4 +230,14 @@ public class Player extends GameObject {
         lifeAuraSpite.animate(100, true);
         this.countLife++;
     }
+
+    public void setStandartStep(){
+        step = Utils.getPixelsOfPercentX(1);
+    }
+
+    public void setNewStep(float newStep){
+        step = Utils.getPixelsOfPercentX(newStep);
+    }
+
+
 }

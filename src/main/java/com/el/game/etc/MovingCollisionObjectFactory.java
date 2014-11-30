@@ -114,6 +114,7 @@ public class MovingCollisionObjectFactory {
 
     public void generateObjectsPositions() {
         int i = random.nextInt(4);
+        //i = 3;
         switch (i) {
             case 0:
                 generateRandomPositionsForEnemy();
@@ -243,7 +244,7 @@ public class MovingCollisionObjectFactory {
                 movingObjectsList.get(i).setPositionX(x18);
             }
             if (i == 4 || i == 13) {
-                movingObjectsList.get(i).setPosition(movingObjectsList.get(0).getPositionX(), movingObjectsList.get(0).getPositionY());
+                movingObjectsList.get(i).setPositionX(startPosition * 100.0f * -1.0f);
             }
             movingObjectsList.get(i).setIsAlife(true);
             movingObjectsList.get(i).getObjectSprite().animate(new long[]{100, 100, 100, 100}, 0, 3, true);
@@ -268,6 +269,8 @@ public class MovingCollisionObjectFactory {
             movingObjectsList.get(i).setPositionX(i * Utils.getPixelsOfPercentX(20) * orientation + Utils.getPixelsOfPercentX(startPosition) - Utils.getPixelsOfPercentX(i % 3 * 10) * orientation);
             movingObjectsList.get(i).setIsAlife(true);
             movingObjectsList.get(i).getObjectSprite().animate(new long[]{100, 100, 100, 100}, 0, 3, true);
+            if (i == 19)
+                movingObjectsList.get(i).setPositionY(Utils.getPixelsOfPercentY(80));
         }
     }
 

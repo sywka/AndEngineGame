@@ -266,7 +266,7 @@ public class MovingCollisionObjectFactory {
                 movingObjectsList.get(i).setIsAlife(false);
             }
             if (i == 4 || i == 13) {
-                movingObjectsList.get(i).setPositionX(startPosition * 100.0f * -1.0f);
+                movingObjectsList.get(i).setPositionX(startPosition * Utils.getPixelsOfPercentX(-100.0f));
                 movingObjectsList.get(i).setIsAlife(false);
                 continue;
             }

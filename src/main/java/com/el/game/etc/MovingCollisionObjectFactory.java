@@ -68,12 +68,14 @@ public class MovingCollisionObjectFactory {
             ///Костыли
             return;
         }
-        if (!movingObjectsList.get(19).getIsAlife() &&     //Обновляем летящие объекты только в том случае, если
+
+        /*if (!movingObjectsList.get(19).getIsAlife() &&     //Обновляем летящие объекты только в том случае, если
             movingObjectsList.get(19).getObjectSprite().getCurrentTileIndex() < 4 &&//Мертвы 3 последних врага. Это спасёт от неоправданного
                 !movingObjectsList.get(18).getIsAlife() &&  //Увеличения скорости
                     movingObjectsList.get(18).getObjectSprite().getCurrentTileIndex() < 4 &&//Также проверяем, не проигрывается ли у них
                         !movingObjectsList.get(17).getIsAlife() &&
-                            movingObjectsList.get(17).getObjectSprite().getCurrentTileIndex() < 4){
+                            movingObjectsList.get(17).getObjectSprite().getCurrentTileIndex() < 4){*/
+        if (!isThereAliveEnemys()){
             if (currentSpeed < 0.8f)
                 currentSpeed += 0.1f;
             else {
@@ -86,6 +88,19 @@ public class MovingCollisionObjectFactory {
         }
         for (MovingCollisionObject movingObject : movingObjectsList)
             movingObject.onUpdateState(0);
+    }
+
+    /**
+     * Проверяет, все ли враги живые
+     * @return
+     */
+    public boolean isThereAliveEnemys(){
+        for (int i = 0; i < 20; i++)
+            if (movingObjectsList.get(i).getIsAlife() ||
+                (movingObjectsList.get(i).getObjectSprite().getCurrentTileIndex() >= 4 &&
+                    movingObjectsList.get(i).getObjectSprite().isAnimationRunning()))
+                return true;
+        return false;
     }
 
     public void UpdateUntilPlayerDead() {
@@ -117,8 +132,8 @@ public class MovingCollisionObjectFactory {
     }
 
     public void generateObjectsPositions() {
-        int i = random.nextInt(4);
-        //i = 3;
+        //int i = random.nextInt(4);
+        int i = 3;
         switch (i) {
             case 0:
                 generateRandomPositionsForEnemy();
@@ -225,6 +240,7 @@ public class MovingCollisionObjectFactory {
      */
     public void generateBoxPositionsForEnemy(){
         int orientation = random.nextInt(2), startPosition = 120;
+        orientation = 0;
         float x18 = 0, y18 = 0;
         if (orientation == 0) {
             orientation = -1;
@@ -247,9 +263,12 @@ public class MovingCollisionObjectFactory {
             if (i == 18) {
                 movingObjectsList.get(i).setPositionY(y18);
                 movingObjectsList.get(i).setPositionX(x18);
+                movingObjectsList.get(i).setIsAlife(false);
             }
             if (i == 4 || i == 13) {
                 movingObjectsList.get(i).setPositionX(startPosition * 100.0f * -1.0f);
+                movingObjectsList.get(i).setIsAlife(false);
+                continue;
             }
             movingObjectsList.get(i).setIsAlife(true);
             movingObjectsList.get(i).getObjectSprite().animate(new long[]{100, 100, 100, 100}, 0, 3, true);
@@ -304,6 +323,4 @@ public class MovingCollisionObjectFactory {
     public ArrayList<MovingCollisionObject> getMovingObjectsList() {
         return movingObjectsList;
     }
-
-    //public BonusLife getBonusLife(){ return bonusLife; }
 }

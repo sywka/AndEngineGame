@@ -1,40 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/game_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <RelativeLayout
-        android:id="@+id/header"
+        android:id="@+id/game_header"
         android:layout_width="match_parent"
         android:layout_height="@dimen/header_menu_height"
         android:layout_alignParentTop="true"
         android:background="#FC9">
 
-        <FrameLayout
+        <include
             android:id="@+id/button_menu"
-            android:layout_width="wrap_content"
+            android:layout_width="@dimen/button_width"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true">
+            android:layout_alignParentLeft="true"
+            layout="@layout/button" />
 
-            <include layout="@layout/button" />
-
-        </FrameLayout>
-
-        <FrameLayout
+        <include
             android:id="@+id/button_control"
-            android:layout_width="wrap_content"
+            android:layout_width="@dimen/button_width"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true">
-
-            <include layout="@layout/button" />
-
-        </FrameLayout>
+            android:layout_alignParentRight="true"
+            layout="@layout/button" />
 
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/footer"
+        android:id="@+id/game_footer"
         android:layout_width="match_parent"
         android:layout_height="@dimen/footer_menu_height"
         android:layout_alignParentBottom="true"
@@ -83,7 +78,7 @@
                 android:paddingLeft="5dp"
                 android:textSize="@dimen/score_text_size"
                 android:gravity="center_vertical"
-                android:text="@string/high_score_text"/>
+                android:text="@string/high_score_text" />
 
             <TextView
                 android:id="@+id/high_score"
@@ -103,8 +98,8 @@
         android:id="@+id/content"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_above="@id/footer"
-        android:layout_below="@id/header"
+        android:layout_above="@id/game_footer"
+        android:layout_below="@id/game_header"
         android:gravity="center">
 
         <org.andengine.opengl.view.RenderSurfaceView

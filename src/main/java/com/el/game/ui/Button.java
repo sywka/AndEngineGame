@@ -1,23 +1,35 @@
 package com.el.game.ui;
 
+import android.app.Activity;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.el.game.R;
 
-import org.andengine.ui.activity.BaseGameActivity;
+import java.util.ArrayList;
+import java.util.List;
 
 abstract public class Button implements View.OnClickListener {
 
     private FrameLayout buttonLayout;                   // контейнер для содержимого кнопки
     private View buttonView;                            // слой поверх содержимого кнопки, служит для индикации нажатия на кнопку
     private TextView buttonText;                        // контейнер для текста
-    private BaseGameActivity activity;                  // активность к которой привязана кнопка
+    private Activity activity;                          // активность к которой привязана кнопка
+    private List<OnButtonClick> listeners;
 
-    public Button(BaseGameActivity activity, int resourceIdButton) {
+    public Button(Activity activity, int resourceIdButton) {
         this.activity = activity;
         initVar(resourceIdButton);
+        listeners = new ArrayList<OnButtonClick>();
+        setDefaultValues(buttonLayout);
+    }
+
+    public Button(Activity activity, int resourceIdButton, OnButtonClick listener) {
+        this.activity = activity;
+        initVar(resourceIdButton);
+        listeners = new ArrayList<OnButtonClick>();
+        listeners.add(listener);
         setDefaultValues(buttonLayout);
     }
 
@@ -26,7 +38,7 @@ abstract public class Button implements View.OnClickListener {
      *
      * @param buttonLayout view кнопки для изменения фона.
      */
-    protected void setDefaultValues(FrameLayout buttonLayout){
+    protected void setDefaultValues(FrameLayout buttonLayout) {
         buttonLayout.setBackgroundResource(R.drawable.button);
     }
 
@@ -42,17 +54,28 @@ abstract public class Button implements View.OnClickListener {
     }
 
     @Override
-    abstract public void onClick(View view);
+    final public void onClick(View view) {
+        for (OnButtonClick listener : listeners)
+            listener.onClick(this, view);
+    }
 
     public FrameLayout getButtonLayout() {
         return buttonLayout;
     }
 
-    public BaseGameActivity getActivity() {
+    public Activity getActivity() {
         return activity;
     }
 
     public TextView getButtonText() {
         return buttonText;
+    }
+
+    public void addListener(OnButtonClick listener) {
+        listeners.add(listener);
+    }
+
+    public void removeListener(OnButtonClick listener) {
+        listeners.remove(listener);
     }
 }

@@ -2,6 +2,7 @@ package com.el.game.ui;
 
 import org.andengine.audio.music.Music;
 import org.andengine.audio.music.MusicFactory;
+import org.andengine.engine.Engine;
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.handler.timer.ITimerCallback;
 import org.andengine.engine.handler.timer.TimerHandler;
@@ -19,12 +20,18 @@ import java.util.List;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 import com.el.game.R;
 import com.el.game.etc.MovingCollisionObjectFactory;
@@ -48,7 +55,6 @@ public class GameActivity extends LayoutGameActivity implements SensorEventListe
     private int startLandscapeOrientation;
 
     private ControlButton controlButton;
-    private MenuButton menuButton;
     private Music backgroundMusic;
 
     @Override
@@ -65,7 +71,29 @@ public class GameActivity extends LayoutGameActivity implements SensorEventListe
     protected void onSetContentView() {
         super.onSetContentView();
         controlButton = new ControlButton(this, R.id.button_control);
-        menuButton = new MenuButton(this, R.id.button_menu);
+        new MenuButton(this, R.id.button_menu, R.string.button_menu, new OnButtonClick() {
+            @Override
+            public void onClick(Button button, View view) {
+                openMainMenu();
+            }
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == MainMenuActivity.RESULT_EXIT) finish();
+
+        if (getEngine() == null || backgroundMusic == null) return;
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (getEngine() != null && getEngine().getScene() != null)
+                    getEngine().getScene().setIgnoreUpdate(false);
+            }
+        }, 500);
+        backgroundMusic.setVolume(1f);
     }
 
     /**
@@ -236,36 +264,28 @@ public class GameActivity extends LayoutGameActivity implements SensorEventListe
     @Override
     protected void onPause() {
         super.onPause();
-        if (backgroundMusic != null)
-            backgroundMusic.pause();
+        getEngine().getScene().setIgnoreUpdate(true);
     }
 
     @Override
-    protected synchronized void onResume() {
-        super.onResume();
-        if (getEngine() != null && getEngine().getScene() != null)
-            showResumeDialog();
+    protected void onStop() {
+        super.onStop();
+        if (backgroundMusic != null)
+            backgroundMusic.setVolume(0f);
     }
 
-    private void showResumeDialog() {
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
-        dialogBuilder.setTitle(R.string.dialog_on_pause_title);
-
-        getEngine().getScene().setIgnoreUpdate(true);
-        dialogBuilder
-                .setPositiveButton(R.string.dialog_yes, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (backgroundMusic != null)
-                            backgroundMusic.resume();
-                        getEngine().getScene().setIgnoreUpdate(false);
-                    }
-                });
-        AlertDialog dialog = dialogBuilder.create();
-        dialog.show();
+    @Override
+    protected void onStart() {
+        super.onStart();
+        openMainMenu();
     }
 
-    public Music getBackgroundMusic() {
-        return backgroundMusic;
+    private void openMainMenu() {
+        if (getEngine() != null && getEngine().getScene() != null) {
+            getEngine().getScene().setIgnoreUpdate(true);
+            backgroundMusic.setVolume(0.2f);
+            startActivityForResult(new Intent(GameActivity.this, MainMenuActivity.class)
+                    .putExtra(MainMenuActivity.MENU_MODIFICATION, MainMenuActivity.RESUME_MENU), 1);
+        }
     }
 }

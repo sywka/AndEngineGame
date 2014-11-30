@@ -1,8 +1,11 @@
 package com.el.game.ui;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.view.View;
+import android.widget.FrameLayout;
 
 import com.el.game.R;
 
@@ -11,32 +14,13 @@ import org.andengine.engine.Engine;
 
 public class MenuButton extends Button {
 
-    public MenuButton(GameActivity activity, int resourceIdButton) {
+    public MenuButton(Activity activity, int resourceIdButton, int textId) {
         super(activity, resourceIdButton);
-        getButtonText().setText(R.string.button_menu);
+        getButtonText().setText(activity.getString(textId));
     }
 
-    @Override
-    public void onClick(View view) {
-        final Engine engine = getActivity().getEngine();
-        final Music backgroundMusic = ((GameActivity) getActivity()).getBackgroundMusic();
-        if (engine == null) return;
-
-        engine.stop();
-        backgroundMusic.setVolume(0.2f, 0.2f);
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Что-то вроде меню")
-                .setMessage(" блаблабла \n настройки \n блаблабла \n выход")
-                .setCancelable(true)
-                .setOnCancelListener(new DialogInterface.OnCancelListener() {
-                    @Override
-                    public void onCancel(DialogInterface dialogInterface) {
-                        engine.start();
-                        backgroundMusic.setVolume(1f, 1f);
-                    }
-                });
-        AlertDialog alert = builder.create();
-        alert.show();
+    public MenuButton(Activity activity, int resourceIdButton, int textId, OnButtonClick listener) {
+        super(activity, resourceIdButton, listener);
+        getButtonText().setText(activity.getString(textId));
     }
 }

@@ -20,7 +20,7 @@ public class MainMenuActivity extends Activity implements OnButtonClick {
     public static final int RESULT_EXIT = 2;
 
     private int modification;
-    private LinearLayout mainMenulayout;
+    private LinearLayout mainMenuLayout;
     private TextButton startResumeButton;
     private TextButton settingsButton;
     private TextButton exitButton;
@@ -31,13 +31,13 @@ public class MainMenuActivity extends Activity implements OnButtonClick {
         checkMenuModification();
         setContentView(R.layout.activity_main_menu);
 
-        mainMenulayout = (LinearLayout) findViewById(R.id.main_menu_layout);
+        mainMenuLayout = (LinearLayout) findViewById(R.id.main_menu_layout);
 
         if (modification == START_MENU) {
-            mainMenulayout.setBackgroundColor(getResources().getColor(R.color.main_menu_background));
+            mainMenuLayout.setBackgroundColor(getResources().getColor(R.color.main_menu_background));
             startResumeButton = new TextButton(this, R.id.button_start_resume, R.string.button_menu_start, this);
         } else {
-            mainMenulayout.setBackgroundColor(getResources().getColor(R.color.main_menu_background_with_alpha));
+            mainMenuLayout.setBackgroundColor(getResources().getColor(R.color.main_menu_background_with_alpha));
             startResumeButton = new TextButton(this, R.id.button_start_resume, R.string.button_menu_resume, this);
         }
         settingsButton = new TextButton(this, R.id.button_settings, R.string.button_menu_settings, this);
@@ -84,10 +84,10 @@ public class MainMenuActivity extends Activity implements OnButtonClick {
     private void showAnimation(int animIdBackground, int animIdMenu, Animation.AnimationListener listener) {
         final Animation backgroundAnimation = AnimationUtils.loadAnimation(this, animIdBackground);
         backgroundAnimation.setAnimationListener(listener);
-        mainMenulayout.post(new Runnable() {
+        mainMenuLayout.post(new Runnable() {
             @Override
             public void run() {
-                mainMenulayout.startAnimation(backgroundAnimation);
+                mainMenuLayout.startAnimation(backgroundAnimation);
             }
         });
         final Animation startResumeButtonAnimation = AnimationUtils.loadAnimation(this, animIdMenu);

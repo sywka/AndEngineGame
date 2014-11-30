@@ -2,7 +2,6 @@ package com.el.game.ui;
 
 import org.andengine.audio.music.Music;
 import org.andengine.audio.music.MusicFactory;
-import org.andengine.engine.Engine;
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.handler.timer.ITimerCallback;
 import org.andengine.engine.handler.timer.TimerHandler;
@@ -18,20 +17,14 @@ import org.andengine.ui.activity.LayoutGameActivity;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 
 import com.el.game.R;
 import com.el.game.etc.MovingCollisionObjectFactory;
@@ -182,7 +175,7 @@ public class GameActivity extends LayoutGameActivity implements SensorEventListe
      */
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
-        if (controlButton.getControl() == ControlButton.CONRTOL_TOUCH)
+        if (controlButton.getControl() == ControlButton.CONTROL_TOUCH)
             return;
 
         switch (sensorEvent.sensor.getType()) {

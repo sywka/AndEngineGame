@@ -13,7 +13,7 @@ import org.andengine.ui.activity.BaseGameActivity;
 public class ControlButton extends Button implements OnButtonClick {
 
     private static final String CONTROL = "control";
-    public static final int CONRTOL_TOUCH = 0;
+    public static final int CONTROL_TOUCH = 0;
     public static final int CONTROL_ACCELEROMETER = 1;
     private int control;
     private Player player;
@@ -28,7 +28,7 @@ public class ControlButton extends Button implements OnButtonClick {
     protected void setDefaultValues(FrameLayout buttonLayout) {
         control = load();
         switch (control) {
-            case CONRTOL_TOUCH:
+            case CONTROL_TOUCH:
                 buttonLayout.setBackgroundResource(R.drawable.control_touch);
                 break;
             case CONTROL_ACCELEROMETER:
@@ -40,12 +40,12 @@ public class ControlButton extends Button implements OnButtonClick {
     @Override
     public void onClick(Button button, View view) {
         switch (control) {
-            case CONRTOL_TOUCH:
+            case CONTROL_TOUCH:
                 control = CONTROL_ACCELEROMETER;
                 getButtonLayout().setBackgroundResource(R.drawable.control_accelerometer);
                 break;
             case CONTROL_ACCELEROMETER:
-                control = CONRTOL_TOUCH;
+                control = CONTROL_TOUCH;
                 if (player != null)
                     player.setNewStep(1);
                 getButtonLayout().setBackgroundResource(R.drawable.control_touch);
@@ -69,7 +69,7 @@ public class ControlButton extends Button implements OnButtonClick {
 
     private int load() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
-        return prefs.getInt(CONTROL, CONRTOL_TOUCH);
+        return prefs.getInt(CONTROL, CONTROL_TOUCH);
     }
 
     public int getControl() {

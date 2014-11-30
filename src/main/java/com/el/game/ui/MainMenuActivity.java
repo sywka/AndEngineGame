@@ -29,10 +29,13 @@ public class MainMenuActivity extends Activity implements OnButtonClick {
         checkMenuModification();
         setContentView(R.layout.activity_main_menu);
 
-        if (modification == START_MENU)
+        if (modification == START_MENU) {
+            findViewById(R.id.main_menu_layout).setBackgroundColor(getResources().getColor(R.color.main_menu_background));
             startResumeButton = new TextButton(this, R.id.button_start_resume, R.string.button_menu_start, this);
-        else
+        } else {
+            findViewById(R.id.main_menu_layout).setBackgroundColor(getResources().getColor(R.color.main_menu_background_with_alpha));
             startResumeButton = new TextButton(this, R.id.button_start_resume, R.string.button_menu_resume, this);
+        }
         settingsButton = new TextButton(this, R.id.button_settings, R.string.button_menu_settings, this);
         exitButton = new TextButton(this, R.id.button_exit, R.string.button_menu_exit, this);
 
@@ -44,6 +47,7 @@ public class MainMenuActivity extends Activity implements OnButtonClick {
     public void onClick(Button button, View view) {
         if (button == startResumeButton) {
             finish();
+            overridePendingTransition(0, 0);
             if (modification == START_MENU)
                 startActivity(new Intent(this, GameActivity.class));
 
@@ -52,6 +56,7 @@ public class MainMenuActivity extends Activity implements OnButtonClick {
         } else if (button == exitButton) {
             setResult(RESULT_EXIT);
             finish();
+            overridePendingTransition(0, 0);
         }
     }
 
@@ -59,6 +64,7 @@ public class MainMenuActivity extends Activity implements OnButtonClick {
     protected void onStop() {
         super.onStop();
         finish();
+        overridePendingTransition(0, 0);
     }
 
     /**
@@ -77,19 +83,38 @@ public class MainMenuActivity extends Activity implements OnButtonClick {
      * Показываем анимацию открытия
      */
     private void startOpenAnimation() {
-//        Animation backgroundAnimation = AnimationUtils.loadAnimation(this, R.anim.main_menu_open_background);
-//        findViewById(R.id.main_menu_layout).setAnimation(backgroundAnimation);
+        final Animation backgroundAnimation = AnimationUtils.loadAnimation(this, R.anim.main_menu_open_background);
+        findViewById(R.id.main_menu_layout).post(new Runnable() {
+            @Override
+            public void run() {
+                findViewById(R.id.main_menu_layout).startAnimation(backgroundAnimation);
+            }
+        });
+        final Animation startResumeButtonAnimation = AnimationUtils.loadAnimation(this, R.anim.main_menu_open);
+        startResumeButton.getButtonLayout().post(new Runnable() {
+            @Override
+            public void run() {
+                startResumeButton.getButtonLayout().startAnimation(startResumeButtonAnimation);
+            }
+        });
 
-        Animation startResumeButtonAnimation = AnimationUtils.loadAnimation(this, R.anim.main_menu_open);
-        startResumeButton.getButtonLayout().startAnimation(startResumeButtonAnimation);
-
-        Animation settingsButtonAnimation = AnimationUtils.loadAnimation(this, R.anim.main_menu_open);
+        final Animation settingsButtonAnimation = AnimationUtils.loadAnimation(this, R.anim.main_menu_open);
         settingsButtonAnimation.setStartOffset(100);
-        settingsButton.getButtonLayout().startAnimation(settingsButtonAnimation);
+        settingsButton.getButtonLayout().post(new Runnable() {
+            @Override
+            public void run() {
+                settingsButton.getButtonLayout().startAnimation(settingsButtonAnimation);
+            }
+        });
 
-        Animation exitButtonAnimation = AnimationUtils.loadAnimation(this, R.anim.main_menu_open);
+        final Animation exitButtonAnimation = AnimationUtils.loadAnimation(this, R.anim.main_menu_open);
         exitButtonAnimation.setStartOffset(200);
-        exitButton.getButtonLayout().startAnimation(exitButtonAnimation);
+        exitButton.getButtonLayout().post(new Runnable() {
+            @Override
+            public void run() {
+                exitButton.getButtonLayout().startAnimation(exitButtonAnimation);
+            }
+        });
     }
 
     private void checkMenuModification() {

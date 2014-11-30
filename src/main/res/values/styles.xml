@@ -4,18 +4,4 @@
         <item name="android:textColor">@color/text_color</item>
     </style>
 
-    <style name="AppTheme.MainMenu" parent="AppTheme">
-        <item name="android:windowNoTitle">true</item>
-        <item name="android:windowAnimationStyle">@null</item>
-        <item name="android:textColor">@android:color/white</item>
-    </style>
-
-    <style name="AppTheme.MainMenu.Transparent" parent="AppTheme.MainMenu">
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:colorBackgroundCacheHint">@null</item>
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowContentOverlay">@null</item>
-        <item name="android:windowFullscreen">true</item>
-    </style>
-
 </resources>

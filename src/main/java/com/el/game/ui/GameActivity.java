@@ -17,14 +17,13 @@ import org.andengine.ui.activity.LayoutGameActivity;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.FrameLayout;
 
 import com.el.game.R;
 import com.el.game.etc.MovingCollisionObjectFactory;
@@ -35,15 +34,15 @@ import com.el.game.objects.Player;
 
 import com.el.game.utils.Vector2;
 
-public class GameActivity extends LayoutGameActivity implements SensorEventListener, IOnSceneTouchListener {
+public class GameActivity extends LayoutGameActivity implements SensorEventListener, IOnSceneTouchListener, OnMainAction {
 
     private List<GameObject> objectList;                //Список игровых объектов
     private List<Integer> fingersId;                    //Список Id пальцев (необходим для корректного мультитача)
     private MovingCollisionObjectFactory movingCollisionObjectFactory;
     private Player player;                              //Объект игрока
     private SensorManager sensorManager;                //Менеджер сенсора
-    private final int accelerometerYCencity = 1;        //Чувствительность акселлерометра по OY
-    private final int accelerometerMaxYCencity = 4;        //Чувствительность акселлерометра по OY
+    private final float accelerometerYCencity = 1.0f;        //Чувствительность акселлерометра по OY
+    private final float accelerometerMaxYCencity = 3.0f;        //Чувствительность акселлерометра по OY
     private float zRotation = 0;
 
     private boolean isAdaptiveAccelerometr = true;
@@ -70,26 +69,9 @@ public class GameActivity extends LayoutGameActivity implements SensorEventListe
         new MenuButton(this, R.id.button_menu, R.string.button_menu, new OnButtonClick() {
             @Override
             public void onClick(Button button, View view) {
-                openMainMenu();
+                showMainMenu();
             }
         });
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == MainMenuActivity.RESULT_EXIT) finish();
-
-        if (getEngine() == null || backgroundMusic == null) return;
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (getEngine() != null && getEngine().getScene() != null)
-                    getEngine().getScene().setIgnoreUpdate(false);
-            }
-        }, 1000);
-        backgroundMusic.setVolume(1f);
     }
 
     /**
@@ -186,29 +168,29 @@ public class GameActivity extends LayoutGameActivity implements SensorEventListe
                  */
                 zRotation = (1 - Math.abs(sensorEvent.values[0]) / 10) / accelerometerYCencity;   //Устанавливаем погрешность OZ
 
-                    if (sensorEvent.values[1] < accelerometerYCencity - zRotation && sensorEvent.values[1] > -accelerometerYCencity + zRotation)
-                        player.setMove(Player.IDLE);                //Если наклон не входит в промежуток, то не двигаем персонажа
-                    else {
-                        if (isAdaptiveAccelerometr) {
-                            if (Math.abs(sensorEvent.values[1]) > accelerometerYCencity - zRotation) {
-                                if (Math.abs(sensorEvent.values[1]) > accelerometerMaxYCencity - zRotation)
-                                    player.setNewStep(1);
-                                else
-                                    player.setNewStep(Math.abs(sensorEvent.values[1]) / (accelerometerMaxYCencity - zRotation));
-                            }
-                        }
-                        if (getWindowManager().getDefaultDisplay().getRotation() == startLandscapeOrientation) {     //При стандартном повороте экрана
-                            if (sensorEvent.values[1] > accelerometerYCencity - zRotation)
-                                player.setMove(Player.MOVE_RIGHT);      //Двигаем в зависимости от наклона телефона
-                            if (sensorEvent.values[1] < -accelerometerYCencity + zRotation)
-                                player.setMove(Player.MOVE_LEFT);
-                        } else {
-                            if (sensorEvent.values[1] > accelerometerYCencity - zRotation)
-                                player.setMove(Player.MOVE_LEFT);      //Двигаем в зависимости от наклона телефона
-                            if (sensorEvent.values[1] < -accelerometerYCencity + zRotation)
-                                player.setMove(Player.MOVE_RIGHT);
+                if (sensorEvent.values[1] < accelerometerYCencity - zRotation && sensorEvent.values[1] > -accelerometerYCencity + zRotation)
+                    player.setMove(Player.IDLE);                //Если наклон не входит в промежуток, то не двигаем персонажа
+                else {
+                    if (isAdaptiveAccelerometr) {
+                        if (Math.abs(sensorEvent.values[1]) > accelerometerYCencity - zRotation) {
+                            if (Math.abs(sensorEvent.values[1]) > accelerometerMaxYCencity - zRotation)
+                                player.setNewStep(1);
+                            else
+                                player.setNewStep(Math.abs(sensorEvent.values[1]) / (accelerometerMaxYCencity - zRotation));
                         }
                     }
+                    if (getWindowManager().getDefaultDisplay().getRotation() == startLandscapeOrientation) {     //При стандартном повороте экрана
+                        if (sensorEvent.values[1] > accelerometerYCencity - zRotation)
+                            player.setMove(Player.MOVE_RIGHT);      //Двигаем в зависимости от наклона телефона
+                        if (sensorEvent.values[1] < -accelerometerYCencity + zRotation)
+                            player.setMove(Player.MOVE_LEFT);
+                    } else {
+                        if (sensorEvent.values[1] > accelerometerYCencity - zRotation)
+                            player.setMove(Player.MOVE_LEFT);      //Двигаем в зависимости от наклона телефона
+                        if (sensorEvent.values[1] < -accelerometerYCencity + zRotation)
+                            player.setMove(Player.MOVE_RIGHT);
+                    }
+                }
                 break;
         }
     }
@@ -271,28 +253,36 @@ public class GameActivity extends LayoutGameActivity implements SensorEventListe
     @Override
     protected void onPause() {
         super.onPause();
+        if (!isGameLoaded()) return;
+
         getEngine().getScene().setIgnoreUpdate(true);
+        backgroundMusic.setVolume(0f);
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
-        if (backgroundMusic != null)
-            backgroundMusic.setVolume(0f);
+    protected synchronized void onResume() {
+        super.onResume();
+        showMainMenu();
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        openMainMenu();
+    public void action(MainMenu.Result result) {
+        switch (result) {
+            case RESUME:
+                getEngine().getScene().setIgnoreUpdate(false);
+                backgroundMusic.setVolume(1.0f);
+                break;
+            case FINISH:
+                finish();
+                break;
+        }
     }
 
-    private void openMainMenu() {
-        if (getEngine() != null && getEngine().getScene() != null) {
+    private void showMainMenu() {
+        if (isGameLoaded()) {
             getEngine().getScene().setIgnoreUpdate(true);
             backgroundMusic.setVolume(0.2f);
-            startActivityForResult(new Intent(GameActivity.this, MainMenuActivity.class)
-                    .putExtra(MainMenuActivity.MENU_MODIFICATION, MainMenuActivity.RESUME_MENU), 1);
+            new MainMenu(this, (FrameLayout) findViewById(R.id.activity_content), MainMenu.Modification.RESUME_MENU, this);
         }
     }
 }

@@ -1,112 +1,119 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/game_layout"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/activity_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <RelativeLayout
-        android:id="@+id/game_header"
+        android:id="@+id/game_layout"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/header_menu_height"
-        android:layout_alignParentTop="true"
-        android:background="#FC9">
+        android:layout_height="match_parent">
 
-        <include
-            android:id="@+id/button_menu"
-            android:layout_width="@dimen/button_width"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            layout="@layout/button" />
-
-        <include
-            android:id="@+id/button_control"
-            android:layout_width="@dimen/button_width"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            layout="@layout/button" />
-
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/game_footer"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/footer_menu_height"
-        android:layout_alignParentBottom="true"
-        android:background="#FC0"
-        android:gravity="center">
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true">
-
-            <TextView
-                android:id="@+id/current_score_text_field"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingRight="5dp"
-                android:paddingLeft="5dp"
-                android:textSize="@dimen/score_text_size"
-                android:gravity="center_vertical"
-                android:text="@string/current_score_text" />
-
-            <TextView
-                android:id="@+id/current_score"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingRight="5dp"
-                android:paddingLeft="5dp"
-                android:textSize="@dimen/score_text_size"
-                android:gravity="center_vertical"
-                android:text="@string/null_score" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true">
-
-            <TextView
-                android:id="@+id/high_score_text_field"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingRight="5dp"
-                android:paddingLeft="5dp"
-                android:textSize="@dimen/score_text_size"
-                android:gravity="center_vertical"
-                android:text="@string/high_score_text" />
-
-            <TextView
-                android:id="@+id/high_score"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingRight="5dp"
-                android:paddingLeft="5dp"
-                android:textSize="@dimen/score_text_size"
-                android:gravity="center_vertical"
-                android:text="@string/null_score" />
-
-        </LinearLayout>
-
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/content"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_above="@id/game_footer"
-        android:layout_below="@id/game_header"
-        android:gravity="center">
-
-        <org.andengine.opengl.view.RenderSurfaceView
-            android:id="@+id/game_field"
+        <RelativeLayout
+            android:id="@+id/game_header"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="@dimen/header_menu_height"
+            android:layout_alignParentTop="true"
+            android:background="#FC9">
+
+            <include
+                android:id="@+id/button_menu"
+                android:layout_width="@dimen/button_width"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                layout="@layout/button" />
+
+            <include
+                android:id="@+id/button_control"
+                android:layout_width="@dimen/button_width"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                layout="@layout/button" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/game_footer"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/footer_menu_height"
+            android:layout_alignParentBottom="true"
+            android:background="#FC0"
+            android:gravity="center">
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true">
+
+                <TextView
+                    android:id="@+id/current_score_text_field"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingRight="5dp"
+                    android:paddingLeft="5dp"
+                    android:textSize="@dimen/score_text_size"
+                    android:gravity="center_vertical"
+                    android:text="@string/current_score_text" />
+
+                <TextView
+                    android:id="@+id/current_score"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingRight="5dp"
+                    android:paddingLeft="5dp"
+                    android:textSize="@dimen/score_text_size"
+                    android:gravity="center_vertical"
+                    android:text="@string/null_score" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true">
+
+                <TextView
+                    android:id="@+id/high_score_text_field"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingRight="5dp"
+                    android:paddingLeft="5dp"
+                    android:textSize="@dimen/score_text_size"
+                    android:gravity="center_vertical"
+                    android:text="@string/high_score_text" />
+
+                <TextView
+                    android:id="@+id/high_score"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingRight="5dp"
+                    android:paddingLeft="5dp"
+                    android:textSize="@dimen/score_text_size"
+                    android:gravity="center_vertical"
+                    android:text="@string/null_score" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/content"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_above="@id/game_footer"
+            android:layout_below="@id/game_header"
+            android:gravity="center">
+
+            <org.andengine.opengl.view.RenderSurfaceView
+                android:id="@+id/game_field"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </RelativeLayout>
 
     </RelativeLayout>
 
-</RelativeLayout>
+</FrameLayout>

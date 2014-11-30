@@ -49,7 +49,7 @@ public class GameActivity extends LayoutGameActivity implements SensorEventListe
     private MovingCollisionObjectFactory movingCollisionObjectFactory;
     private Player player;                              //Объект игрока
     private SensorManager sensorManager;                //Менеджер сенсора
-    private final int accelerometerYCencity = 2;        //Чувствительность акселлерометра по OY
+    private final int accelerometerYCencity = 1;        //Чувствительность акселлерометра по OY
     private final int accelerometerMaxYCencity = 4;        //Чувствительность акселлерометра по OY
     private float zRotation = 0;
 

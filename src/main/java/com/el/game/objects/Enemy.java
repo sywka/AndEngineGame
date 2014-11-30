@@ -45,7 +45,7 @@ public class Enemy extends MovingCollisionObject {
         if (getIsAlife() == false)              //Блок может быть мёртвым, но при этом, пока проигрывает смертную анимацию, он будет находиться
             return;                             //На сцене
         if (!player.getIsDead()) {              //Достаточно один раз убить персонажа
-            //player.die();
+            player.die();
             if (player.getCountLife() != 0) {     //Если у персонажа не закончились жизни, то мы проигрываем смерть блока
                 getObjectSprite().animate(new long[]{100, 100, 100, 100}, 4, 7, false);
                 setIsAlife(false);

@@ -46,6 +46,8 @@ public class ControlButton extends Button implements OnButtonClick {
                 break;
             case CONTROL_ACCELEROMETER:
                 control = CONRTOL_TOUCH;
+                if (player != null)
+                    player.setNewStep(1);
                 getButtonLayout().setBackgroundResource(R.drawable.control_touch);
                 break;
         }

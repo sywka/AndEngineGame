@@ -36,6 +36,8 @@ public class MainMenu implements OnButtonClick {
         this.listener = listener;
         this.content = content;
 
+        deleteOldViewIfExist(content);
+
         changeClickable((ViewGroup) content.getChildAt(0), false);
         content.addView(activity.getLayoutInflater().inflate(R.layout.main_menu, null));
         mainMenuLayout = (LinearLayout) content.findViewById(R.id.main_menu_layout);
@@ -134,5 +136,10 @@ public class MainMenu implements OnButtonClick {
 
             }
         });
+    }
+
+    private void deleteOldViewIfExist(FrameLayout content) {
+        if (content.findViewById(R.id.main_menu_layout) != null)
+            content.removeView(content.findViewById(R.id.main_menu_layout));
     }
 }

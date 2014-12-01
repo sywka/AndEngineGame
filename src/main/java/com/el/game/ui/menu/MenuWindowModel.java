@@ -80,7 +80,6 @@ abstract public class MenuWindowModel {
                 onCloseWindow();
                 removeMenu(true);
                 isAnimateNow = false;
-                removeFromBackList();
                 if (newWindow != null) newWindow.showWindow(isWithBackgroundAnimation);
             }
 

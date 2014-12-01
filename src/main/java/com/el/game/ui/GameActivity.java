@@ -21,6 +21,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -28,13 +29,15 @@ import android.widget.FrameLayout;
 import com.el.game.R;
 import com.el.game.etc.MovingCollisionObjectFactory;
 import com.el.game.objects.MovingCollisionObject;
+import com.el.game.ui.menu.MainMenu;
+import com.el.game.ui.menu.MenuWindowModel;
 import com.el.game.utils.Utils;
 import com.el.game.objects.GameObject;
 import com.el.game.objects.Player;
 
 import com.el.game.utils.Vector2;
 
-public class GameActivity extends LayoutGameActivity implements SensorEventListener, IOnSceneTouchListener, OnMainAction {
+public class GameActivity extends LayoutGameActivity implements SensorEventListener, IOnSceneTouchListener, OnResumeMainMenu {
 
     private List<GameObject> objectList;                //Список игровых объектов
     private List<Integer> fingersId;                    //Список Id пальцев (необходим для корректного мультитача)
@@ -49,6 +52,7 @@ public class GameActivity extends LayoutGameActivity implements SensorEventListe
 
     private int startLandscapeOrientation;
 
+    private MainMenu mainMenu;
     private ControlButton controlButton;
     private Music backgroundMusic;
 
@@ -65,6 +69,7 @@ public class GameActivity extends LayoutGameActivity implements SensorEventListe
     @Override
     protected void onSetContentView() {
         super.onSetContentView();
+        mainMenu = new MainMenu(this, (FrameLayout) findViewById(R.id.activity_content), MainMenu.Modification.RESUME_MENU, this);
         controlButton = new ControlButton(this, R.id.button_control);
         new MenuButton(this, R.id.button_menu, R.string.button_menu, new OnButtonClick() {
             @Override
@@ -266,23 +271,25 @@ public class GameActivity extends LayoutGameActivity implements SensorEventListe
     }
 
     @Override
-    public void action(MainMenu.Result result) {
-        switch (result) {
-            case RESUME:
-                getEngine().getScene().setIgnoreUpdate(false);
-                backgroundMusic.setVolume(1.0f);
-                break;
-            case FINISH:
-                finish();
-                break;
-        }
+    public void resume() {
+        getEngine().getScene().setIgnoreUpdate(false);
+        backgroundMusic.setVolume(1.0f);
     }
 
     private void showMainMenu() {
         if (isGameLoaded()) {
             getEngine().getScene().setIgnoreUpdate(true);
             backgroundMusic.setVolume(0.2f);
-            new MainMenu(this, (FrameLayout) findViewById(R.id.activity_content), MainMenu.Modification.RESUME_MENU, this);
+            mainMenu.showWindow(true);
         }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && !MenuWindowModel.getBackListMenu().isEmpty()) {
+            MainMenu.onBackPressed();
+            return false;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

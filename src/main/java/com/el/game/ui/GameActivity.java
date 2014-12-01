@@ -277,7 +277,7 @@ public class GameActivity extends LayoutGameActivity implements SensorEventListe
     }
 
     private void showMainMenu() {
-        if (isGameLoaded()) {
+        if (isGameLoaded() && MenuWindowModel.getBackListMenu().size() <= 1) {
             getEngine().getScene().setIgnoreUpdate(true);
             backgroundMusic.setVolume(0.2f);
             mainMenu.showWindow(true);

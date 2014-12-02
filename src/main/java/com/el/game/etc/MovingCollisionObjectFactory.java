@@ -119,20 +119,28 @@ public class MovingCollisionObjectFactory {
     }
 
     public void generateObjectsPositions() {
-        int i = random.nextInt(4);
+        int i = random.nextInt(9);
         switch (i) {
             case 0:
-                generateRandomPositionsForEnemy();
-                break;
-            case 1:
                 generateStairPositionsForEnemy();
                 break;
-            case 2:
+            case 1:
                 generateTrianglePositionsForEnemy();
                 break;
-            case 3:
+            case 2:
                 generateBoxPositionsForEnemy();
                 break;
+            case 3:
+                generateVercicalLinesPositionsForEnemy();
+                break;
+            case 4:
+                generateHorisontalLinesPositionsForEnemy();
+                break;
+            case 5:
+                generateWPositionsForEnemy();
+                break;
+            default:
+                generateRandomPositionsForEnemy();
         }
 
         for (int j = 20; j < 23; j++)       //Генерируем бонусы
@@ -163,8 +171,8 @@ public class MovingCollisionObjectFactory {
     }
 
     /**
-        Генерирует новую позицию для бонуса
-        param i - номер бонуса
+    *  Генерирует новую позицию для бонуса
+    *  param i - номер бонуса
      */
     public void generateNewBonusPosition(int i){
         if (movingObjectsList.get(i).getIsAlife())
@@ -189,11 +197,7 @@ public class MovingCollisionObjectFactory {
             orientation = -1;
             startPosition = -20;
         }
-        for (int i = 0; i < movingObjectsList.size() - 4; i++) {
-            if (movingObjectsList.get(i).getIsAlife() || //Если враг жив, или проигрывает анимацию смерти, то не трогаем его
-                    (!movingObjectsList.get(i).getIsAlife() && movingObjectsList.get(movingObjectsList.size() - 4).getObjectSprite().getCurrentTileIndex() > 3))
-                continue;
-
+        for (int i = 0; i < 20; i++) {
             int z = i % 4;
             switch (z){
                 case 0:
@@ -213,9 +217,6 @@ public class MovingCollisionObjectFactory {
                     movingObjectsList.get(i).setPositionX((i / 4 * Utils.getPixelsOfPercentX(60) + 240) * orientation + Utils.getPixelsOfPercentX(startPosition));
                     break;
             }
-
-            //movingObjectsList.get(i).setPositionX(i / 3 * Utils.getPixelsOfPercentX(20) * orientation + Utils.getPixelsOfPercentX(startPosition));
-
             movingObjectsList.get(i).setXSpeed(Utils.getPixelsOfPercentX(-currentSpeed * orientation));
             movingObjectsList.get(i).setIsAlife(true);
             movingObjectsList.get(i).getObjectSprite().animate(new long[]{100, 100, 100, 100}, 0, 3, true);
@@ -234,10 +235,7 @@ public class MovingCollisionObjectFactory {
             orientation = -1;
             startPosition = -20;
         }
-        for (int i = 0; i < movingObjectsList.size() - 4; i++) {
-            if (movingObjectsList.get(i).getIsAlife() || //Если враг жив, или проигрывает анимацию смерти, то не трогаем его
-                    (!movingObjectsList.get(i).getIsAlife() && movingObjectsList.get(movingObjectsList.size() - 4).getObjectSprite().getCurrentTileIndex() > 3))
-                continue;
+        for (int i = 0; i < 20; i++) {
             movingObjectsList.get(i).setPositionY(Utils.getPixelsOfPercentY((10 + i % 3 * 40)));
             movingObjectsList.get(i).setXSpeed(Utils.getPixelsOfPercentX(-currentSpeed * orientation));
             movingObjectsList.get(i).setPositionX(i / 3 * Utils.getPixelsOfPercentX(20) * orientation + Utils.getPixelsOfPercentX(startPosition));
@@ -272,10 +270,7 @@ public class MovingCollisionObjectFactory {
             orientation = -1;
             startPosition = -20;
         }
-        for (int i = 0; i < movingObjectsList.size() - 4; i++) {
-            if (movingObjectsList.get(i).getIsAlife() || //Если враг жив, или проигрывает анимацию смерти, то не трогаем его
-                    (!movingObjectsList.get(i).getIsAlife() && movingObjectsList.get(movingObjectsList.size() - 4).getObjectSprite().getCurrentTileIndex() > 3))
-                continue;
+        for (int i = 0; i < 20; i++) {
             movingObjectsList.get(i).setPositionY(Utils.getPixelsOfPercentY((i % 3 * 40)));
             movingObjectsList.get(i).setXSpeed(Utils.getPixelsOfPercentX(-currentSpeed * orientation));
             movingObjectsList.get(i).setPositionX(i * Utils.getPixelsOfPercentX(20) * orientation + Utils.getPixelsOfPercentX(startPosition) - Utils.getPixelsOfPercentX(i % 3 * 10) * orientation);
@@ -286,15 +281,79 @@ public class MovingCollisionObjectFactory {
         }
     }
 
+    /**
+     * Генерирует врагов вертикальными полосочками
+     */
+    public void generateVercicalLinesPositionsForEnemy(){
+        int orientation = random.nextInt(2), startPosition = 120;
+        if (orientation == 0) {
+            orientation = -1;
+            startPosition = -20;
+        }
+        for (int i = 0; i < 20; i++) {
+            movingObjectsList.get(i).setPositionY(Utils.getPixelsOfPercentY((i % 4 * 20 + i % 2 * 20)));
+            movingObjectsList.get(i).setXSpeed(Utils.getPixelsOfPercentX(-currentSpeed * orientation));
+            movingObjectsList.get(i).setPositionX(i / 2 * Utils.getPixelsOfPercentX(40) * orientation + Utils.getPixelsOfPercentX(startPosition));
+            movingObjectsList.get(i).setIsAlife(true);
+            movingObjectsList.get(i).getObjectSprite().animate(new long[]{100, 100, 100, 100}, 0, 3, true);
+        }
+    }
+
+    /**
+     * Генерирует врагов горизонтальными линиями
+     */
+    public void generateHorisontalLinesPositionsForEnemy(){
+        int orientation = random.nextInt(2), startPosition = 120;
+        if (orientation == 0) {
+            orientation = -1;
+            startPosition = -20;
+        }
+        for (int i = 0; i < 20; i++) {
+            movingObjectsList.get(i).setPositionY(Utils.getPixelsOfPercentY((i / 2 * 20 % 100)));
+            movingObjectsList.get(i).setXSpeed(Utils.getPixelsOfPercentX(-currentSpeed * orientation));
+            movingObjectsList.get(i).setPositionX((i / 2 * Utils.getPixelsOfPercentX(40) + i % 2 * Utils.getPixelsOfPercentX(10))
+                    * orientation + Utils.getPixelsOfPercentX(startPosition));
+            movingObjectsList.get(i).setIsAlife(true);
+            movingObjectsList.get(i).getObjectSprite().animate(new long[]{100, 100, 100, 100}, 0, 3, true);
+        }
+    }
+
+    /**
+     * Генерирует врагов буквой W
+     */
+    public void generateWPositionsForEnemy(){
+        int orientation = random.nextInt(2), startPosition = 120;
+        if (orientation == 0) {
+            orientation = -1;
+            startPosition = -20;
+        }
+        for (int i = 0; i < 20; i++) {
+            movingObjectsList.get(i).setIsAlife(true);
+            movingObjectsList.get(i).getObjectSprite().animate(new long[]{100, 100, 100, 100}, 0, 3, true);
+            movingObjectsList.get(i).setXSpeed(Utils.getPixelsOfPercentX(-currentSpeed * orientation));
+            movingObjectsList.get(i).setPositionX(i * Utils.getPixelsOfPercentX(15)
+                    * orientation + i / 10 * Utils.getPixelsOfPercentX(30) * orientation
+                        +  Utils.getPixelsOfPercentX(startPosition));
+        }
+        for (int i = 0; i < 2; i++) {
+            movingObjectsList.get(i * 10).setPositionY(Utils.getPixelsOfPercentY(20));
+            movingObjectsList.get(i * 10 + 1).setPositionY(Utils.getPixelsOfPercentY(50));
+            movingObjectsList.get(i * 10 + 2).setPositionY(Utils.getPixelsOfPercentY(80));
+            movingObjectsList.get(i * 10 + 3).setPositionY(Utils.getPixelsOfPercentY(50));
+            movingObjectsList.get(i * 10 + 4).setPositionY(Utils.getPixelsOfPercentY(20));
+            movingObjectsList.get(i * 10 + 5).setPositionY(Utils.getPixelsOfPercentY(50));
+            movingObjectsList.get(i * 10 + 6).setPositionY(Utils.getPixelsOfPercentY(80));
+            movingObjectsList.get(i * 10 + 7).setPositionY(Utils.getPixelsOfPercentY(50));
+            movingObjectsList.get(i * 10 + 8).setPositionY(Utils.getPixelsOfPercentY(20));
+            movingObjectsList.get(i * 10 + 9).setPositionY(Utils.getPixelsOfPercentY(90));
+        }
+    }
 
     /**
      * Генерирует позицию для врага по генератору случайных чисел
      */
     public void generateRandomPositionsForEnemy(){
-        for (int i = 0; i < movingObjectsList.size() - 4; i++) {
-            if (movingObjectsList.get(i).getIsAlife() || //Если враг жив, или проигрывает анимацию смерти, то не трогаем его
-                    (!movingObjectsList.get(i).getIsAlife() && movingObjectsList.get(movingObjectsList.size() - 4).getObjectSprite().getCurrentTileIndex() > 3))
-                continue;
+        for (int i = 0; i < 20; i++) {
             movingObjectsList.get(i).setPositionY(random.nextInt(10) * Utils.getPixelsOfPercentY(10));
             if (random.nextInt(2) == 1) {
                 movingObjectsList.get(i).setXSpeed(Utils.getPixelsOfPercentX(-currentSpeed));

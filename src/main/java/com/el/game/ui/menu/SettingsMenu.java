@@ -18,6 +18,7 @@ public class SettingsMenu extends MenuWindowModel {
 
     @Override
     protected void onCreateWindow() {
+        setTitleText(R.string.button_menu_settings);
     }
 
     @Override

@@ -7,7 +7,11 @@
 
     <string name="null_score">0</string>
 
+    <string name="exit_confirm_menu_title">Уверены, что хотите выйти?</string>
+
     <string name="button_menu">Меню</string>
+    <string name="button_confirm">Да</string>
+    <string name="button_not_confirm">Нет</string>
     <string name="button_menu_start">Старт</string>
     <string name="button_menu_resume">Продолжить</string>
     <string name="button_menu_settings">Настройки</string>

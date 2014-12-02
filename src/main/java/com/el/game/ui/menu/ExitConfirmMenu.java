@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
-import android.widget.TextView;
 
 import com.el.game.R;
 import com.el.game.ui.Button;
@@ -17,14 +16,14 @@ import com.el.game.ui.TextButton;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainMenu extends MenuWindowModel implements OnButtonClick {
+public class ExitConfirmMenu extends MenuWindowModel implements OnButtonClick {
 
     public enum Modification {
         START_MENU, RESUME_MENU
     }
 
     public enum Result {
-        RESUME, SETTINGS, FINISH
+        RESUME, FINISH
     }
 
     private Modification modification;
@@ -32,7 +31,7 @@ public class MainMenu extends MenuWindowModel implements OnButtonClick {
     private Result result;
     private OnResumeMainMenu listener;
 
-    public MainMenu(Activity activity, FrameLayout activityContent, Modification modification, OnResumeMainMenu listener) {
+    public ExitConfirmMenu(Activity activity, FrameLayout activityContent, Modification modification, OnResumeMainMenu listener) {
         super(activity, activityContent);
         this.listener = listener;
         this.modification = modification;
@@ -40,28 +39,26 @@ public class MainMenu extends MenuWindowModel implements OnButtonClick {
     }
 
     @Override
-    public int getMenuLayoutId() {
-        return R.layout.main_menu;
+    protected int getMenuLayoutId() {
+        return R.layout.exit_confirm_menu;
     }
 
     @Override
     protected void onCreateWindow() {
-        setTitleText(R.string.button_menu);
+        setTitleText(R.string.exit_confirm_menu_title);
         result = Result.RESUME;
-        buttons.clear();
         switch (modification) {
             case START_MENU:
-                getMenuLayout().setBackgroundColor(activity.getResources().getColor(R.color.main_menu_background));
-                buttons.add(new TextButton(activity, R.id.button_start_resume, R.string.button_menu_start, this));
+                getMenuLayout().setBackgroundColor(getActivity().getResources().getColor(R.color.main_menu_background));
+
                 break;
             case RESUME_MENU:
-                getMenuLayout().setBackgroundColor(activity.getResources().getColor(R.color.main_menu_background_with_alpha));
-                buttons.add(new TextButton(activity, R.id.button_start_resume, R.string.button_menu_resume, this));
+                getMenuLayout().setBackgroundColor(getActivity().getResources().getColor(R.color.main_menu_background_with_alpha));
                 break;
         }
-        buttons.add(new TextButton(activity, R.id.button_settings, R.string.button_menu_settings, this));
-        buttons.add(new TextButton(activity, R.id.button_exit, R.string.button_menu_exit, this));
-        title = (TextView) getMenuLayout().findViewById(R.id.title);
+        buttons.clear();
+        buttons.add(new TextButton(getActivity(), R.id.button_confirm, R.string.button_confirm, this));
+        buttons.add(new TextButton(getActivity(), R.id.button_not_confirm, R.string.button_not_confirm, this));
 
         for (Button button : buttons) {
             button.getButtonText().setTextColor(activity.getResources().getColor(android.R.color.white));
@@ -75,15 +72,11 @@ public class MainMenu extends MenuWindowModel implements OnButtonClick {
         if (result != null)
             switch (result) {
                 case RESUME:
-                    listener.resume();
-                    break;
-                case SETTINGS:
-                    new SettingsMenu(getActivity(), getActivityContent())
-                            .showWindow(true);
+                    if (listener != null)
+                        listener.resume();
                     break;
                 case FINISH:
-                    new ExitConfirmMenu(getActivity(), getActivityContent(), ExitConfirmMenu.Modification.RESUME_MENU, null)
-                            .showWindow(true);
+                    getActivity().finish();
                     break;
             }
     }
@@ -114,16 +107,12 @@ public class MainMenu extends MenuWindowModel implements OnButtonClick {
     public void onClick(Button button, View view) {
         switch (buttons.indexOf(button)) {
             case 0:
-                result = Result.RESUME;
-                onBackPressed();
-                break;
-            case 1:
-                result = Result.SETTINGS;
-                closeWindow(true, null);
-                break;
-            case 2:
                 result = Result.FINISH;
                 closeWindow(true, null);
+                break;
+            case 1:
+                result = Result.RESUME;
+                onBackPressed();
                 break;
         }
     }

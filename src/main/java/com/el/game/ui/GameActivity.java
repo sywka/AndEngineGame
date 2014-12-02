@@ -29,6 +29,7 @@ import android.widget.FrameLayout;
 import com.el.game.R;
 import com.el.game.etc.MovingCollisionObjectFactory;
 import com.el.game.objects.MovingCollisionObject;
+import com.el.game.ui.menu.ExitConfirmMenu;
 import com.el.game.ui.menu.MainMenu;
 import com.el.game.ui.menu.MenuWindowModel;
 import com.el.game.utils.Utils;
@@ -276,20 +277,40 @@ public class GameActivity extends LayoutGameActivity implements SensorEventListe
         backgroundMusic.setVolume(1.0f);
     }
 
-    private void showMainMenu() {
-        if (isGameLoaded() && MenuWindowModel.getBackListMenu().size() <= 1) {
+    private void pause() {
+        if (isGameLoaded()) {
             getEngine().getScene().setIgnoreUpdate(true);
             backgroundMusic.setVolume(0.2f);
+        }
+    }
+
+    private void showMainMenu() {
+        if (isGameLoaded() && MenuWindowModel.getBackListMenu().size() <= 1) {
+            pause();
             mainMenu.showWindow(true);
         }
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK && !MenuWindowModel.getBackListMenu().isEmpty()) {
-            MainMenu.onBackPressed();
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+
+            if (MenuWindowModel.getBackListMenu().isEmpty()) {
+                pause();
+                new ExitConfirmMenu(this, (FrameLayout) findViewById(R.id.activity_content), ExitConfirmMenu.Modification.RESUME_MENU, this)
+                        .showWindow(true);
+            } else
+                MainMenu.onBackPressed();
+
             return false;
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        MainMenu.getBackListMenu().clear();
+        System.exit(0);
     }
 }

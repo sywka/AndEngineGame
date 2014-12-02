@@ -1,12 +1,12 @@
 package com.el.game.ui.menu;
 
 import android.app.Activity;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import com.el.game.R;
 
@@ -18,8 +18,9 @@ abstract public class MenuWindowModel {
     protected static List<MenuWindowModel> backListMenu = new ArrayList<MenuWindowModel>();
 
     protected Activity activity;
-    protected View menuLayout;
+    protected FrameLayout menuLayout;
     protected FrameLayout activityContent;
+    protected TextView title;
 
     private boolean isAnimateNow;
 
@@ -42,12 +43,16 @@ abstract public class MenuWindowModel {
         addToBackList();
 
         removeMenu(false);
-        menuLayout = activity.getLayoutInflater().inflate(getMenuLayoutId(), null);
+        menuLayout = (FrameLayout) activity.getLayoutInflater().inflate(getMenuLayoutId(), null);
+        FrameLayout titleLayout = (FrameLayout) activity.getLayoutInflater().inflate(R.layout.menu_title, null);
+        menuLayout.addView(titleLayout, 0);
         activityContent.addView(menuLayout);
+        title = (TextView) titleLayout.findViewById(R.id.title);
+
         onCreateWindow();
 
         isAnimateNow = true;
-        long startOffset = showAnimationBackground(R.anim.main_menu_open_background, 0, isWithBackgroundAnimation, new Animation.AnimationListener() {
+        long startOffset = showAnimationBackground(R.anim.menu_open_background, 0, isWithBackgroundAnimation, new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
 
@@ -63,13 +68,15 @@ abstract public class MenuWindowModel {
 
             }
         });
+        showAnimationTitle(R.anim.menu_title_open);
         showOpenAnimation(startOffset);
     }
 
     public void closeWindow(final boolean isWithBackgroundAnimation, final MenuWindowModel newWindow) {
         isAnimateNow = true;
+        showAnimationTitle(R.anim.menu_title_close);
         long startOffset = showCloseAnimation();
-        showAnimationBackground(R.anim.main_menu_close_background, startOffset, isWithBackgroundAnimation, new Animation.AnimationListener() {
+        showAnimationBackground(R.anim.menu_close_background, startOffset, isWithBackgroundAnimation, new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
 
@@ -77,9 +84,9 @@ abstract public class MenuWindowModel {
 
             @Override
             public void onAnimationEnd(Animation animation) {
+                isAnimateNow = false;
                 onCloseWindow();
                 removeMenu(true);
-                isAnimateNow = false;
                 if (newWindow != null) newWindow.showWindow(isWithBackgroundAnimation);
             }
 
@@ -99,6 +106,12 @@ abstract public class MenuWindowModel {
         animation.setFillAfter(true);
         menuLayout.startAnimation(animation);
         return animation.getDuration();
+    }
+
+    private void showAnimationTitle(int animResourceId) {
+        Animation animation = AnimationUtils.loadAnimation(activity, animResourceId);
+        animation.setFillAfter(true);
+        title.startAnimation(animation);
     }
 
     private void changeClickable(ViewGroup viewGroup, boolean flag) {
@@ -138,6 +151,10 @@ abstract public class MenuWindowModel {
             backListMenu.get(0).closeWindow(true, null);
             backListMenu.remove(0);
         }
+    }
+
+    protected void setTitleText(int resource) {
+        title.setText(resource);
     }
 
     public FrameLayout getActivityContent() {

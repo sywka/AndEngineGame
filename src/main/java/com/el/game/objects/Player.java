@@ -102,15 +102,15 @@ public class Player extends GameObject {
 
         getObjectSprite().animate(new long[]{100, 100, 100, 100}, 0, 3, true);
 
-        BitmapTextureAtlas redAtlas = new BitmapTextureAtlas(getActivity().getTextureManager(), 512, 512, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
-        TiledTextureRegion redRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromResource(redAtlas, getActivity(), R.drawable.red_fire, 0, 0, 1, 4);
+        BitmapTextureAtlas redAtlas = new BitmapTextureAtlas(getActivity().getTextureManager(), 1024, 1024, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
+        TiledTextureRegion redRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromResource(redAtlas, getActivity(), R.drawable.red_fire, 0, 0, 2, 6);
         redFireSprite = new AnimatedSprite(0, Utils.getPixelsOfPercentY(0),
                 Utils.getPixelsOfPercentX(100), Utils.getPixelsOfPercentY(10), redRegion, getEngine().getVertexBufferObjectManager());
         redAtlas.load();
         scene.attachChild(redFireSprite);
 
-        BitmapTextureAtlas blueAtlas = new BitmapTextureAtlas(getActivity().getTextureManager(), 512, 512, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
-        TiledTextureRegion blueRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromResource(blueAtlas, getActivity(), R.drawable.blue_fire, 0, 0, 1, 4);
+        BitmapTextureAtlas blueAtlas = new BitmapTextureAtlas(getActivity().getTextureManager(), 1024, 1024, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
+        TiledTextureRegion blueRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromResource(blueAtlas, getActivity(), R.drawable.blue_fire, 0, 0, 2, 6);
         blueFireSprite = new AnimatedSprite(0, Utils.getPixelsOfPercentY(90),
                 Utils.getPixelsOfPercentX(100), Utils.getPixelsOfPercentY(10), blueRegion, getEngine().getVertexBufferObjectManager());
         blueAtlas.load();
@@ -163,7 +163,11 @@ public class Player extends GameObject {
         }
 
         ///Устанавливаем движение по OY
-        if (fireTime <= 0) {
+        if (fireTime <= 0 || (redFireSprite.getCurrentTileIndex() > 3 && redFireSprite.isAnimationRunning())) {
+            if (!redFireSprite.isAnimationRunning()){
+                redFireSprite.setVisible(false);
+                blueFireSprite.setVisible(false);
+            }
             if (fallSpeed > 0 && getPositionY() > fieldExtremeDownPoint) {
                 fallSpeed *= -1;
                 startSpriteFrame = (startSpriteFrame < 5) ? 0 : 8;
@@ -177,6 +181,10 @@ public class Player extends GameObject {
                 getObjectSprite().animate(new long[]{100, 100, 100, 100}, startSpriteFrame, endSpriteFrame, true);
             }
         } else {
+            if (!redFireSprite.isAnimationRunning() && !blueFireSprite.isAnimationRunning()) {
+                redFireSprite.animate(new long[]{100, 100, 100, 100}, 0, 3, true);
+                blueFireSprite.animate(new long[]{100, 100, 100, 100}, 0, 3, true);
+            }
             fireTime -= 0.015f;
             if (fireTime <= 0) {
                 stopFire();
@@ -279,15 +287,13 @@ public class Player extends GameObject {
     public void startFire() {
         redFireSprite.setVisible(true);
         blueFireSprite.setVisible(true);
-        redFireSprite.animate(new long[]{100, 100, 100, 100}, 0, 3, true);
-        blueFireSprite.animate(new long[]{100, 100, 100, 100}, 0, 3, true);
+        redFireSprite.animate(new long[]{100, 100, 100, 100}, 4, 7, false);
+        blueFireSprite.animate(new long[]{100, 100, 100, 100}, 4, 7, false);
         fireTime = 5.0f;
     }
 
     public void stopFire() {
-        redFireSprite.setVisible(false);
-        blueFireSprite.setVisible(false);
-        redFireSprite.stopAnimation();
-        redFireSprite.stopAnimation();
+        redFireSprite.animate(new long[]{100, 100, 100, 100}, 8, 11, false);
+        redFireSprite.animate(new long[]{100, 100, 100, 100}, 8, 11, false);
     }
 }

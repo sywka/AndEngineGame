@@ -57,24 +57,11 @@ public class MovingCollisionObjectFactory {
         if (player.getIsDead()) {
             UpdateUntilPlayerDead();
             ///Костыли
-            {
-                if (!movingObjectsList.get(24).getIsAlife())
-                    movingObjectsList.get(24).getObjectSprite().setVisible(false);      //Фикс Вылета мёртвого портала на экран
-                for(int i = 0; i < 20; i++)     //Фикс Вылета на экран живого врага, но проигрывающего анимацию смерти.
-                    if (movingObjectsList.get(i).getObjectSprite().getCurrentTileIndex() > 3 &&
-                            movingObjectsList.get(i).getIsAlife())
-                        movingObjectsList.get(i).getObjectSprite().animate(new long[]{100, 100, 100, 100}, 0, 3, true);
-            }
+            if (!movingObjectsList.get(24).getIsAlife())
+                movingObjectsList.get(24).getObjectSprite().setVisible(false);      //Фикс Вылета мёртвого портала на экран
             ///Костыли
             return;
         }
-
-        /*if (!movingObjectsList.get(19).getIsAlife() &&     //Обновляем летящие объекты только в том случае, если
-            movingObjectsList.get(19).getObjectSprite().getCurrentTileIndex() < 4 &&//Мертвы 3 последних врага. Это спасёт от неоправданного
-                !movingObjectsList.get(18).getIsAlife() &&  //Увеличения скорости
-                    movingObjectsList.get(18).getObjectSprite().getCurrentTileIndex() < 4 &&//Также проверяем, не проигрывается ли у них
-                        !movingObjectsList.get(17).getIsAlife() &&
-                            movingObjectsList.get(17).getObjectSprite().getCurrentTileIndex() < 4){*/
         if (!isThereAliveEnemys()){
             if (currentSpeed < 0.8f)
                 currentSpeed += 0.1f;
@@ -119,7 +106,7 @@ public class MovingCollisionObjectFactory {
                 isThereObjects = movingObject.getIsAlife();
         }
 
-        if (isThereObjects == false && !player.getObjectSprite().isAnimationRunning()) {
+        if ((isThereObjects == false) && !player.getObjectSprite().isAnimationRunning()) {
             player.setPositionX(Utils.getPixelsOfPercentX(50));
             player.setPositionY(Utils.getPixelsOfPercentY(50));
             player.setIsDead(false);
@@ -151,25 +138,27 @@ public class MovingCollisionObjectFactory {
         for (int j = 20; j < 23; j++)       //Генерируем бонусы
             generateNewBonusPosition(j);
 
-        //Генерация телепортов
+        generateNewBonusPortalsPosition();  //Генерация телепортов
+    }
+
+    /**
+     *  Генерирует новую позицию для бонусов "телепортов"(их 2, поэтому пришлось вынести в отдельный метод
+     */
+    public void generateNewBonusPortalsPosition(){
         if (movingObjectsList.get(23).getIsAlife() == false && movingObjectsList.get(24).getIsAlife() == false) {
             float newPortalsXPosition = random.nextInt(20) * Utils.getPixelsOfPercentX(20);
-
+            //Генерируем противоположные X
             movingObjectsList.get(23).setPositionX(Utils.getPixelsOfPercentX(-20) - newPortalsXPosition);
             movingObjectsList.get(24).setPositionX(Utils.getPixelsOfPercentX(120) + newPortalsXPosition);
-
-            movingObjectsList.get(23).setPositionY(random.nextInt(10) * Utils.getPixelsOfPercentY(10));
-            movingObjectsList.get(23).setIsAlife(true);
             movingObjectsList.get(23).setXSpeed(Utils.getPixelsOfPercentX(currentSpeed));
-
-            movingObjectsList.get(24).setPositionY(random.nextInt(10) * Utils.getPixelsOfPercentY(10));
-            movingObjectsList.get(24).setIsAlife(true);
             movingObjectsList.get(24).setXSpeed(Utils.getPixelsOfPercentX(-currentSpeed));
-
-            movingObjectsList.get(24).getObjectSprite().setVisible(true);
-
-            movingObjectsList.get(23).getObjectSprite().animate(new long[]{100, 100, 100, 100}, 0, 3, true);
-            movingObjectsList.get(24).getObjectSprite().animate(new long[]{100, 100, 100, 100}, 4, 7, true);
+            //Генерируем Y и прочие параметры
+            for (int i = 23; i < 25; i++) {
+                movingObjectsList.get(i).setPositionY(random.nextInt(10) * Utils.getPixelsOfPercentY(10));
+                movingObjectsList.get(i).setIsAlife(true);
+                movingObjectsList.get(i).getObjectSprite().setVisible(true);
+                movingObjectsList.get(i).getObjectSprite().animate(new long[]{100, 100, 100, 100}, i % 23 * 4, i % 23 * 4 + 3, true);
+            }
         }
     }
 

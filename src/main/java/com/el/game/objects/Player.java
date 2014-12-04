@@ -138,6 +138,10 @@ public class Player extends GameObject {
     public void onUpdateState(float v) {
         super.onUpdateState(v);
         if (isDead) {
+            if (redFireSprite.isVisible() && !blueFireSprite.isAnimationRunning()){
+                redFireSprite.setVisible(false);
+                blueFireSprite.setVisible(false);
+            }
             return;
         } else scoreHelper.updateScore();
 
@@ -240,6 +244,7 @@ public class Player extends GameObject {
         if (countLife != 0) return;
         getObjectSprite().animate(new long[]{200, 200, 200, 200, 200}, 16, 20, false);
         isDead = true;
+        stopFire();
     }
 
     public void setIsDead(boolean state) {
@@ -293,7 +298,8 @@ public class Player extends GameObject {
     }
 
     public void stopFire() {
+        fireTime = 0;
         redFireSprite.animate(new long[]{100, 100, 100, 100}, 8, 11, false);
-        redFireSprite.animate(new long[]{100, 100, 100, 100}, 8, 11, false);
+        blueFireSprite.animate(new long[]{100, 100, 100, 100}, 8, 11, false);
     }
 }

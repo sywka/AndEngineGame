@@ -201,15 +201,15 @@ public class MovingCollisionObjectFactory {
             int z = i % 4;
             switch (z){
                 case 0:
-                    movingObjectsList.get(i).setPositionY(Utils.getPixelsOfPercentY(50));
+                    movingObjectsList.get(i).setPositionY(Utils.getPixelsOfPercentY(46));
                     movingObjectsList.get(i).setPositionX(i / 4 * Utils.getPixelsOfPercentX(60) * orientation + Utils.getPixelsOfPercentX(startPosition));
                     break;
                 case 1:
-                    movingObjectsList.get(i).setPositionY(Utils.getPixelsOfPercentY(10));
+                    movingObjectsList.get(i).setPositionY(Utils.getPixelsOfPercentY(6));
                     movingObjectsList.get(i).setPositionX((i / 4 * Utils.getPixelsOfPercentX(60) + 120) * orientation + Utils.getPixelsOfPercentX(startPosition));
                     break;
                 case 2:
-                    movingObjectsList.get(i).setPositionY(Utils.getPixelsOfPercentY(90));
+                    movingObjectsList.get(i).setPositionY(Utils.getPixelsOfPercentY(86));
                     movingObjectsList.get(i).setPositionX((i / 4 * Utils.getPixelsOfPercentX(60) + 120) * orientation + Utils.getPixelsOfPercentX(startPosition));
                     break;
                 case 3:
@@ -236,7 +236,7 @@ public class MovingCollisionObjectFactory {
             startPosition = -20;
         }
         for (int i = 0; i < 20; i++) {
-            movingObjectsList.get(i).setPositionY(Utils.getPixelsOfPercentY((10 + i % 3 * 40)));
+            movingObjectsList.get(i).setPositionY(Utils.getPixelsOfPercentY((5 + i % 3 * 40)));
             movingObjectsList.get(i).setXSpeed(Utils.getPixelsOfPercentX(-currentSpeed * orientation));
             movingObjectsList.get(i).setPositionX(i / 3 * Utils.getPixelsOfPercentX(20) * orientation + Utils.getPixelsOfPercentX(startPosition));
             if (i == 9){
@@ -271,7 +271,7 @@ public class MovingCollisionObjectFactory {
             startPosition = -20;
         }
         for (int i = 0; i < 20; i++) {
-            movingObjectsList.get(i).setPositionY(Utils.getPixelsOfPercentY((i % 3 * 40)));
+            movingObjectsList.get(i).setPositionY(Utils.getPixelsOfPercentY((i % 3 * 40 + 5)));
             movingObjectsList.get(i).setXSpeed(Utils.getPixelsOfPercentX(-currentSpeed * orientation));
             movingObjectsList.get(i).setPositionX(i * Utils.getPixelsOfPercentX(20) * orientation + Utils.getPixelsOfPercentX(startPosition) - Utils.getPixelsOfPercentX(i % 3 * 10) * orientation);
             movingObjectsList.get(i).setIsAlife(true);
@@ -291,7 +291,7 @@ public class MovingCollisionObjectFactory {
             startPosition = -20;
         }
         for (int i = 0; i < 20; i++) {
-            movingObjectsList.get(i).setPositionY(Utils.getPixelsOfPercentY((i % 4 * 20 + i % 2 * 20)));
+            movingObjectsList.get(i).setPositionY(Utils.getPixelsOfPercentY((i % 4 * 20 + i % 2 * 20 + 4)));
             movingObjectsList.get(i).setXSpeed(Utils.getPixelsOfPercentX(-currentSpeed * orientation));
             movingObjectsList.get(i).setPositionX(i / 2 * Utils.getPixelsOfPercentX(40) * orientation + Utils.getPixelsOfPercentX(startPosition));
             movingObjectsList.get(i).setIsAlife(true);
@@ -309,7 +309,7 @@ public class MovingCollisionObjectFactory {
             startPosition = -20;
         }
         for (int i = 0; i < 20; i++) {
-            movingObjectsList.get(i).setPositionY(Utils.getPixelsOfPercentY((i / 2 * 20 % 100)));
+            movingObjectsList.get(i).setPositionY(Utils.getPixelsOfPercentY((i / 2 * 20 % 100 + 4)));
             movingObjectsList.get(i).setXSpeed(Utils.getPixelsOfPercentX(-currentSpeed * orientation));
             movingObjectsList.get(i).setPositionX((i / 2 * Utils.getPixelsOfPercentX(40) + i % 2 * Utils.getPixelsOfPercentX(10))
                     * orientation + Utils.getPixelsOfPercentX(startPosition));

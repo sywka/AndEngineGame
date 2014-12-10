@@ -1,6 +1,7 @@
 package com.el.game.ui;
 
 import android.app.Activity;
+import android.content.Context;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
@@ -21,14 +22,14 @@ abstract public class Button implements View.OnClickListener {
     public Button(Activity activity, int resourceIdButton) {
         this.activity = activity;
         initVar(resourceIdButton);
-        listeners = new ArrayList<OnButtonClick>();
+        listeners = new ArrayList<>();
         setDefaultValues(buttonLayout);
     }
 
     public Button(Activity activity, int resourceIdButton, OnButtonClick listener) {
         this.activity = activity;
         initVar(resourceIdButton);
-        listeners = new ArrayList<OnButtonClick>();
+        listeners = new ArrayList<>();
         listeners.add(listener);
         setDefaultValues(buttonLayout);
     }
@@ -65,6 +66,10 @@ abstract public class Button implements View.OnClickListener {
 
     public Activity getActivity() {
         return activity;
+    }
+
+    public Context getContext() {
+        return activity.getApplicationContext();
     }
 
     public TextView getButtonText() {

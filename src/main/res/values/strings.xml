@@ -17,4 +17,7 @@
     <string name="button_menu_settings">Настройки</string>
     <string name="button_menu_exit">Выход</string>
 
+    <string name="sounds">Звуки</string>
+    <string name="accelerometer">Акселерометр</string>
+
 </resources>

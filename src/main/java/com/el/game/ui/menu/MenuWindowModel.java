@@ -1,6 +1,7 @@
 package com.el.game.ui.menu;
 
 import android.app.Activity;
+import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -9,18 +10,23 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.el.game.R;
+import com.el.game.ui.Button;
+import com.el.game.ui.ImageButton;
+import com.el.game.ui.OnButtonClick;
 
 import java.util.ArrayList;
 import java.util.List;
 
 abstract public class MenuWindowModel {
 
-    protected static List<MenuWindowModel> backListMenu = new ArrayList<MenuWindowModel>();
+    protected static List<MenuWindowModel> backListMenu = new ArrayList<>();
 
     protected Activity activity;
     protected FrameLayout menuLayout;
     protected FrameLayout activityContent;
     protected TextView title;
+    protected Button backButton;
+    protected FrameLayout actionBar;
 
     private boolean isAnimateNow;
 
@@ -42,12 +48,18 @@ abstract public class MenuWindowModel {
     public void showWindow(boolean isWithBackgroundAnimation) {
         addToBackList();
 
-        removeMenu(false);
-        menuLayout = (FrameLayout) activity.getLayoutInflater().inflate(getMenuLayoutId(), null);
-        FrameLayout titleLayout = (FrameLayout) activity.getLayoutInflater().inflate(R.layout.menu_title, null);
-        menuLayout.addView(titleLayout, 0);
+        removeWindowLayout(false);
+        menuLayout = (FrameLayout) activity.getLayoutInflater().inflate(getMenuLayoutId(), activityContent, false);
+        actionBar = (FrameLayout) activity.getLayoutInflater().inflate(R.layout.menu_title, menuLayout, false);
+        menuLayout.addView(actionBar);
         activityContent.addView(menuLayout);
-        title = (TextView) titleLayout.findViewById(R.id.title);
+        title = (TextView) actionBar.findViewById(R.id.title);
+        backButton = new ImageButton(getActivity(), R.id.button_back, R.drawable.ic_back, new OnButtonClick() {
+            @Override
+            public void onClick(Button button, View view) {
+                onBackPressed();
+            }
+        });
 
         onCreateWindow();
 
@@ -68,13 +80,13 @@ abstract public class MenuWindowModel {
 
             }
         });
-        showAnimationTitle(R.anim.menu_title_open);
+        showAnimationActionBar(R.anim.menu_title_open);
         showOpenAnimation(startOffset);
     }
 
     public void closeWindow(final boolean isWithBackgroundAnimation, final MenuWindowModel newWindow) {
         isAnimateNow = true;
-        showAnimationTitle(R.anim.menu_title_close);
+        showAnimationActionBar(R.anim.menu_title_close);
         long startOffset = showCloseAnimation();
         showAnimationBackground(R.anim.menu_close_background, startOffset, isWithBackgroundAnimation, new Animation.AnimationListener() {
             @Override
@@ -86,7 +98,7 @@ abstract public class MenuWindowModel {
             public void onAnimationEnd(Animation animation) {
                 isAnimateNow = false;
                 onCloseWindow();
-                removeMenu(true);
+                removeWindowLayout(true);
                 if (newWindow != null) newWindow.showWindow(isWithBackgroundAnimation);
             }
 
@@ -108,10 +120,10 @@ abstract public class MenuWindowModel {
         return animation.getDuration();
     }
 
-    private void showAnimationTitle(int animResourceId) {
+    private void showAnimationActionBar(int animResourceId) {
         Animation animation = AnimationUtils.loadAnimation(activity, animResourceId);
         animation.setFillAfter(true);
-        title.startAnimation(animation);
+        actionBar.startAnimation(animation);
     }
 
     private void changeClickable(ViewGroup viewGroup, boolean flag) {
@@ -125,7 +137,7 @@ abstract public class MenuWindowModel {
         }
     }
 
-    private void removeMenu(boolean isClickableActivityContent) {
+    private void removeWindowLayout(boolean isClickableActivityContent) {
         changeClickable(activityContent, isClickableActivityContent);
         activityContent.removeView(menuLayout);
     }
@@ -157,16 +169,20 @@ abstract public class MenuWindowModel {
         title.setText(resource);
     }
 
-    public FrameLayout getActivityContent() {
+    protected FrameLayout getActivityContent() {
         return activityContent;
     }
 
-    public View getMenuLayout() {
+    protected View getMenuLayout() {
         return menuLayout;
     }
 
-    public Activity getActivity() {
+    protected Activity getActivity() {
         return activity;
+    }
+
+    protected Context getContext() {
+        return activity.getApplicationContext();
     }
 
     public static List<MenuWindowModel> getBackListMenu() {

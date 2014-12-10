@@ -1,7 +1,5 @@
 package com.el.game.ui;
 
-import org.andengine.audio.music.Music;
-import org.andengine.audio.music.MusicFactory;
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.handler.timer.ITimerCallback;
 import org.andengine.engine.handler.timer.TimerHandler;
@@ -32,6 +30,7 @@ import com.el.game.objects.MovingCollisionObject;
 import com.el.game.ui.menu.ExitConfirmMenu;
 import com.el.game.ui.menu.MainMenu;
 import com.el.game.ui.menu.MenuWindowModel;
+import com.el.game.utils.SoundControl;
 import com.el.game.utils.Utils;
 import com.el.game.objects.GameObject;
 import com.el.game.objects.Player;
@@ -55,7 +54,7 @@ public class GameActivity extends LayoutGameActivity implements SensorEventListe
 
     private MainMenu mainMenu;
     private ControlButton controlButton;
-    private Music backgroundMusic;
+    private SoundControl soundControl;
 
     @Override
     protected int getLayoutID() {
@@ -70,6 +69,7 @@ public class GameActivity extends LayoutGameActivity implements SensorEventListe
     @Override
     protected void onSetContentView() {
         super.onSetContentView();
+        soundControl = SoundControl.getInstance(getApplicationContext(), getMusicManager());
         mainMenu = new MainMenu(this, (FrameLayout) findViewById(R.id.activity_content), MainMenu.Modification.RESUME_MENU, this);
         controlButton = new ControlButton(this, R.id.button_control);
         new MenuButton(this, R.id.button_menu, R.string.button_menu, new OnButtonClick() {
@@ -87,7 +87,7 @@ public class GameActivity extends LayoutGameActivity implements SensorEventListe
     public EngineOptions onCreateEngineOptions() {
         Utils.calculateResolution(this);
         startLandscapeOrientation = 1;
-        fingersId = new ArrayList<Integer>();
+        fingersId = new ArrayList<>();
         Camera camera = new Camera(0, 0, Utils.getResolutionWidth(), Utils.getResolutionHeight());
         EngineOptions options = new EngineOptions(true, ScreenOrientation.LANDSCAPE_SENSOR,
                 new RatioResolutionPolicy(Utils.getScreenResolutionRatio(this)), camera);
@@ -103,7 +103,7 @@ public class GameActivity extends LayoutGameActivity implements SensorEventListe
         player = new Player(this, getEngine(), new Vector2(Utils.getPixelsOfPercentX(50), Utils.getPixelsOfPercentY(50)));       //Добавляем игрока
         controlButton.setPlayer(player);
 
-        objectList = new ArrayList<GameObject>();           //Инициализируем массив игровых объектов
+        objectList = new ArrayList<>();           //Инициализируем массив игровых объектов
         objectList.add(player);                             //Добавляем к массиву игрока
 
         movingCollisionObjectFactory = new MovingCollisionObjectFactory(this, getEngine(), player);
@@ -112,8 +112,8 @@ public class GameActivity extends LayoutGameActivity implements SensorEventListe
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
                 SensorManager.SENSOR_DELAY_GAME);         //Устанавливаем менеджер сенсора как работника с акселерометром
 
-        backgroundMusic = MusicFactory.createMusicFromAsset(getMusicManager(), this, "snd/background_music.mp3");
-        backgroundMusic.setLooping(true);
+        soundControl.initBgMusicFromAsset("snd/background_music.mp3", true);
+
         onCreateResourcesCallback.onCreateResourcesFinished();
     }
 
@@ -136,8 +136,7 @@ public class GameActivity extends LayoutGameActivity implements SensorEventListe
 
         scene.setOnSceneTouchListener(this);    //Устанавливаем слушатель прикосновений на сцене
 
-
-        backgroundMusic.play();
+        soundControl.playBgMusic();
         onCreateSceneCallback.onCreateSceneFinished(scene);
 
         scene.registerUpdateHandler(new TimerHandler(0.015f, true, new ITimerCallback() {
@@ -262,25 +261,26 @@ public class GameActivity extends LayoutGameActivity implements SensorEventListe
         if (!isGameLoaded()) return;
 
         getEngine().getScene().setIgnoreUpdate(true);
-        backgroundMusic.setVolume(0f);
+        soundControl.pauseBgMusic();
     }
 
     @Override
     protected synchronized void onResume() {
         super.onResume();
+        soundControl.resumeBgMusic();
         showMainMenu();
     }
 
     @Override
     public void resume() {
         getEngine().getScene().setIgnoreUpdate(false);
-        backgroundMusic.setVolume(1.0f);
+        soundControl.setVolume(SoundControl.Volume.FULL_VOLUME);
     }
 
     private void pause() {
         if (isGameLoaded()) {
             getEngine().getScene().setIgnoreUpdate(true);
-            backgroundMusic.setVolume(0.2f);
+            soundControl.setVolume(SoundControl.Volume.ONE_FIFTH_VOLUME);
         }
     }
 

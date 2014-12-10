@@ -1,12 +1,11 @@
 package com.el.game.ui;
 
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.FrameLayout;
 
 import com.el.game.R;
 import com.el.game.objects.Player;
+import com.el.game.utils.Utils;
 
 import org.andengine.ui.activity.BaseGameActivity;
 
@@ -21,12 +20,11 @@ public class ControlButton extends Button implements OnButtonClick {
     public ControlButton(BaseGameActivity activity, int resourceIdButton) {
         super(activity, resourceIdButton);
         addListener(this);
-
     }
 
     @Override
     protected void setDefaultValues(FrameLayout buttonLayout) {
-        control = load();
+        control = Utils.load(getContext(), CONTROL, CONTROL_TOUCH);
         switch (control) {
             case CONTROL_TOUCH:
                 buttonLayout.setBackgroundResource(R.drawable.control_touch);
@@ -53,23 +51,7 @@ public class ControlButton extends Button implements OnButtonClick {
         }
         if (player != null)
             player.setMove(Player.IDLE);
-        save(control);
-    }
-
-    private void save(int value) {
-        SharedPreferences prefs;
-        SharedPreferences.Editor editor;
-
-        prefs = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
-        editor = prefs.edit();
-
-        editor.putInt(CONTROL, value);
-        editor.commit();
-    }
-
-    private int load() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
-        return prefs.getInt(CONTROL, CONTROL_TOUCH);
+        Utils.save(getContext(), CONTROL, control);
     }
 
     public int getControl() {

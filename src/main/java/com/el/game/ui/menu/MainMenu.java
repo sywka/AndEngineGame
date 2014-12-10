@@ -36,7 +36,7 @@ public class MainMenu extends MenuWindowModel implements OnButtonClick {
         super(activity, activityContent);
         this.listener = listener;
         this.modification = modification;
-        this.buttons = new ArrayList<Button>();
+        this.buttons = new ArrayList<>();
     }
 
     @Override
@@ -61,12 +61,11 @@ public class MainMenu extends MenuWindowModel implements OnButtonClick {
         }
         buttons.add(new TextButton(activity, R.id.button_settings, R.string.button_menu_settings, this));
         buttons.add(new TextButton(activity, R.id.button_exit, R.string.button_menu_exit, this));
-        title = (TextView) getMenuLayout().findViewById(R.id.title);
 
         for (Button button : buttons) {
             button.getButtonText().setTextColor(activity.getResources().getColor(android.R.color.white));
             button.getButtonText().setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
-            button.getButtonLayout().setPadding((int) activity.getResources().getDimension(R.dimen.button_main_menu_padding_left), 0, 0, 0);
+            button.getButtonText().setPadding((int) activity.getResources().getDimension(R.dimen.menu_elements_padding), 0, 0, 0);
         }
     }
 
@@ -95,7 +94,7 @@ public class MainMenu extends MenuWindowModel implements OnButtonClick {
 
     @Override
     protected long showCloseAnimation() {
-        return showAnimation(0, R.anim.menu__button_close);
+        return showAnimation(0, R.anim.menu_button_close);
     }
 
     private long showAnimation(long startOffset, int animResourceId) {

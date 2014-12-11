@@ -71,8 +71,8 @@ public class GameActivity extends LayoutGameActivity implements SensorEventListe
         super.onSetContentView();
         soundControl = SoundControl.getInstance(getApplicationContext(), getMusicManager());
         mainMenu = new MainMenu(this, (FrameLayout) findViewById(R.id.activity_content), MainMenu.Modification.RESUME_MENU, this);
-        controlButton = new ControlButton(this, R.id.button_control);
-        new MenuButton(this, R.id.button_menu, R.string.button_menu, new OnButtonClick() {
+        controlButton = (ControlButton) findViewById(R.id.button_control);
+        ((Button) findViewById(R.id.button_menu)).setOnClickListener(new OnButtonClick() {
             @Override
             public void onClick(Button button, View view) {
                 showMainMenu();

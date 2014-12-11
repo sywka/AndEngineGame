@@ -1,15 +1,14 @@
 package com.el.game.ui;
 
+import android.content.Context;
+import android.util.AttributeSet;
 import android.view.View;
-import android.widget.FrameLayout;
 
 import com.el.game.R;
 import com.el.game.objects.Player;
 import com.el.game.utils.Utils;
 
-import org.andengine.ui.activity.BaseGameActivity;
-
-public class ControlButton extends Button implements OnButtonClick {
+public class ControlButton extends Button {
 
     private static final String CONTROL = "control";
     public static final int CONTROL_TOUCH = 0;
@@ -17,36 +16,46 @@ public class ControlButton extends Button implements OnButtonClick {
     private int control;
     private Player player;
 
-    public ControlButton(BaseGameActivity activity, int resourceIdButton) {
-        super(activity, resourceIdButton);
-        addListener(this);
+    public ControlButton(Context context) {
+        super(context);
+        initButton();
     }
 
-    @Override
-    protected void setDefaultValues(FrameLayout buttonLayout) {
+    public ControlButton(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        initButton();
+    }
+
+    public ControlButton(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        initButton();
+    }
+
+    private void initButton() {
         control = Utils.load(getContext(), CONTROL, CONTROL_TOUCH);
         switch (control) {
             case CONTROL_TOUCH:
-                buttonLayout.setBackgroundResource(R.drawable.control_touch);
+                setBackgroundResource(R.drawable.control_touch);
                 break;
             case CONTROL_ACCELEROMETER:
-                buttonLayout.setBackgroundResource(R.drawable.control_accelerometer);
+                setBackgroundResource(R.drawable.control_accelerometer);
                 break;
         }
     }
 
     @Override
-    public void onClick(Button button, View view) {
+    public void onClick(View view) {
+        super.onClick(view);
         switch (control) {
             case CONTROL_TOUCH:
                 control = CONTROL_ACCELEROMETER;
-                getButtonLayout().setBackgroundResource(R.drawable.control_accelerometer);
+                setBackgroundResource(R.drawable.control_accelerometer);
                 break;
             case CONTROL_ACCELEROMETER:
                 control = CONTROL_TOUCH;
                 if (player != null)
                     player.setNewStep(1);
-                getButtonLayout().setBackgroundResource(R.drawable.control_touch);
+                setBackgroundResource(R.drawable.control_touch);
                 break;
         }
         if (player != null)

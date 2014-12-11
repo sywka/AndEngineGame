@@ -34,7 +34,7 @@ public class SettingsMenu extends MenuWindowModel implements SeekBar.OnSeekBarCh
     }
 
     @Override
-    protected int getMenuLayoutId() {
+    protected int getWindowLayoutId() {
         return R.layout.settings_menu;
     }
 
@@ -47,21 +47,21 @@ public class SettingsMenu extends MenuWindowModel implements SeekBar.OnSeekBarCh
         initSoundPrefLayout();
         initControlPrefLayout();
 
-        animationViews.add(getMenuLayout().findViewById(R.id.sound_pref_layout));
-        animationViews.add(getMenuLayout().findViewById(R.id.control_pref_layout));
+        animationViews.add(getWindowLayout().findViewById(R.id.sound_pref_layout));
+        animationViews.add(getWindowLayout().findViewById(R.id.control_pref_layout));
     }
 
     public void initSoundPrefLayout() {
         boolean isSoundEnabled = Utils.load(getContext(), SoundControl.MUSIC_ENABLED, SoundControl.DEFAULT_MUSIC_ENABLED);
 
-        soundVolume = (SeekBar) getMenuLayout().findViewById(R.id.seekbar_sound_volume);
+        soundVolume = (SeekBar) getWindowLayout().findViewById(R.id.seekbar_sound_volume);
         soundVolume.setMax(SEEKBAR_SOUND_MAX);
         soundVolume.setProgress((int) (Utils.load(getContext(), SoundControl.MUSIC_VOLUME,
                 SoundControl.DEFAULT_MUSIC_VOLUME) * SEEKBAR_SOUND_MAX));
         soundVolume.setEnabled(isSoundEnabled);
         soundVolume.setOnSeekBarChangeListener(this);
 
-        soundEnabled = (CheckBox) getMenuLayout().findViewById(R.id.checkbox_sound);
+        soundEnabled = (CheckBox) getWindowLayout().findViewById(R.id.checkbox_sound);
         soundEnabled.setChecked(isSoundEnabled);
         soundEnabled.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override

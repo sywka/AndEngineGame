@@ -1,18 +1,15 @@
 package com.el.game.ui.menu;
 
 import android.app.Activity;
-import android.view.Gravity;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
-import android.widget.TextView;
 
 import com.el.game.R;
 import com.el.game.ui.Button;
 import com.el.game.ui.OnButtonClick;
 import com.el.game.ui.OnResumeMainMenu;
-import com.el.game.ui.TextButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +37,7 @@ public class MainMenu extends MenuWindowModel implements OnButtonClick {
     }
 
     @Override
-    public int getMenuLayoutId() {
+    public int getWindowLayoutId() {
         return R.layout.main_menu;
     }
 
@@ -49,23 +46,20 @@ public class MainMenu extends MenuWindowModel implements OnButtonClick {
         setTitleText(R.string.button_menu);
         result = Result.RESUME;
         buttons.clear();
+        buttons.add((Button) getWindowLayout().findViewById(R.id.button_start_resume));
+        buttons.add((Button) getWindowLayout().findViewById(R.id.button_settings));
+        buttons.add((Button) getWindowLayout().findViewById(R.id.button_exit));
+        for (Button button : buttons)
+            button.setOnClickListener(this);
         switch (modification) {
             case START_MENU:
-                getMenuLayout().setBackgroundColor(activity.getResources().getColor(R.color.main_menu_background));
-                buttons.add(new TextButton(activity, R.id.button_start_resume, R.string.button_menu_start, this));
+                getWindowLayout().setBackgroundColor(activity.getResources().getColor(R.color.main_menu_background));
+                buttons.get(0).setTextResource(R.string.button_menu_start);
                 break;
             case RESUME_MENU:
-                getMenuLayout().setBackgroundColor(activity.getResources().getColor(R.color.main_menu_background_with_alpha));
-                buttons.add(new TextButton(activity, R.id.button_start_resume, R.string.button_menu_resume, this));
+                getWindowLayout().setBackgroundColor(activity.getResources().getColor(R.color.main_menu_background_with_alpha));
+                buttons.get(0).setTextResource(R.string.button_menu_resume);
                 break;
-        }
-        buttons.add(new TextButton(activity, R.id.button_settings, R.string.button_menu_settings, this));
-        buttons.add(new TextButton(activity, R.id.button_exit, R.string.button_menu_exit, this));
-
-        for (Button button : buttons) {
-            button.getButtonText().setTextColor(activity.getResources().getColor(android.R.color.white));
-            button.getButtonText().setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
-            button.getButtonText().setPadding((int) activity.getResources().getDimension(R.dimen.menu_elements_padding), 0, 0, 0);
         }
     }
 
@@ -77,11 +71,11 @@ public class MainMenu extends MenuWindowModel implements OnButtonClick {
                     listener.resume();
                     break;
                 case SETTINGS:
-                    new SettingsMenu(getActivity(), getActivityContent())
+                    new SettingsMenu(getActivity(), getContainerLayout())
                             .showWindow(true);
                     break;
                 case FINISH:
-                    new ExitConfirmMenu(getActivity(), getActivityContent(), ExitConfirmMenu.Modification.RESUME_MENU, null)
+                    new ExitConfirmMenu(getActivity(), getContainerLayout(), ExitConfirmMenu.Modification.RESUME_MENU, null)
                             .showWindow(true);
                     break;
             }
@@ -104,7 +98,7 @@ public class MainMenu extends MenuWindowModel implements OnButtonClick {
             animation = AnimationUtils.loadAnimation(activity, animResourceId);
             animation.setStartOffset(startOffset);
             animation.setFillAfter(true);
-            button.getButtonLayout().startAnimation(animation);
+            button.startAnimation(animation);
         }
         return startOffset;
     }

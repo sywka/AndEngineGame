@@ -1,86 +1,114 @@
 package com.el.game.ui;
 
-import android.app.Activity;
 import android.content.Context;
+import android.content.res.TypedArray;
+import android.graphics.Color;
+import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.el.game.R;
 
-import java.util.ArrayList;
-import java.util.List;
+public class Button extends FrameLayout implements View.OnClickListener {
 
-abstract public class Button implements View.OnClickListener {
+    private int textResource;
+    private int textColor;
+    private Gravity gravity;
+    private int textPaddingLeft;
+    private int textPaddingRight;
 
-    private FrameLayout buttonLayout;                   // контейнер для содержимого кнопки
-    private View buttonView;                            // слой поверх содержимого кнопки, служит для индикации нажатия на кнопку
-    private TextView buttonText;                        // контейнер для текста
-    private Activity activity;                          // активность к которой привязана кнопка
-    private List<OnButtonClick> listeners;
-
-    public Button(Activity activity, int resourceIdButton) {
-        this.activity = activity;
-        initVar(resourceIdButton);
-        listeners = new ArrayList<>();
-        setDefaultValues(buttonLayout);
+    private enum Gravity {
+        CENTER, LEFT, RIGHT
     }
 
-    public Button(Activity activity, int resourceIdButton, OnButtonClick listener) {
-        this.activity = activity;
-        initVar(resourceIdButton);
-        listeners = new ArrayList<>();
-        listeners.add(listener);
-        setDefaultValues(buttonLayout);
+    private FrameLayout buttonLayout;
+    private TextView buttonTextView;
+
+    private OnButtonClick listener;
+
+    public Button(Context context) {
+        super(context);
+        initButton();
     }
 
-    /**
-     * Метод для инициализации начальных значений, фона и тп.
-     *
-     * @param buttonLayout view кнопки для изменения фона.
-     */
-    protected void setDefaultValues(FrameLayout buttonLayout) {
-        buttonLayout.setBackgroundResource(R.drawable.button);
+    public Button(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        initAttrs(attrs);
+        initButton();
     }
 
-    /**
-     * получаем ссылки на View, назначаем onClickListner
-     */
-    private void initVar(int resourceIdButton) {
-        View button = activity.findViewById(resourceIdButton);
-        buttonLayout = (FrameLayout) button.findViewById(R.id.button_layout);
-        buttonView = button.findViewById(R.id.button_onclick_view);
-        buttonText = (TextView) button.findViewById(R.id.button_text);
-        buttonView.setOnClickListener(this);
+    public Button(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        initAttrs(attrs);
+        initButton();
+    }
+
+    private void initAttrs(AttributeSet attrs) {
+        TypedArray typedArray = getContext().getTheme().obtainStyledAttributes(
+                attrs,
+                R.styleable.button,
+                0, 0);
+        try {
+            textResource = typedArray.getResourceId(R.styleable.button_text, R.string.null_text);
+            textColor = typedArray.getColor(R.styleable.button_textColor, Color.WHITE);
+            gravity = Gravity.values()[typedArray.getInt(R.styleable.button_gravity, Gravity.CENTER.ordinal())];
+            textPaddingLeft = typedArray.getDimensionPixelOffset(R.styleable.button_textPaddingLeft, 0);
+            textPaddingRight = typedArray.getDimensionPixelOffset(R.styleable.button_textPaddingRight, 0);
+        } finally {
+            typedArray.recycle();
+        }
+    }
+
+    private void initButton() {
+        inflate(getContext(), R.layout.button, this);
+
+        buttonLayout = (FrameLayout) findViewById(R.id.button_layout);
+        buttonTextView = (TextView) findViewById(R.id.button_text);
+
+        buttonLayout.setClickable(true);
+        buttonLayout.setOnClickListener(this);
+
+        buttonTextView.setText(textResource);
+        buttonTextView.setTextColor(textColor);
+        switch (gravity) {
+            case CENTER:
+                buttonTextView.setGravity(android.view.Gravity.CENTER);
+                break;
+            case LEFT:
+                buttonTextView.setGravity(android.view.Gravity.LEFT | android.view.Gravity.CENTER);
+                break;
+            case RIGHT:
+                buttonTextView.setGravity(android.view.Gravity.RIGHT | android.view.Gravity.CENTER);
+                break;
+        }
+        buttonTextView.setPadding(textPaddingLeft, 0, textPaddingRight, 0);
     }
 
     @Override
-    final public void onClick(View view) {
-        for (OnButtonClick listener : listeners)
+    public void onClick(View view) {
+        if (listener != null)
             listener.onClick(this, view);
     }
 
-    public FrameLayout getButtonLayout() {
-        return buttonLayout;
+    public void setOnClickListener(OnButtonClick listener) {
+        this.listener = listener;
     }
 
-    public Activity getActivity() {
-        return activity;
+    public String getText() {
+        return getContext().getString(textResource);
     }
 
-    public Context getContext() {
-        return activity.getApplicationContext();
+    public void setTextResource(int textResource) {
+        this.textResource = textResource;
+        buttonTextView.setText(textResource);
     }
 
-    public TextView getButtonText() {
-        return buttonText;
+    public int getTextColor() {
+        return textColor;
     }
 
-    public void addListener(OnButtonClick listener) {
-        listeners.add(listener);
-    }
-
-    public void removeListener(OnButtonClick listener) {
-        listeners.remove(listener);
+    public void setTextColor(int textColor) {
+        this.textColor = textColor;
     }
 }

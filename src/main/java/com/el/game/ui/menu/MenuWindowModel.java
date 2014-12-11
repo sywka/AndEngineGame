@@ -3,7 +3,6 @@ package com.el.game.ui.menu;
 import android.app.Activity;
 import android.content.Context;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
@@ -11,7 +10,6 @@ import android.widget.TextView;
 
 import com.el.game.R;
 import com.el.game.ui.Button;
-import com.el.game.ui.ImageButton;
 import com.el.game.ui.OnButtonClick;
 
 import java.util.ArrayList;
@@ -22,20 +20,20 @@ abstract public class MenuWindowModel {
     protected static List<MenuWindowModel> backListMenu = new ArrayList<>();
 
     protected Activity activity;
-    protected FrameLayout menuLayout;
-    protected FrameLayout activityContent;
-    protected TextView title;
-    protected Button backButton;
-    protected FrameLayout actionBar;
+    protected FrameLayout windowLayout;
+    protected FrameLayout containerLayout;
+    protected TextView windowTitle;
+    protected FrameLayout windowActionBar;
+    protected Button windowBackButton;
 
     private boolean isAnimateNow;
 
-    protected MenuWindowModel(Activity activity, FrameLayout activityContent) {
+    protected MenuWindowModel(Activity activity, FrameLayout containerLayout) {
         this.activity = activity;
-        this.activityContent = activityContent;
+        this.containerLayout = containerLayout;
     }
 
-    abstract protected int getMenuLayoutId();
+    abstract protected int getWindowLayoutId();
 
     abstract protected void onCreateWindow();
 
@@ -48,13 +46,15 @@ abstract public class MenuWindowModel {
     public void showWindow(boolean isWithBackgroundAnimation) {
         addToBackList();
 
-        removeWindowLayout(false);
-        menuLayout = (FrameLayout) activity.getLayoutInflater().inflate(getMenuLayoutId(), activityContent, false);
-        actionBar = (FrameLayout) activity.getLayoutInflater().inflate(R.layout.menu_title, menuLayout, false);
-        menuLayout.addView(actionBar);
-        activityContent.addView(menuLayout);
-        title = (TextView) actionBar.findViewById(R.id.title);
-        backButton = new ImageButton(getActivity(), R.id.button_back, R.drawable.ic_back, new OnButtonClick() {
+        containerLayout.removeView(windowLayout);
+        windowLayout = (FrameLayout) activity.getLayoutInflater().inflate(getWindowLayoutId(), null);
+        windowLayout.setClickable(true);
+        windowActionBar = (FrameLayout) activity.getLayoutInflater().inflate(R.layout.menu_title, windowLayout, false);
+        windowLayout.addView(windowActionBar);
+        containerLayout.addView(windowLayout);
+        windowTitle = (TextView) windowActionBar.findViewById(R.id.title);
+        windowBackButton = (Button) windowActionBar.findViewById(R.id.button_back);
+        windowBackButton.setOnClickListener(new OnButtonClick() {
             @Override
             public void onClick(Button button, View view) {
                 onBackPressed();
@@ -98,7 +98,7 @@ abstract public class MenuWindowModel {
             public void onAnimationEnd(Animation animation) {
                 isAnimateNow = false;
                 onCloseWindow();
-                removeWindowLayout(true);
+                containerLayout.removeView(windowLayout);
                 if (newWindow != null) newWindow.showWindow(isWithBackgroundAnimation);
             }
 
@@ -116,30 +116,14 @@ abstract public class MenuWindowModel {
         if (!isWithBackgroundAnimation) animation.setDuration(1);
         animation.setStartOffset(startOffset);
         animation.setFillAfter(true);
-        menuLayout.startAnimation(animation);
+        windowLayout.startAnimation(animation);
         return animation.getDuration();
     }
 
     private void showAnimationActionBar(int animResourceId) {
         Animation animation = AnimationUtils.loadAnimation(activity, animResourceId);
         animation.setFillAfter(true);
-        actionBar.startAnimation(animation);
-    }
-
-    private void changeClickable(ViewGroup viewGroup, boolean flag) {
-        int childCount = viewGroup.getChildCount();
-        for (int i = 0; i < childCount; i++) {
-            View view = viewGroup.getChildAt(i);
-            view.setClickable(flag);
-            if (view instanceof ViewGroup) {
-                changeClickable((ViewGroup) view, flag);
-            }
-        }
-    }
-
-    private void removeWindowLayout(boolean isClickableActivityContent) {
-        changeClickable(activityContent, isClickableActivityContent);
-        activityContent.removeView(menuLayout);
+        windowActionBar.startAnimation(animation);
     }
 
     protected void addToBackList() {
@@ -166,15 +150,15 @@ abstract public class MenuWindowModel {
     }
 
     protected void setTitleText(int resource) {
-        title.setText(resource);
+        windowTitle.setText(resource);
     }
 
-    protected FrameLayout getActivityContent() {
-        return activityContent;
+    protected FrameLayout getContainerLayout() {
+        return containerLayout;
     }
 
-    protected View getMenuLayout() {
-        return menuLayout;
+    protected View getWindowLayout() {
+        return windowLayout;
     }
 
     protected Activity getActivity() {

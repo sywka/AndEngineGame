@@ -1,7 +1,6 @@
 package com.el.game.ui.menu;
 
 import android.app.Activity;
-import android.view.Gravity;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -11,7 +10,6 @@ import com.el.game.R;
 import com.el.game.ui.Button;
 import com.el.game.ui.OnButtonClick;
 import com.el.game.ui.OnResumeMainMenu;
-import com.el.game.ui.TextButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +37,7 @@ public class ExitConfirmMenu extends MenuWindowModel implements OnButtonClick {
     }
 
     @Override
-    protected int getMenuLayoutId() {
+    protected int getWindowLayoutId() {
         return R.layout.exit_confirm_menu;
     }
 
@@ -49,22 +47,19 @@ public class ExitConfirmMenu extends MenuWindowModel implements OnButtonClick {
         result = Result.RESUME;
         switch (modification) {
             case START_MENU:
-                getMenuLayout().setBackgroundColor(getActivity().getResources().getColor(R.color.main_menu_background));
+                getWindowLayout().setBackgroundColor(getActivity().getResources().getColor(R.color.main_menu_background));
 
                 break;
             case RESUME_MENU:
-                getMenuLayout().setBackgroundColor(getActivity().getResources().getColor(R.color.main_menu_background_with_alpha));
+                getWindowLayout().setBackgroundColor(getActivity().getResources().getColor(R.color.main_menu_background_with_alpha));
                 break;
         }
         buttons.clear();
-        buttons.add(new TextButton(getActivity(), R.id.button_confirm, R.string.button_confirm, this));
-        buttons.add(new TextButton(getActivity(), R.id.button_not_confirm, R.string.button_not_confirm, this));
+        buttons.add((Button) getWindowLayout().findViewById(R.id.button_confirm1));
+        buttons.add((Button) getWindowLayout().findViewById(R.id.button_not_confirm1));
 
-        for (Button button : buttons) {
-            button.getButtonText().setTextColor(activity.getResources().getColor(android.R.color.white));
-            button.getButtonText().setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
-            button.getButtonText().setPadding((int) activity.getResources().getDimension(R.dimen.menu_elements_padding), 0, 0, 0);
-        }
+        for (Button button : buttons)
+            button.setOnClickListener(this);
     }
 
     @Override
@@ -98,7 +93,7 @@ public class ExitConfirmMenu extends MenuWindowModel implements OnButtonClick {
             animation = AnimationUtils.loadAnimation(activity, animResourceId);
             animation.setStartOffset(startOffset);
             animation.setFillAfter(true);
-            button.getButtonLayout().startAnimation(animation);
+            button.startAnimation(animation);
         }
         return startOffset;
     }

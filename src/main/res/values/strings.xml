@@ -6,6 +6,7 @@
     <string name="high_score_text">Лучший счет:</string>
 
     <string name="null_score">0</string>
+    <string name="null_text" />
 
     <string name="exit_confirm_menu_title">Уверены, что хотите выйти?</string>
 

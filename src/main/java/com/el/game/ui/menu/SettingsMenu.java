@@ -42,7 +42,9 @@ public class SettingsMenu extends MenuWindowModel implements SeekBar.OnSeekBarCh
     protected void onCreateWindow() {
         setTitleText(R.string.button_menu_settings);
         animationViews.clear();
-        soundControl = SoundControl.getInstance(getContext(), ((GameActivity) getActivity()).getMusicManager());
+        soundControl = SoundControl.getInstance(getContext(),
+                ((GameActivity) getActivity()).getMusicManager(),
+                ((GameActivity) getActivity()).getSoundManager());
 
         initSoundPrefLayout();
         initControlPrefLayout();
@@ -57,7 +59,7 @@ public class SettingsMenu extends MenuWindowModel implements SeekBar.OnSeekBarCh
         soundVolume = (SeekBar) getWindowLayout().findViewById(R.id.seekbar_sound_volume);
         soundVolume.setMax(SEEKBAR_SOUND_MAX);
         soundVolume.setProgress((int) (Utils.load(getContext(), SoundControl.MUSIC_VOLUME,
-                SoundControl.DEFAULT_MUSIC_VOLUME) * SEEKBAR_SOUND_MAX));
+                SoundControl.DEFAULT_VOLUME) * SEEKBAR_SOUND_MAX));
         soundVolume.setEnabled(isSoundEnabled);
         soundVolume.setOnSeekBarChangeListener(this);
 

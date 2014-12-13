@@ -69,7 +69,7 @@ public class GameActivity extends LayoutGameActivity implements SensorEventListe
     @Override
     protected void onSetContentView() {
         super.onSetContentView();
-        soundControl = SoundControl.getInstance(getApplicationContext(), getMusicManager());
+        soundControl = SoundControl.getInstance(getApplicationContext(), getMusicManager(), getSoundManager());
         mainMenu = new MainMenu(this, (FrameLayout) findViewById(R.id.activity_content), MainMenu.Modification.RESUME_MENU, this);
         controlButton = (ControlButton) findViewById(R.id.button_control);
         ((Button) findViewById(R.id.button_menu)).setOnClickListener(new OnButtonClick() {
@@ -92,6 +92,7 @@ public class GameActivity extends LayoutGameActivity implements SensorEventListe
         EngineOptions options = new EngineOptions(true, ScreenOrientation.LANDSCAPE_SENSOR,
                 new RatioResolutionPolicy(Utils.getScreenResolutionRatio(this)), camera);
         options.getAudioOptions().setNeedsMusic(true);
+        options.getAudioOptions().setNeedsSound(true);
         return options;
     }
 
@@ -112,7 +113,8 @@ public class GameActivity extends LayoutGameActivity implements SensorEventListe
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
                 SensorManager.SENSOR_DELAY_GAME);         //Устанавливаем менеджер сенсора как работника с акселерометром
 
-        soundControl.initBgMusicFromAsset("snd/background_music.mp3", true);
+        soundControl.initBgMusicFromAsset();
+        soundControl.initSoundsFromAsset();
 
         onCreateResourcesCallback.onCreateResourcesFinished();
     }
@@ -274,13 +276,13 @@ public class GameActivity extends LayoutGameActivity implements SensorEventListe
     @Override
     public void resume() {
         getEngine().getScene().setIgnoreUpdate(false);
-        soundControl.setVolume(SoundControl.Volume.FULL_VOLUME);
+        soundControl.setBgVolume(SoundControl.Volume.FULL_VOLUME);
     }
 
     private void pause() {
         if (isGameLoaded()) {
             getEngine().getScene().setIgnoreUpdate(true);
-            soundControl.setVolume(SoundControl.Volume.ONE_FIFTH_VOLUME);
+            soundControl.setBgVolume(SoundControl.Volume.ONE_FIFTH_VOLUME);
         }
     }
 

@@ -4,13 +4,15 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.el.game.R;
+import com.el.game.utils.SoundControl;
 
-public class Button extends FrameLayout implements View.OnClickListener {
+public class Button extends FrameLayout implements View.OnClickListener, View.OnTouchListener {
 
     private int textResource;
     private int textColor;
@@ -25,6 +27,7 @@ public class Button extends FrameLayout implements View.OnClickListener {
     private FrameLayout buttonLayout;
     private TextView buttonTextView;
 
+    private SoundControl soundControl;
     private OnButtonClick listener;
 
     public Button(Context context) {
@@ -61,6 +64,9 @@ public class Button extends FrameLayout implements View.OnClickListener {
     }
 
     private void initButton() {
+        soundControl = SoundControl.getInstance(getContext(),
+                ((GameActivity) getContext()).getMusicManager(),
+                ((GameActivity) getContext()).getSoundManager());
         inflate(getContext(), R.layout.button, this);
 
         buttonLayout = (FrameLayout) findViewById(R.id.button_layout);
@@ -68,6 +74,7 @@ public class Button extends FrameLayout implements View.OnClickListener {
 
         buttonLayout.setClickable(true);
         buttonLayout.setOnClickListener(this);
+        buttonLayout.setOnTouchListener(this);
 
         buttonTextView.setText(textResource);
         buttonTextView.setTextColor(textColor);
@@ -89,6 +96,13 @@ public class Button extends FrameLayout implements View.OnClickListener {
     public void onClick(View view) {
         if (listener != null)
             listener.onClick(this, view);
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN)
+            soundControl.playPressButtonSound();
+        return false;
     }
 
     public void setOnClickListener(OnButtonClick listener) {

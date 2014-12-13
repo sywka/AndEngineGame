@@ -2,6 +2,7 @@ package com.el.game.ui.menu;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -99,7 +100,11 @@ abstract public class MenuWindowModel {
                 isAnimateNow = false;
                 onCloseWindow();
                 containerLayout.removeView(windowLayout);
-                if (newWindow != null) newWindow.showWindow(isWithBackgroundAnimation);
+                if (newWindow != null) {
+                    removeFromBackList();
+                    newWindow.showWindow(isWithBackgroundAnimation);
+                }
+                if (backListMenu.size() == 1) removeFromBackList();
             }
 
             @Override
@@ -129,24 +134,22 @@ abstract public class MenuWindowModel {
     protected void addToBackList() {
         if (!backListMenu.contains(this))
             backListMenu.add(this);
+        Log.d("backListMenu", backListMenu.toString());
     }
 
     protected void removeFromBackList() {
         backListMenu.remove(this);
+        Log.d("backListMenu", backListMenu.toString());
     }
 
     public static void onBackPressed() {
         if (backListMenu == null || backListMenu.isEmpty()) return;
-
         if (backListMenu.get(backListMenu.size() - 1).isAnimateNow) return;
 
-        if (backListMenu.size() > 1) {
+        if (backListMenu.size() > 1)
             backListMenu.get(backListMenu.size() - 1).closeWindow(true, backListMenu.get(backListMenu.size() - 2));
-            backListMenu.remove(backListMenu.size() - 1);
-        } else {
+        else
             backListMenu.get(0).closeWindow(true, null);
-            backListMenu.remove(0);
-        }
     }
 
     protected void setTitleText(int resource) {
